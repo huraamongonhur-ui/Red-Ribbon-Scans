@@ -1,6 +1,22 @@
-(() => {
+(async () => {
+  // config.js fetches Vercel's public configuration before initializing auth.
+  await (window.RR_SUPABASE_READY || Promise.resolve());
   const U = window.SUPABASE_URL, K = window.SUPABASE_KEY;
-  if (!U || U.includes('PASTE') || !window.supabase) return;
+  if (!U || !K || !window.supabase) {
+    const target = document.querySelector(
+      document.body.classList.contains('reader') ? '.reader-toolbar' : 'header .header-actions'
+    );
+    if (target) {
+      const account = document.createElement('button');
+      account.type = 'button';
+      account.className = 'btn acct';
+      account.textContent = 'Нэвтрэх';
+      account.title = 'Нэвтрэх тохиргоо дутуу';
+      account.onclick = () => alert('Нэвтрэх систем түр ажиллахгүй байна. Сайтын эзэн Supabase тохиргоогоо шалгана уу.');
+      target.append(account);
+    }
+    return;
+  }
   const sb = supabase.createClient(U, K);
   const $ = (s, r = document) => r.querySelector(s);
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -35,7 +51,7 @@
     if (signup) {
       const username = $('#au', dlg).value.trim();
       if (username.length < 2) { msg.textContent = 'Хэрэглэгчийн нэр 2-24 тэмдэгттэй байна.'; return; }
-      const { data, error } = await sb.auth.signUp({ email, password, options: { data: { username } } });
+      const { data, error } = await sb.auth.signUp({ email, password, options: { data: { username }, emailRedirectTo: new URL('index.html', document.baseURI).href } });
       if (error) { msg.textContent = 'Алдаа: ' + error.message; return; }
       if (!data.session) { msg.textContent = 'Имэйлээ шалгаж, баталгаажуулах холбоос дээр дарна уу.'; return; }
     } else {
