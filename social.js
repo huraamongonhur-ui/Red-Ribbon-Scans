@@ -17,7 +17,7 @@
     }
     return;
   }
-  const sb = supabase.createClient(U, K);
+  const sb = window.RR_SB || (window.RR_SB = supabase.createClient(U, K));
   const $ = (s, r = document) => r.querySelector(s);
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const isReader = document.body.classList.contains('reader');
