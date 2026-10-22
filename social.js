@@ -47,7 +47,7 @@
   $('#af', dlg).onsubmit = async e => {
     e.preventDefault();
     const msg = $('#am', dlg), email = $('#ae', dlg).value.trim(), password = $('#ap', dlg).value;
-    msg.textContent = 'Түр хүлээнэ үү...';
+    msg.textContent = 'Нэвтэрч байна…';
     if (signup) {
       const username = $('#au', dlg).value.trim();
       if (username.length < 2) { msg.textContent = 'Хэрэглэгчийн нэр 2-24 тэмдэгттэй байна.'; return; }
@@ -129,7 +129,7 @@
     const item = (x, extra = '') => `<article class="cm"><b>${esc(x.profiles?.username || 'Хэрэглэгч')}</b> <small>${when(x.created_at)}</small>${extra}<p>${esc(x.body)}</p></article>`;
     box.innerHTML = `<h2>Үнэлгээ</h2><p>${avg}</p>
       <form id="rf"><select id="rr" aria-label="Од">${[5, 4, 3, 2, 1].map(n => `<option value="${n}"${mine && mine.rating === n ? ' selected' : ''}>${'★'.repeat(n)} ${n}</option>`).join('')}</select>
-      <textarea id="rb" maxlength="1000" placeholder="Манга тухай санал (заавал биш)">${mine ? esc(mine.body) : ''}</textarea>
+      <textarea id="rb" maxlength="1000" placeholder="Манганы тухай санал (заавал биш)">${mine ? esc(mine.body) : ''}</textarea>
       <button class="btn primary">Үнэлгээ хадгалах</button></form>
       <div>${(rv.data || []).filter(r => r.body).map(r => item(r, ` <small>★ ${r.rating}</small>${isAdmin ? ` <button class="lnk" data-delr="${r.id}" type="button">Устгах</button>` : ''}`)).join('')}</div>
       <h2>Сэтгэгдэл</h2>
