@@ -62,11 +62,14 @@ let zoom=1, panX=0, panY=0, isPanning=false, startX=0, startY=0;
 let touchStartDist=0, touchStartZoom=1;
 const ZOOM_MIN=1, ZOOM_MAX=4, ZOOM_STEP=0.2;
 
+window.RR_READER_STATE='loading';
 window.RRCatalog.load().then(d=>{
   const requestedId=P.get('m');
   m=requestedId ? d.find(x=>x.id===requestedId) : d[0];
-  if(!m||!m.chapters||!m.chapters.length)return note('Бүлэг олдсонгүй.');
-  idx=Math.max(0,m.chapters.findIndex(c=>String(c.n)===P.get('c')));
+  if(!m||!m.chapters||!m.chapters.length)return note('Манга эсвэл бүлэг олдсонгүй.');
+  const requestedChapter=P.get('c');
+  idx=requestedChapter==null ? 0 : m.chapters.findIndex(c=>String(c.n)===requestedChapter);
+  if(idx<0)return note('Энэ бүлэг олдсонгүй.');
   ch=m.chapters[idx];
   updateReaderLibrary();
   document.title=`${m.title} · Бүлэг ${ch.n} — Red Ribbon`;
@@ -74,13 +77,17 @@ window.RRCatalog.load().then(d=>{
   $('#ch').innerHTML=m.chapters.map((c,i)=>`<option value="${i}"${i===idx?' selected':''}>Бүлэг ${c.n}${c.title?' — '+c.title:''}</option>`).join('');
   urls=pagesOf(ch);
   if(!urls.length)return note('Энэ бүлэгт зураг байхгүй байна.');
+  window.RR_READER_STATE='ready';
   applyDir();
   // Track reading history
   try { addHist(m.id, ch.n); } catch(e) {}
   show();
-}).catch(()=>note('manga.json файлыг ачаалж чадсангүй.'));
+}).catch(()=>note('Манганы мэдээллийг ачаалж чадсангүй.'));
 
-function note(t){$('#view').innerHTML=`<p class="note">${t}</p>`}
+function note(t){
+  window.RR_READER_STATE='error';
+  $('#view').innerHTML=`<p class="note">${t}</p>`;
+}
 
 function pagesOf(c){
   const s=c.pages||{};
