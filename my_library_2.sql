@@ -16,6 +16,10 @@ create index if not exists user_manga_library_by_status
 
 alter table public.user_manga_library enable row level security;
 
+-- Explicitly allow logged-in clients to use the table; RLS still scopes each row.
+grant select, insert, update, delete on public.user_manga_library to authenticated;
+revoke all on public.user_manga_library from anon;
+
 drop policy if exists "my library: read own" on public.user_manga_library;
 create policy "my library: read own" on public.user_manga_library
   for select to authenticated using (user_id = (select auth.uid()));
