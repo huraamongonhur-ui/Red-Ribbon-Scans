@@ -398,7 +398,7 @@ function renderFavs(){
       </a>
       <button class="fav-remove" type="button" data-id="${esc(m.id)}" aria-label="Хайртаас хасах">\u2715</button>
     </div>`}).join(''):'<p class="empty">Хайртал хоосон \u0431айна.</p>';
-  $('#favList .fav-remove').forEach(b=>b.onclick=async e=>{e.stopPropagation();b.disabled=true;try{await toggleFav(b.dataset.id);renderFavs()}catch(error){toast('Алдаа: '+(error?.message||'Хадгалж чадсангүй'),4500);b.disabled=false}});
+  $$('#favList .fav-remove').forEach(b=>b.onclick=async e=>{e.stopPropagation();b.disabled=true;try{await toggleFav(b.dataset.id);renderFavs()}catch(error){toast('Алдаа: '+(error?.message||'Хадгалж чадсангүй'),4500);b.disabled=false}});
 }
 
 function renderHist(){
