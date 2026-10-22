@@ -73,6 +73,13 @@
     adminLink.hidden = !session || !isAdmin;
   };
   const profileUI = window.RRProfile.create(sb, () => renderAcct());
+  const libraryStore = window.RRMyLibrary.create(sb);
+  window.RRLibraryStore = libraryStore;
+  const libraryLink = document.createElement('a');
+  libraryLink.href = 'my-library.html';
+  libraryLink.className = 'btn my-library-profile-link';
+  libraryLink.textContent = '📚 Миний манганы сан';
+  document.querySelector('.profile-actions')?.prepend(libraryLink);
   // Visible only to authenticated admins; the dashboard and RLS also enforce authorization.
   const adminLink = document.createElement('a');
   adminLink.href = 'admin.html';
@@ -159,6 +166,7 @@
   sb.auth.onAuthStateChange((_ev, s) => {
     session = s;
     profileUI.setSession(s);
+    libraryStore.setSession(s);
     renderAcct();
     setTimeout(async () => {
       isAdmin = s ? !!(await sb.rpc('is_admin')).data : false;

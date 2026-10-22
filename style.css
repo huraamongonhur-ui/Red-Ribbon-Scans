@@ -698,3 +698,27 @@ body.reader .profile-modal{font-family:Manrope,"Segoe UI",system-ui,sans-serif}
   .profile-actions{padding:19px 18px 25px}
   .profile-actions #profileImport{flex-basis:100%}
 }
+
+
+/* My Library 2.0 — entry points on homepage and reader */
+.my-library-header{display:inline-flex;align-items:center;gap:7px;white-space:nowrap;padding:9px 12px;font-size:12px;font-weight:800;background:var(--card);border:1px solid var(--line);border-radius:11px}
+.my-library-header:hover{border-color:var(--red);color:var(--red)}
+.card-library-picker{border-top:1px solid var(--line);margin:0 9px 9px;padding-top:10px;display:flex;flex-direction:column;gap:5px;position:relative;z-index:2}
+.card-library-picker label{font-size:10px;font-weight:800;color:var(--mute)}
+.card-library-picker select{display:block;width:100%;min-width:0;min-height:36px;padding:7px 9px;border:1px solid var(--line);border-radius:9px;background:var(--paper);color:var(--ink);font-size:11px}
+.card-library-picker select:focus-visible{outline:2px solid var(--red);outline-offset:1px}
+.card-library-picker select:disabled{opacity:.55;cursor:wait}
+.profile-actions .my-library-profile-link{display:inline-flex;align-items:center;justify-content:center;gap:5px;flex:1;text-align:center;font-size:12px}
+.reader-toolbar #readerLibraryStatus{min-width:140px;max-width:180px;min-height:39px;padding:7px 9px}
+.reader-toolbar #readerLibraryStatus:disabled{opacity:.65}
+.reader-library-link{display:inline-flex;align-items:center;min-height:39px!important;padding:8px 11px!important;font-size:11px!important;white-space:nowrap}
+@media(max-width:700px){
+  .my-library-header span{display:none}
+  .my-library-header{width:36px;height:36px;justify-content:center;padding:0}
+  .reader-toolbar #readerLibraryStatus{max-width:100%;min-width:160px;flex:1}
+}
+@media(max-width:560px){
+  .header-actions .my-library-header{width:34px;height:36px;min-width:34px;border-radius:10px}
+  .card-library-picker{margin:0 6px 7px;padding-top:8px}
+  .card-library-picker select{font-size:10px;padding:6px 7px}
+}
