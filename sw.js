@@ -1,4 +1,4 @@
-const CACHE_NAME='red-ribbon-v2';
+const CACHE_NAME='red-ribbon-v3';
 const STATIC_ASSETS=[
   './',
   './index.html',
@@ -23,20 +23,10 @@ self.addEventListener('activate',e=>{
 });
 
 self.addEventListener('fetch',e=>{
+  // Never cache login requests or third-party/API responses.
+  if(e.request.method!=='GET')return;
   const url=new URL(e.request.url);
-  if(url.origin!==location.origin){
-    // Cross-origin: network first, fallback to cache
-    e.respondWith(
-      fetch(e.request).then(res=>{
-        if(res.ok){
-          const clone=res.clone();
-          caches.open(CACHE_NAME).then(c=>c.put(e.request,clone));
-        }
-        return res;
-      }).catch(()=>caches.match(e.request))
-    );
-    return;
-  }
+  if(url.origin!==self.location.origin)return;
   // Keep manga metadata and HTML fresh; only fall back to cached data offline.
   if(e.request.mode==='navigate'||url.pathname.endsWith('/manga.json')){
     e.respondWith(fetch(e.request).then(res=>{
