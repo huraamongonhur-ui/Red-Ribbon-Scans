@@ -93,7 +93,7 @@ test('Reader honors requested manga and chapter IDs', () => {
 test('Reader terminal failures end social loading retries', () => {
   assert.match(inline('reader.html'),/RR_READER_STATE='error'/);
   assert.match(read('social.js'),/RR_READER_STATE !== 'error'/);
-  assert.match(read('sw.js'),/red-ribbon-v11/);
+  assert.match(read('sw.js'),/red-ribbon-v12/);
 });
 
 
