@@ -105,7 +105,7 @@
       $('#end').after(box);
       profileUI.recordRead(m.id, ch.n);
       drawSocial();
-    } else setTimeout(ready, 150);
+    } else if(window.RR_READER_STATE !== 'error') setTimeout(ready, 150);
   }
   const when = d => new Date(d).toLocaleDateString('mn-MN');
 
