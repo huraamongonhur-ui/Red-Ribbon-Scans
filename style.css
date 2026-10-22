@@ -722,3 +722,5 @@ body.reader .profile-modal{font-family:Manrope,"Segoe UI",system-ui,sans-serif}
   .card-library-picker{margin:0 6px 7px;padding-top:8px}
   .card-library-picker select{font-size:10px;padding:6px 7px}
 }
+
+.fav-toggle:disabled{opacity:.6;cursor:wait}
