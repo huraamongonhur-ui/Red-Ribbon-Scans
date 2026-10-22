@@ -7,9 +7,7 @@ const STATIC_ASSETS=[
   './config.js',
   './social.js',
   './manga.json',
-  './manifest.json',
-  'https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap',
-  'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js'
+  './manifest.json'
 ];
 
 self.addEventListener('install',e=>{
@@ -27,9 +25,10 @@ self.addEventListener('activate',e=>{
 self.addEventListener('fetch',e=>{
   const url=new URL(e.request.url);
   if(url.origin!==location.origin){
+    // Cross-origin: network first, fallback to cache
     e.respondWith(
       fetch(e.request).then(res=>{
-        if(res.ok&&res.type==='basic'){
+        if(res.ok){
           const clone=res.clone();
           caches.open(CACHE_NAME).then(c=>c.put(e.request,clone));
         }
@@ -38,6 +37,7 @@ self.addEventListener('fetch',e=>{
     );
     return;
   }
+  // Same-origin: cache first, then network
   e.respondWith(
     caches.match(e.request).then(cached=>{
       const fetchPromise=fetch(e.request).then(res=>{

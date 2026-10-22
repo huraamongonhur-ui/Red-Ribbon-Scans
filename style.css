@@ -126,7 +126,7 @@ body.paged #view{cursor:pointer;padding-top:8px;touch-action:none}
 .dir-btn.active{background:var(--red);border-color:var(--red);color:#fff}
 
 /* accounts, comments, reviews */
-.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.accounts-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
 .acct{font-size:14px;padding:7px 12px}
 dialog{border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);padding:22px;width:min(360px,92vw)}
 dialog::backdrop{background:rgba(0,0,0,.6)}
