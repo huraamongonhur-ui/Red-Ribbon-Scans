@@ -3,14 +3,14 @@
     "id": "trapped",
     "title": "Trapped",
     "genres": [],
-    "cover": "/manga/trapped/cover.png",
+    "cover": "manga/trapped/cover.png",
     "chapters": [
       {
         "n": 1,
         "title": "Хэнэггүй сурагч ба Танхай этгээд",
         "date": "2026-10-22",
         "pages": {
-          "base": "/manga/trapped/1/",
+          "base": "manga/trapped/1/",
           "count": 8,
           "ext": ".png",
           "pad": 2
@@ -21,7 +21,7 @@
         "title": "Хэнэггүй сурагч ба Танхай этгээд 2",
         "date": "2026-10-22",
         "pages": {
-          "base": "/manga/trapped/2/",
+          "base": "manga/trapped/2/",
           "count": 5,
           "ext": ".png",
           "pad": 2
@@ -32,7 +32,7 @@
         "title": "zombie",
         "date": "2026-10-22",
         "pages": {
-          "base": "/manga/trapped/3/",
+          "base": "manga/trapped/3/",
           "count": 6,
           "ext": ".png",
           "pad": 2
@@ -43,7 +43,7 @@
         "title": "demon king",
         "date": "2026-10-22",
         "pages": {
-          "base": "/manga/trapped/4/",
+          "base": "manga/trapped/4/",
           "count": 12,
           "ext": ".png",
           "pad": 2
@@ -54,7 +54,7 @@
         "title": "ghost",
         "date": "2026-10-22",
         "pages": {
-          "base": "/manga/trapped/5/",
+          "base": "manga/trapped/5/",
           "count": 7,
           "ext": ".png",
           "pad": 2

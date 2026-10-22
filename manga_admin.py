@@ -177,7 +177,7 @@ class App(tk.Tk):
             old.unlink()
         ext = Path(f).suffix.lower()
         shutil.copy2(f, mdir / f"cover{ext}")
-        self.cur["cover"] = f"/manga/{self.cur['id']}/cover{ext}"
+        self.cur["cover"] = f"manga/{self.cur['id']}/cover{ext}"
         self.write()
         self.refresh(self.cur["id"])
 
@@ -218,7 +218,7 @@ class App(tk.Tk):
         for i, f in enumerate(files, 1):
             shutil.copy2(f, cdir / f"{str(i).zfill(pad)}{ext}")
         ch = {"n": n, "title": title.strip(), "date": datetime.date.today().isoformat(),
-              "pages": {"base": f"/manga/{mid}/{n}/", "count": len(files), "ext": ext, "pad": pad}}
+              "pages": {"base": f"manga/{mid}/{n}/", "count": len(files), "ext": ext, "pad": pad}}
         self.cur["chapters"] = sorted([c for c in self.cur["chapters"] if c["n"] != n] + [ch], key=lambda c: c["n"])
         self.write()
         self.refresh(mid)
