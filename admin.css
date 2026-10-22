@@ -1,0 +1,78 @@
+/* Red Ribbon Scans — Admin Dashboard 2.0 */
+.admin-page{background:var(--paper);min-height:100vh;color:var(--ink)}
+.admin-header{background:#0c1018;border-bottom:1px solid #303541;color:#fff}
+.admin-head-inner{display:flex;justify-content:space-between;align-items:center;gap:15px;padding-top:14px;padding-bottom:14px}
+.admin-brand{display:flex;align-items:center;gap:12px;font-size:14px;font-weight:800;letter-spacing:.04em}
+.admin-brand small{font-size:10px;color:#acb4c3}
+.admin-logo{display:grid;place-items:center;width:43px;height:43px;border-radius:12px;background:linear-gradient(145deg,#ff637e,#bd143b);font-size:25px;letter-spacing:-.04em}
+.admin-head-links{display:flex;gap:20px;font-size:12px;font-weight:800}
+.admin-head-links a{opacity:.7}
+.admin-head-links a:hover,.admin-head-links [aria-current=page]{color:#ff6984;opacity:1}
+.admin-main{padding-top:36px;padding-bottom:60px}
+.admin-intro{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:17px;margin-bottom:25px}
+.admin-eyebrow{color:var(--red);font-size:10px;font-weight:800;letter-spacing:.13em}
+.admin-intro h1{font-size:clamp(32px,5vw,54px);max-width:none;margin:8px 0 8px;letter-spacing:-.055em}
+.admin-intro h1 span{color:var(--red)}
+.admin-intro p{color:var(--mute);margin:0;font-size:13px}
+.admin-chip{padding:9px 15px;border-radius:100px;border:1px solid var(--line);font-size:12px;color:var(--mute);background:var(--card);overflow-wrap:anywhere}
+.admin-notice{border:1px solid var(--line);background:var(--card);border-radius:13px;padding:14px 18px;margin-bottom:26px;color:var(--mute);font-size:13px;line-height:1.65}
+.admin-notice a{margin-left:8px;font-size:12px}
+.admin-stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:13px;margin-bottom:26px}
+.admin-stats>div{min-width:0;display:flex;flex-direction:column;gap:2px;background:var(--card);border:1px solid var(--line);padding:22px 17px 19px;border-radius:17px}
+.admin-stats>div span{font-size:12px;font-weight:700;color:var(--mute)}
+.admin-stats>div strong{font-size:clamp(24px,3.1vw,36px);font-weight:800;letter-spacing:-.04em;color:var(--ink)}
+.admin-stats>div small{font-size:10px;color:var(--mute)}
+.admin-columns{display:grid;grid-template-columns:minmax(260px,.91fr) minmax(0,1.4fr);gap:20px;align-items:start}
+.admin-editor-stack{display:flex;flex-direction:column;gap:20px;min-width:0}
+.admin-section{padding:24px;background:var(--card);border:1px solid var(--line);border-radius:18px;min-width:0}
+.admin-section-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:20px}
+.admin-section-title h2{margin:4px 0 0;font-size:22px;letter-spacing:-.04em}
+.admin-section-title .btn{font-size:12px;padding:9px 12px;white-space:nowrap}
+.admin-section input[type=search]{width:100%;min-width:0;margin-bottom:15px}
+.admin-manga-list{display:flex;flex-direction:column;gap:9px;max-height:540px;overflow-y:auto}
+.admin-manga-row{display:flex;align-items:center;gap:11px;padding:11px;border:1px solid var(--line);background:var(--paper);border-radius:13px}
+.admin-manga-row.selected{border-color:var(--red);box-shadow:inset 0 0 0 1px var(--red)}
+.admin-manga-row img{width:42px;height:61px;object-fit:cover;border-radius:7px;flex:none}
+.admin-manga-info{flex:1;min-width:0;overflow-wrap:anywhere}
+.admin-manga-info b{display:block;font-size:13px;line-height:1.35}
+.admin-manga-info small{display:block;font-size:10px;color:var(--mute);margin-top:3px}
+.admin-manga-actions{display:flex;flex-direction:column;gap:5px}
+.admin-manga-actions .btn{font-size:11px;padding:6px 10px;border-radius:9px}
+.admin-tip{color:var(--mute);font-size:12px;line-height:1.6;margin:14px 0 0}
+.admin-form{display:flex;flex-direction:column;gap:9px}
+.admin-form label{font-size:12px;font-weight:800}
+.admin-form label small{font-size:11px;font-weight:400;color:var(--mute)}
+.admin-form input:not([type=file]){width:100%;min-width:0;min-height:42px;background:var(--paper);border:1px solid var(--line);border-radius:11px;padding:10px 13px;font-size:13px}
+.admin-form input[type=file]{width:100%;min-width:0;background:var(--paper);border:1px dashed var(--line);border-radius:11px;padding:13px;color:var(--mute);font-size:12px}
+.admin-form input:read-only{opacity:.68}
+.admin-form input:disabled{opacity:.5;cursor:not-allowed}
+.admin-wide{min-height:46px;margin-top:6px;width:100%}
+.admin-danger{color:#ef6c82!important;border-color:rgba(229,56,79,.5)!important;background:transparent!important;min-height:41px}
+.admin-danger:hover{background:rgba(229,56,79,.08)!important}
+.admin-status{font-size:12px;line-height:1.6;color:var(--mute);min-height:17px;margin:5px 0 0;overflow-wrap:anywhere}
+.admin-cover-preview img{max-height:220px;max-width:150px;border-radius:10px;border:1px solid var(--line);object-fit:cover}
+.admin-chapter-list{display:flex;flex-direction:column;gap:8px;margin-bottom:18px;max-height:260px;overflow-y:auto}
+.admin-chapter-row{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line);background:var(--paper);border-radius:11px;padding:10px 12px}
+.admin-chapter-row span{font-size:12px;font-weight:700;overflow-wrap:anywhere}
+.admin-chapter-row .btn{font-size:11px;padding:6px 10px;flex:none}
+.admin-footer-note{color:var(--mute);font-size:11px;text-align:center;line-height:1.6;padding:28px 0 0}
+@media(max-width:940px){
+  .admin-stats{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .admin-columns{grid-template-columns:minmax(230px,1fr) minmax(0,1.15fr);gap:14px}
+  .admin-section{padding:19px}
+}
+@media(max-width:680px){
+  .admin-main{padding-top:25px}
+  .admin-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  .admin-stats>div{padding:16px 13px}
+  .admin-columns{grid-template-columns:1fr}
+  .admin-section{padding:18px}
+  .admin-intro{align-items:flex-start}
+  .admin-head-links{gap:12px}
+  .admin-brand{font-size:12px}
+  .admin-brand small{display:none}
+}
+@media(max-width:370px){
+  .admin-section-title{align-items:flex-start;flex-wrap:wrap}
+  .admin-head-links{gap:8px}
+}

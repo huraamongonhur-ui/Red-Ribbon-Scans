@@ -85,9 +85,13 @@
           return;
         }
         try {
-          const response = await fetch('manga.json');
-          if (!response.ok) throw Error('Catalog unavailable');
-          const list = await response.json();
+          const list = window.RRCatalog
+            ? await window.RRCatalog.load()
+            : await (async () => {
+                const response = await fetch('manga.json');
+                if (!response.ok) throw Error('Catalog unavailable');
+                return response.json();
+              })();
           const entries = ids.map(id => list.find(m => m.id === id)).filter(Boolean);
           holder.replaceChildren();
           for (const manga of entries) {

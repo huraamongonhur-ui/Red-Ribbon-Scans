@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="mn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b0e15">
+<meta name="description" content="Red Ribbon Scans — Admin Dashboard">
+<title>Admin Dashboard — Red Ribbon Scans</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=admin-2">
+<link rel="stylesheet" href="admin.css?v=admin-2">
+</head>
+<body class="admin-page">
+<header class="admin-header">
+  <div class="wrap admin-head-inner">
+    <a class="admin-brand" href="index.html" aria-label="Нүүр хуудас"><span class="admin-logo">R.</span><span>RED RIBBON <small>/ DASHBOARD</small></span></a>
+    <nav class="admin-head-links">
+      <a href="index.html">Нүүр</a>
+      <a href="admin.html" aria-current="page">Удирдлага</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap admin-main">
+  <section class="admin-intro">
+    <div><span class="admin-eyebrow">CONTENT MANAGEMENT / SUPABASE</span><h1>Admin <span>Dashboard 2.0</span></h1><p>Манга, бүлэг, зураг, хэрэглэгчийн статистикаа нэг дор удирдаарай.</p></div>
+    <span id="adminIdentity" class="admin-chip">Нэвтрэлт шалгаж байна…</span>
+  </section>
+  <div id="adminNotice" class="admin-notice" role="status" aria-live="polite">Supabase холболт шалгаж байна…</div>
+  <section id="adminPanel" hidden>
+    <div class="admin-stats" aria-label="Сайтын статистик">
+      <div><span>Нийт манга</span><strong id="statManga">—</strong><small>Статик + онлайн</small></div>
+      <div><span>Нийт бүлэг</span><strong id="statChapters">—</strong><small>Нийтлэгдсэн бүлгүүд</small></div>
+      <div><span>Хэрэглэгч</span><strong id="statUsers">—</strong><small>Бүртгэлтэй профайл</small></div>
+      <div><span>Сэтгэгдэл</span><strong id="statComments">—</strong><small>Нийт сэтгэгдэл</small></div>
+      <div><span>Үнэлгээ</span><strong id="statReviews">—</strong><small>Нийт үнэлгээ</small></div>
+    </div>
+    <div class="admin-columns">
+      <section class="admin-section">
+        <div class="admin-section-title"><div><span class="admin-eyebrow">LIBRARY</span><h2>Манга удирдах</h2></div><button id="newManga" class="btn" type="button">+ Шинэ манга</button></div>
+        <label for="adminSearch" class="visually-hidden">Манга хайх</label>
+        <input id="adminSearch" type="search" placeholder="Манга хайх…" autocomplete="off">
+        <div id="adminMangaList" class="admin-manga-list" aria-live="polite"></div>
+        <p class="admin-tip">GitHub-д байгаа хуучин мангануудыг өөрчлөхийн өмнө <b>Импортлох</b> товч дарна. Энэ нь эх файлыг устгахгүй.</p>
+      </section>
+      <div class="admin-editor-stack">
+        <section class="admin-section" id="mangaEditor">
+          <div class="admin-section-title"><div><span class="admin-eyebrow">MANGA EDITOR</span><h2 id="mangaFormHeading">Манга нэмэх</h2></div></div>
+          <form id="mangaForm" class="admin-form">
+            <label for="mangaId">ID / Slug <small>Англи жижиг үсэг, тоо, -</small></label>
+            <input id="mangaId" name="id" pattern="[a-z0-9][a-z0-9-]{1,79}" maxlength="80" minlength="2" required placeholder="my-manga">
+            <label for="mangaTitle">Манганы нэр</label>
+            <input id="mangaTitle" name="title" maxlength="160" required placeholder="Манганы нэр">
+            <label for="mangaGenres">Жанр <small>Таслалаар тусгаарла</small></label>
+            <input id="mangaGenres" name="genres" placeholder="Action, Romance, Fantasy">
+            <label for="mangaCover">Нүүр зураг солих <small>PNG, JPG, WebP • 10 MB</small></label>
+            <input id="mangaCover" type="file" accept="image/png,image/jpeg,image/webp">
+            <div id="mangaCoverPreview" class="admin-cover-preview" hidden></div>
+            <p class="admin-status" id="mangaStatus" role="status" aria-live="polite"></p>
+            <button id="saveManga" class="btn primary admin-wide" type="submit">Манга хадгалах</button>
+            <button id="deleteManga" class="btn admin-danger" type="button" hidden>Онлайн манга устгах</button>
+          </form>
+        </section>
+        <section class="admin-section" id="chapterEditor">
+          <div class="admin-section-title"><div><span class="admin-eyebrow">CHAPTER MANAGER</span><h2>Бүлэг удирдах</h2></div></div>
+          <p id="chapterHelp" class="admin-tip">Эхлээд онлайн манга сонгоно уу.</p>
+          <div id="chapterPanel" hidden>
+            <div id="adminChapterList" class="admin-chapter-list"></div>
+            <form id="chapterForm" class="admin-form">
+              <label for="chapterNo">Бүлгийн дугаар</label>
+              <input id="chapterNo" type="number" min="1" max="99999" step="1" required placeholder="1">
+              <label for="chapterTitle">Бүлгийн нэр</label>
+              <input id="chapterTitle" maxlength="160" placeholder="Бүлгийн нэр">
+              <label for="chapterImages">Бүлгийн зургууд <small>Файлын нэрээр эрэмбэлнэ: 01.png, 02.png…</small></label>
+              <input id="chapterImages" type="file" accept="image/png,image/jpeg,image/webp" multiple>
+              <p class="admin-tip">80 хүртэл зураг; тус бүр 10 MB. Одоо байгаа бүлэгт зураг сонгохгүй бол зөвхөн нэр нь өөрчлөгдөнө.</p>
+              <p class="admin-status" id="chapterStatus" role="status" aria-live="polite"></p>
+              <button id="saveChapter" class="btn primary admin-wide" type="submit">Бүлэг хадгалах</button>
+              <button id="deleteChapter" class="btn admin-danger" type="button" hidden>Энэ бүлгийг устгах</button>
+              <button id="resetChapter" class="btn" type="button">+ Шинэ бүлэг</button>
+            </form>
+          </div>
+        </section>
+      </div>
+    </div>
+    <div class="admin-footer-note">Зураг Supabase Storage-д хадгалагдана. Устгасан манганы хуучин зураг Storage-д үлдэж болно. Хадгалсан өөрчлөлт хэрэглэгчдэд шууд харагдана.</div>
+  </section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script src="catalog.js?v=admin-2"></script>
+<script src="admin.js?v=admin-2"></script>
+</body>
+</html>
