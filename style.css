@@ -614,3 +614,10 @@ body.paged #view{padding-top:15px}
   .hero-stats{gap:12px}
 }
 @media (prefers-reduced-motion:reduce) {html{scroll-behavior:auto}}
+
+
+/* Accessible saved-manga entries: link and removal control are siblings. */
+.modal-item--favorite{grid-template-columns:minmax(0,1fr) 36px}
+.modal-entry{display:grid;grid-template-columns:56px minmax(0,1fr);align-items:center;gap:12px;min-width:0}
+.modal-entry:focus-visible{outline:2px solid var(--red);outline-offset:2px;border-radius:8px}
+.hero:has(#heroFeature[hidden]){grid-template-columns:1fr}
