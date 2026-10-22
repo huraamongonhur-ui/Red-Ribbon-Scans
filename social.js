@@ -70,8 +70,16 @@
     const name = profileUI?.getName() || session?.user?.user_metadata?.username || 'Хэрэглэгч';
     acct.textContent = session ? '👤 ' + name + (isAdmin ? ' (админ)' : '') : 'Нэвтрэх';
     acct.title = session ? 'Миний профайл' : 'Нэвтрэх';
+    adminLink.hidden = !session || !isAdmin;
   };
   const profileUI = window.RRProfile.create(sb, () => renderAcct());
+  // Visible only to authenticated admins; the dashboard and RLS also enforce authorization.
+  const adminLink = document.createElement('a');
+  adminLink.href = 'admin.html';
+  adminLink.className = 'btn admin-profile-link';
+  adminLink.textContent = '⚙ Админ самбар';
+  adminLink.hidden = true;
+  document.querySelector('.profile-actions')?.prepend(adminLink);
 
   // ---- үнэлгээний дундаж (нүүр хуудас) ----
   async function loadRatings() {
