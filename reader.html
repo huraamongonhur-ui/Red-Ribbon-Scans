@@ -63,7 +63,8 @@ let touchStartDist=0, touchStartZoom=1;
 const ZOOM_MIN=1, ZOOM_MAX=4, ZOOM_STEP=0.2;
 
 window.RRCatalog.load().then(d=>{
-  m=d.find(x=>x.id===P.get('m'))||d[0];
+  const requestedId=P.get('m');
+  m=requestedId ? d.find(x=>x.id===requestedId) : d[0];
   if(!m||!m.chapters||!m.chapters.length)return note('Бүлэг олдсонгүй.');
   idx=Math.max(0,m.chapters.findIndex(c=>String(c.n)===P.get('c')));
   ch=m.chapters[idx];
