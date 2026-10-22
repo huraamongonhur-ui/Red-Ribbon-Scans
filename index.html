@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
 </head>
 <body>
 <header class="wrap top">
@@ -15,10 +16,19 @@
     <span class="tab" aria-hidden="true"></span>
     <span><b class="name">Red Ribbon</b><small>Монгол манга уншигч</small></span>
   </a>
-  <button id="themeToggle" class="theme-btn" aria-label="Хороо солих" title="Хороо солих">
-    <svg class="sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-    <svg class="moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-  </button>
+  <div class="header-actions">
+    <button id="themeToggle" class="theme-btn" aria-label="Хороо солих" title="Хороо солих">
+      <svg class="sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg class="moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+    <a id="favoritesLink" class="btn fav-link" href="#favorites" aria-label="Хайртал" title="Хайртал (Ctrl+Shift+F)">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      <span class="fav-count" hidden>0</span>
+    </a>
+    <a id="historyLink" class="btn hist-link" href="#history" aria-label="Уншсан түүх" title="Уншсан түүх (Ctrl+Shift+H)">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    </a>
+  </div>
 </header>
 <main class="wrap">
   <section class="hero">
@@ -26,46 +36,109 @@
     <a id="resume" class="resume" hidden></a>
   </section>
   <div class="tools">
-    <input id="q" type="search" placeholder="Нэрээр хайх" aria-label="Нэрээр хайх">
+    <input id="q" type="search" placeholder="Нэрээр хайх" aria-label="Нэрээр хайх" autocomplete="off">
     <select id="sort" aria-label="Эрэмбэлэх">
       <option value="new">Шинэ бүлгээр</option>
       <option value="name">Нэрээр</option>
+      <option value="progress">Үргэлжлүүлэгчид</option>
     </select>
   </div>
-  <div id="chips" class="chips"></div>
-  <div id="grid" class="grid"></div>
+  <div id="chips" class="chips" role="tablist" aria-label="Жанр шүүлтүүр"></div>
+  <div id="grid" class="grid" role="list" aria-live="polite"></div>
+  
+  <!-- Favorites Modal -->
+  <dialog id="favModal" class="modal">
+    <div class="modal-header">
+      <h2>Хайртал</h2>
+      <button class="modal-close" aria-label="Хаах">✕</button>
+    </div>
+    <div id="favList" class="modal-list"></div>
+  </dialog>
+  
+  <!-- History Modal -->
+  <dialog id="histModal" class="modal">
+    <div class="modal-header">
+      <h2>Уншсан түүх</h2>
+      <button class="modal-close" aria-label="Хаах">✕</button>
+    </div>
+    <div id="histList" class="modal-list"></div>
+  </div>
 </main>
 <footer class="wrap foot">Red Ribbon Scans</footer>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 <script>
 const $=s=>document.querySelector(s);
-const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let data=[],q='',g='',sort='new';
+const $$=s=>document.querySelectorAll(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&','<':'<','>':'>','"':'"',"'":'''}[c]));
+const debounce=(fn,ms)=>{let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),ms)}};
+
+let data=[], q='', g='', sort='new';
 const last=m=>m.chapters[m.chapters.length-1];
 const hue=t=>{let h=0;for(const c of t)h=(h*31+c.charCodeAt(0))%360;return h};
 const isNew=m=>Date.now()-new Date(last(m).date)<14*864e5;
 const href=(m,n)=>`reader.html?m=${encodeURIComponent(m.id)}&c=${n}`;
+const favKey='rr_favs', histKey='rr_hist', maxHist=200;
+
+function getFavs(){try{return JSON.parse(localStorage.getItem(favKey)||'[]')}catch{return[]}}
+function setFavs(a){try{localStorage.setItem(favKey,JSON.stringify(a))}catch{}}
+function toggleFav(id){const f=getFavs();const i=f.indexOf(id);if(i>=0)f.splice(i,1);else f.unshift(id);setFavs(f);updateFavCount();draw();toast(i>=0?'Хайртаас хасagdлаа':'Хайртад нэмэгдлээ')}
+function isFav(id){return getFavs().includes(id)}
+function updateFavCount(){const c=getFavs().length;const el=$('#favoritesLink .fav-count');el.textContent=c;el.hidden=c===0}
+
+function getHist(){try{return JSON.parse(localStorage.getItem(histKey)||'[]')}catch{return[]}}
+function addHist(mangaId,chapterNum){const h=getHist();const entry={m:mangaId,c:chapterNum,t:Date.now()};const i=h.findIndex(x=>x.m===mangaId&&x.c===chapterNum);if(i>=0)h.splice(i,1);h.unshift(entry);if(h.length>maxHist)h.pop();try{localStorage.setItem(histKey,JSON.stringify(h))}catch{}}
+function clearHist(){try{localStorage.setItem(histKey,'[]')}catch{};renderHist()}
+function isInHist(mangaId,chapterNum){return getHist().some(x=>x.m===mangaId&&x.c===chapterNum)}
+
+function toast(msg,ms=2500){const t=$('#toast');t.textContent=msg;t.hidden=false;t.classList.add('show');setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.hidden=true,200)},ms)}
+
+function renderSkeletons(n=8){$('#grid').innerHTML=Array.from({length:n},()=>`<a class="card skeleton"><div class="cover"></div><h2><span></span><span></span></h2><div class="meta"><span></span></div></a>`).join('')}
 
 fetch('manga.json').then(r=>r.json()).then(d=>{
   data=d.filter(m=>m.chapters&&m.chapters.length);
-  chips();draw();resume();
+  restoreUrlState();
+  chips();draw();resume();updateFavCount();
 }).catch(()=>{$('#grid').innerHTML='<p class="empty">Жагсаалтыг ачаалж чадсангүй. manga.json файлаа шалгана уу.</p>'});
 
 function chips(){
-  const all=[...new Set(data.flatMap(m=>m.genres||[]))];
-  $('#chips').innerHTML=['',...all].map(x=>`<button class="btn" data-g="${esc(x)}" aria-pressed="${x===g}">${x?esc(x):'Бүгд'}</button>`).join('');
+  const all=[...new Set(data.flatMap(m=>m.genres||[]))].sort();
+  $('#chips').innerHTML=['',...all].map(x=>`<button class="btn" role="tab" data-g="${esc(x)}" aria-pressed="${x===g}" aria-selected="${x===g}">${x?esc(x):'Бүгд'}</button>`).join('');
 }
+
 function draw(){
   let list=data.filter(m=>m.title.toLowerCase().includes(q)&&(!g||(m.genres||[]).includes(g)));
-  list.sort(sort==='name'?(a,b)=>a.title.localeCompare(b.title,'mn'):(a,b)=>new Date(last(b).date)-new Date(last(a).date));
+  list.sort(sort==='name'?(a,b)=>a.title.localeCompare(b.title,'mn'):sort==='progress'?(a,b)=>getProgress(b)-getProgress(a):(a,b)=>new Date(last(b).date)-new Date(last(a).date));
+  
+  const favs=getFavs();
+  if(sort==='progress') list=list.filter(m=>getProgress(m)>0);
+  
   $('#grid').innerHTML=list.length?list.map(m=>{
-    const l=last(m),h=hue(m.title);
+    const l=last(m), h=hue(m.title), fav=isFav(m.id), prog=getProgress(m);
     const bg=`style="background:linear-gradient(160deg,hsl(${h} 45% 34%),hsl(${(h+35)%360} 50% 16%))"`;
-    return `<a class="card" href="${href(m,l.n)}">
-      <div class="cover" ${bg}><span>${esc(m.title)}</span>${m.cover?`<img src="${esc(m.cover)}" alt="" loading="lazy" onerror="this.remove()">`:''}${isNew(m)?'<i class="mark"></i>':''}</div>
+    const coverImg=m.cover?`<img src="${esc(m.cover)}" alt="" loading="lazy" onerror="handleCoverError(this, '${esc(m.title)}', ${h})">`:'';
+    return `<a class="card" href="${href(m,l.n)}" data-manga="${esc(m.id)}" role="listitem">
+      <div class="cover" ${bg}><span>${esc(m.title)}</span>${coverImg}${isNew(m)?'<i class="mark"></i>':''}${fav?'<i class="fav-badge" title="Хайртал">★</i>':''}</div>
       <h2>${esc(m.title)}</h2>
-      <div class="meta">Бүлэг ${esc(l.n)}${isNew(m)?'<b>Шинэ</b>':''}${window.RR&&RR[m.id]?`<b class="rt">★ ${RR[m.id]}</b>`:''}</div></a>`}).join('')
+      <div class="meta">
+        <span>Бүлэг ${esc(l.n)}${isNew(m)?' <b>Шинэ</b>':''}${window.RR&&RR[m.id]?' <b class="rt">★ '+RR[m.id]+'</b>':''}</span>
+        ${prog>0?`<span class="prog-wrap"><progress class="prog" value="${prog}" max="${m.chapters.length}"></progress><span class="prog-text">${prog}/${m.chapters.length}</span></span>`:''}
+      </div></a>`}).join('')
     :'<p class="empty">Таарах манга олдсонгүй. Хайлтаа өөрчилнө үү.</p>';
+  
+  // Keyboard nav for cards
+  $$('#grid .card').forEach((el,i)=>{el.tabIndex=0;el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();el.click()}});el.addEventListener('click',e=>{if(e.target.closest('.fav-badge')){e.preventDefault();toggleFav(el.dataset.manga)}})});
 }
+
+function getProgress(m){
+  const h=getHist();return h.filter(x=>x.m===m.id).length
+}
+
+function handleCoverError(img,title,h){
+  img.remove();
+  const cover=img.closest('.cover');
+  if(cover) cover.style.background=`linear-gradient(160deg,hsl(${h} 45% 34%),hsl(${(h+35)%360} 50% 16%))`;
+}
+
 function resume(){
   try{
     const r=JSON.parse(localStorage.getItem('rr_last')||'null');
@@ -77,9 +150,54 @@ function resume(){
     a.hidden=false;
   }catch(e){}
 }
-$('#q').oninput=e=>{q=e.target.value.trim().toLowerCase();draw()};
-$('#sort').onchange=e=>{sort=e.target.value;draw()};
-$('#chips').onclick=e=>{const b=e.target.closest('button');if(!b)return;g=b.dataset.g;chips();draw()};
+
+// URL state sync
+function restoreUrlState(){
+  const p=new URLSearchParams(location.search);
+  if(p.has('q')){q=p.get('q');$('#q').value=q}
+  if(p.has('g')){g=p.get('g')}
+  if(p.has('sort')){sort=p.get('sort');$('#sort').value=sort}
+}
+function saveUrlState(){const p=new URLSearchParams();if(q)p.set('q',q);if(g)p.set('g',g);if(sort!=='new')p.set('sort',sort);history.replaceState(null,'',p.toString()?'?'+p.toString():location.pathname)}
+
+const debouncedDraw=debounce(()=>{draw();saveUrlState()},300);
+$('#q').oninput=e=>{q=e.target.value.trim().toLowerCase();debouncedDraw()};
+$('#sort').onchange=e=>{sort=e.target.value;draw();saveUrlState()};
+$('#chips').onclick=e=>{const b=e.target.closest('button');if(!b)return;g=b.dataset.g||'';chips();draw();saveUrlState()};
+
+// Favorites modal
+const favModal=$('#favModal'), histModal=$('#histModal');
+$('#favoritesLink').onclick=e=>{e.preventDefault();renderFavs();favModal.showModal()};
+$('#historyLink').onclick=e=>{e.preventDefault();renderHist();histModal.showModal()};
+$$('.modal-close').forEach(b=>b.onclick=()=>{favModal.close();histModal.close()});
+[favModal,histModal].forEach(m=>m.onclick=e=>{if(e.target===m)m.close()});
+
+function renderFavs(){
+  const favs=getFavs();
+  $('#favList').innerHTML=favs.length?favs.map(id=>{
+    const m=data.find(x=>x.id===id);if(!m)return '';
+    const l=last(m), prog=getProgress(m);
+    return `<a class="modal-item" href="${href(m,l.n)}" data-manga="${esc(m.id)}">
+      <div class="modal-cover" style="background:linear-gradient(160deg,hsl(${hue(m.title)} 45% 34%),hsl(${(hue(m.title)+35)%360} 50% 16%))">${m.cover?`<img src="${esc(m.cover)}" loading="lazy" onerror="this.remove()">`:''}</div>
+      <div class="modal-info"><strong>${esc(m.title)}</strong><span>Бүлэг ${esc(l.n)} ${prog>0?`· ${prog}/${m.chapters.length} уншсан`:''}</span></div>
+      <button class="fav-remove" data-id="${esc(m.id)}" aria-label="Хайртаас хасах">✕</button>
+    </a>`}).join(''):'<p class="empty">Хайртал хоосон байна.</p>';
+  $$('#favList .fav-remove').forEach(b=>b.onclick=e=>{e.stopPropagation();toggleFav(b.dataset.id);renderFavs();updateFavCount()});
+}
+
+function renderHist(){
+  const hist=getHist();
+  $('#histList').innerHTML=hist.length?hist.map((h,i)=>{
+    const m=data.find(x=>x.id===h.m);if(!m)return '';
+    const ch=m.chapters.find(c=>String(c.n)===String(h.c));
+    const date=new Date(h.t).toLocaleString('mn-MN',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+    return `<a class="modal-item" href="${href(m,h.c)}" data-manga="${esc(m.id)}">
+      <div class="modal-cover" style="background:linear-gradient(160deg,hsl(${hue(m.title)} 45% 34%),hsl(${(hue(m.title)+35)%360} 50% 16%))">${m.cover?`<img src="${esc(m.cover)}" loading="lazy" onerror="this.remove()">`:''}</div>
+      <div class="modal-info"><strong>${esc(m.title)}</strong><span>Бүлэг ${esc(h.c)} ${ch?.title?' — '+esc(ch.title):''}</span><small>${date}</small></div>
+    </a>`}).join(''):'<p class="empty">Түүх хоосон байна.</p>';
+  // Add clear button if history exists
+  if(hist.length){$('#histList').insertAdjacentHTML('beforeend',`<button class="btn clear-hist" style="margin-top:16px;width:100%">Түүхийг арилгах</button>`);$('#histList .clear-hist').onclick=clearHist;}
+}
 
 // Theme toggle
 const themeBtn=$('#themeToggle');
@@ -87,12 +205,24 @@ const prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;
 const stored=localStorage.getItem('theme');
 const initTheme=stored||(prefersDark?'dark':'light');
 document.documentElement.setAttribute('data-theme',initTheme);
-themeBtn.onclick=()=>{
-  const current=document.documentElement.getAttribute('data-theme');
-  const next=current==='dark'?'light':'dark';
-  document.documentElement.setAttribute('data-theme',next);
-  localStorage.setItem('theme',next);
-};
+themeBtn.onclick=()=>{const c=document.documentElement.getAttribute('data-theme');const n=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('theme',n);};
+
+// Keyboard shortcuts
+addEventListener('keydown',e=>{
+  if((e.ctrlKey||e.metaKey)&&e.shiftKey){
+    if(e.key==='F'){e.preventDefault();$('#favoritesLink').click()}
+    if(e.key==='H'){e.preventDefault();$('#historyLink').click()}
+  }
+  if(e.key==='Escape'){favModal.close();histModal.close()}
+});
+
+// Service Worker registration
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+
+// Init skeletons
+renderSkeletons();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>

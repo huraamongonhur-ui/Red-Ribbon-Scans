@@ -1,0 +1,21 @@
+{
+  "name": "Red Ribbon — Монгол манга уншигч",
+  "short_name": "Red Ribbon",
+  "description": "Дуртай түүхээ монгол хэлээр уншаарай",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#E8EAED",
+  "theme_color": "#C8102E",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23C8102E' width='100' height='100' rx='20'/><text x='50' y='68' font-size='50' text-anchor='middle' fill='white'>📖</text></svg>",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["books", "entertainment"],
+  "lang": "mn",
+  "dir": "ltr"
+}

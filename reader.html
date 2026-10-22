@@ -16,6 +16,7 @@
   <div class="ttl" id="ttl"></div>
   <select id="ch" aria-label="Бүлэг сонгох"></select>
   <button class="btn" id="mode" type="button"></button>
+  <button class="dir-btn" id="dirBtn" type="button" aria-label="Уншигчийн чиглэл" title="Уншигчийн чиглэл (LTR/RTL)">⇄</button>
   <button id="themeToggle" class="theme-btn" aria-label="Хороо солих" title="Хороо солих">
     <svg class="sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
     <svg class="moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -23,10 +24,15 @@
 </header>
 <main id="view"></main>
 <nav class="end" id="end" aria-label="Бүлэг солих"></nav>
+<div class="zoom-hint" id="zoomHint" hidden>Scroll/ pinch to zoom • Drag to pan • Click edges to navigate</div>
 <script>
 const $=s=>document.querySelector(s);
 const P=new URLSearchParams(location.search);
 let m,idx=0,ch,urls=[],p=0,mode=localStorage.getItem('rr_mode')||'scroll';
+let dir=localStorage.getItem('rr_dir')||'ltr'; // ltr or rtl
+let zoom=1, panX=0, panY=0, isPanning=false, startX=0, startY=0;
+let touchStartDist=0, touchStartZoom=1;
+const ZOOM_MIN=1, ZOOM_MAX=4, ZOOM_STEP=0.2;
 
 fetch('manga.json').then(r=>r.json()).then(d=>{
   m=d.find(x=>x.id===P.get('m'))||d[0];
@@ -37,6 +43,7 @@ fetch('manga.json').then(r=>r.json()).then(d=>{
   $('#ttl').textContent=`${m.title} · Бүлэг ${ch.n}`;
   $('#ch').innerHTML=m.chapters.map((c,i)=>`<option value="${i}"${i===idx?' selected':''}>Бүлэг ${c.n}${c.title?' — '+c.title:''}</option>`).join('');
   urls=pagesOf(ch);
+  applyDir();
   show();
 }).catch(()=>note('manga.json файлыг ачаалж чадсангүй.'));
 
@@ -47,7 +54,6 @@ function pagesOf(c){
   if(s.base&&s.count){
     return Array.from({length:s.count},(_,i)=>s.base+String(i+1).padStart(s.pad||0,'0')+(s.ext||'.jpg'));
   }
-  // demo pages, so the reader can be tried before real images are added
   return Array.from({length:5},(_,i)=>'data:image/svg+xml,'+encodeURIComponent(
     `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1200"><rect width="800" height="1200" fill="#eceef1"/><rect x="40" y="40" width="720" height="1120" fill="none" stroke="#15171D" stroke-width="4"/><text x="400" y="620" font-size="48" font-family="sans-serif" text-anchor="middle" fill="#15171D">Хуудас ${i+1}</text></svg>`));
 }
@@ -58,18 +64,38 @@ function show(){
   $('#mode').textContent=mode==='page'?'Гүйлгэж унших':'Хуудсаар унших';
   v.innerHTML='';
   if(mode==='scroll'){
-    urls.forEach((u,i)=>{const im=new Image();im.className='pg';im.alt='Хуудас '+(i+1);im.loading=i<2?'eager':'lazy';im.src=u;v.append(im)});
+    urls.forEach((u,i)=>{
+      const im=new Image();
+      im.className='pg';
+      im.alt='Хуудас '+(i+1);
+      im.loading=i<2?'eager':'lazy';
+      im.src=u;
+      im.style.transform=`scaleX(${dir==='rtl'?-1:1})`;
+      v.append(im);
+    });
+    preloadImages(0,3);
     scrollTo(0,0);p=0;
   }else{
-    const im=new Image();im.className='pg';im.id='pg';v.append(im);setPage(p);
+    const im=new Image();
+    im.className='pg';
+    im.id='pg';
+    v.append(im);
+    setPage(p);
+    preloadImages(p,3);
   }
   nav();progress();
+  updateDirBtn();
 }
 
 function setPage(i){
   p=Math.min(Math.max(i,0),urls.length-1);
-  const im=$('#pg');im.src=urls[p];im.alt='Хуудас '+(p+1);
+  const im=$('#pg');
+  im.src=urls[p];
+  im.alt='Хуудас '+(p+1);
+  im.style.transform=`scaleX(${dir==='rtl'?-1:1})`;
+  resetZoom();
   if(urls[p+1])new Image().src=urls[p+1];
+  if(urls[p+2])new Image().src=urls[p+2];
   nav();progress();save();scrollTo(0,0);
 }
 
@@ -104,6 +130,129 @@ function save(){
   try{localStorage.setItem('rr_last',JSON.stringify({m:m.id,c:ch.n,p}))}catch(e){}
 }
 
+function preloadImages(start,count){
+  for(let i=start;i<Math.min(start+count,urls.length);i++){
+    new Image().src=urls[i];
+  }
+}
+
+// Zoom/Pan for page mode
+function resetZoom(){zoom=1;panX=0;panY=0;applyTransform();$('#zoomHint').hidden=true;$('#zoomHint').classList.remove('show')}
+function applyTransform(){
+  const im=$('#pg');
+  if(!im)return;
+  im.style.transform=`scaleX(${dir==='rtl'?-1:1}) scale(${zoom}) translate(${panX}px, ${panY}px)`;
+  im.style.transformOrigin='center center';
+  if(zoom>1.05){im.classList.add('zoomed');$('#view').classList.add('zoomable');showZoomHint()}
+  else{im.classList.remove('zoomed');$('#view').classList.remove('zoomable');$('#zoomHint').hidden=true}
+}
+function showZoomHint(){$('#zoomHint').hidden=false;requestAnimationFrame(()=>$('#zoomHint').classList.add('show'))}
+
+function zoomAt(factor,clientX,clientY){
+  const im=$('#pg');
+  if(!im)return;
+  const rect=im.getBoundingClientRect();
+  const cx=clientX-rect.left-rect.width/2;
+  const cy=clientY-rect.top-rect.height/2;
+  const newZoom=Math.min(ZOOM_MAX,Math.max(ZOOM_MIN,zoom*factor));
+  if(newZoom===zoom)return;
+  const ratio=newZoom/zoom;
+  panX=panX*ratio-cx*(ratio-1);
+  panY=panY*ratio-cy*(ratio-1);
+  zoom=newZoom;
+  applyTransform();
+}
+
+function handleWheel(e){
+  if(mode!=='page')return;
+  e.preventDefault();
+  const factor=e.deltaY>0?1-ZOOM_STEP:1+ZOOM_STEP;
+  zoomAt(factor,e.clientX,e.clientY);
+}
+
+function handlePointerDown(e){
+  if(mode!=='page'||zoom<=1.05)return;
+  if(e.button!==0&&e.pointerType!=='touch')return;
+  isPanning=true;
+  startX=e.clientX-panX;
+  startY=e.clientY-panY;
+  $('#pg').style.cursor='grabbing';
+  e.preventDefault();
+}
+function handlePointerMove(e){
+  if(!isPanning)return;
+  panX=e.clientX-startX;
+  panY=e.clientY-startY;
+  applyTransform();
+}
+function handlePointerUp(){if(isPanning){isPanning=false;$('#pg').style.cursor='grab'}}
+
+function handleTouchStart(e){
+  if(mode!=='page')return;
+  if(e.touches.length===2){
+    e.preventDefault();
+    const t1=e.touches[0],t2=e.touches[1];
+    touchStartDist=Math.hypot(t1.clientX-t2.clientX,t1.clientY-t2.clientY);
+    touchStartZoom=zoom;
+  }else if(e.touches.length===1&&zoom>1.05){
+    isPanning=true;
+    startX=e.touches[0].clientX-panX;
+    startY=e.touches[0].clientY-panY;
+  }
+}
+function handleTouchMove(e){
+  if(mode!=='page')return;
+  if(e.touches.length===2){
+    e.preventDefault();
+    const t1=e.touches[0],t2=e.touches[1];
+    const dist=Math.hypot(t1.clientX-t2.clientX,t1.clientY-t2.clientY);
+    if(touchStartDist>0){zoom=Math.min(ZOOM_MAX,Math.max(ZOOM_MIN,touchStartZoom*dist/touchStartDist));applyTransform()}
+  }else if(e.touches.length===1&&isPanning){
+    e.preventDefault();
+    panX=e.touches[0].clientX-startX;
+    panY=e.touches[0].clientY-startY;
+    applyTransform();
+  }
+}
+function handleTouchEnd(e){
+  if(e.touches.length<2)touchStartDist=0;
+  if(isPanning&&e.touches.length===0){isPanning=false}
+}
+
+function handleDblClick(e){
+  if(mode!=='page')return;
+  if(zoom>1.05){resetZoom()}else{zoomAt(2,e.clientX,e.clientY)}
+}
+
+// Reading direction
+function applyDir(){
+  document.documentElement.dir=dir;
+  document.body.classList.toggle('rtl',dir==='rtl');
+  const v=$('#view');
+  $$('.pg').forEach(im=>im.style.transform=`scaleX(${dir==='rtl'?-1:1})${zoom>1?' scale('+zoom+') translate('+panX+'px,'+panY+'px)':''}`);
+}
+function toggleDir(){dir=dir==='ltr'?'rtl':'ltr';localStorage.setItem('rr_dir',dir);applyDir();updateDirBtn()}
+function updateDirBtn(){const b=$('#dirBtn');b.textContent=dir==='ltr'?'⇄':'⇅';b.classList.toggle('active',dir==='rtl');b.title=dir==='ltr'?'RTL (Манхва/Манхуа)':'LTR (Манга)'}
+
+// Keyboard
+addEventListener('keydown',e=>{
+  if(e.target.tagName==='SELECT'||e.target.tagName==='INPUT')return;
+  if(mode==='page'){
+    if(e.key==='ArrowRight'){if(dir==='ltr'){if(zoom>1.05)panX-=50;else step(1)}else{if(zoom>1.05)panX+=50;else step(-1)}applyTransform()}
+    if(e.key==='ArrowLeft'){if(dir==='ltr'){if(zoom>1.05)panX+=50;else step(-1)}else{if(zoom>1.05)panX-=50;else step(1)}applyTransform()}
+    if(e.key==='ArrowUp'){panY+=50;applyTransform()}
+    if(e.key==='ArrowDown'){panY-=50;applyTransform()}
+    if(e.key==='+'||e.key==='='){zoomAt(1+ZOOM_STEP,innerWidth/2,innerHeight/2)}
+    if(e.key==='-'){zoomAt(1-ZOOM_STEP,innerWidth/2,innerHeight/2)}
+    if(e.key==='0'){resetZoom()}
+    if(e.key==='d'||e.key==='D'){toggleDir()}
+  }else{
+    if(e.key==='ArrowRight')chapter(1);
+    if(e.key==='ArrowLeft')chapter(-1);
+    if(e.key==='d'||e.key==='D'){toggleDir()}
+  }
+});
+
 let tick=false;
 addEventListener('scroll',()=>{
   if(mode!=='scroll'||tick)return;
@@ -117,12 +266,19 @@ addEventListener('scroll',()=>{
 });
 $('#ch').onchange=e=>chapter(e.target.value-idx);
 $('#mode').onclick=()=>{mode=mode==='page'?'scroll':'page';try{localStorage.setItem('rr_mode',mode)}catch(e){}show()};
-$('#view').onclick=e=>{if(mode==='page')step(e.clientX>innerWidth/2?1:-1)};
-addEventListener('keydown',e=>{
-  if(mode!=='page'||e.target.tagName==='SELECT')return;
-  if(e.key==='ArrowRight')step(1);
-  if(e.key==='ArrowLeft')step(-1);
-});
+$('#view').onclick=e=>{if(mode==='page'&&zoom<=1.05)step(e.clientX>innerWidth/2?1:-1)};
+$('#dirBtn').onclick=toggleDir;
+
+// Pointer events for zoom/pan
+addEventListener('wheel',handleWheel,{passive:false});
+addEventListener('pointerdown',handlePointerDown);
+addEventListener('pointermove',handlePointerMove);
+addEventListener('pointerup',handlePointerUp);
+addEventListener('pointerleave',handlePointerUp);
+addEventListener('touchstart',handleTouchStart,{passive:false});
+addEventListener('touchmove',handleTouchMove,{passive:false});
+addEventListener('touchend',handleTouchEnd);
+addEventListener('dblclick',handleDblClick);
 
 // Theme toggle
 const themeBtn=$('#themeToggle');
@@ -130,12 +286,10 @@ const stored=localStorage.getItem('theme');
 const prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;
 const initTheme=stored||(prefersDark?'dark':'light');
 document.documentElement.setAttribute('data-theme',initTheme);
-themeBtn.onclick=()=>{
-  const current=document.documentElement.getAttribute('data-theme');
-  const next=current==='dark'?'light':'dark';
-  document.documentElement.setAttribute('data-theme',next);
-  localStorage.setItem('theme',next);
-};
+themeBtn.onclick=()=>{const c=document.documentElement.getAttribute('data-theme');const n=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('theme',n);};
+
+// Service Worker
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
