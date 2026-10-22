@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="mn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b0e15">
+<meta name="description" content="Red Ribbon Scans — Миний манганы хувийн сан">
+<title>Миний сан — Red Ribbon Scans</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=my-library-2">
+<link rel="stylesheet" href="my-library.css?v=my-library-2">
+</head>
+<body class="my-library-page">
+<header class="site-header">
+  <div class="wrap top library-top">
+    <a class="brand" href="index.html" aria-label="Red Ribbon Scans нүүр хуудас">
+      <span class="brand-mark" aria-hidden="true">R<span>.</span></span>
+      <span class="brand-copy"><b class="name">RED<span>RIBBON</span></b><small>SCANS / МОНГОЛ МАНГА</small></span>
+    </a>
+    <nav class="library-nav" aria-label="Хуудасны цэс">
+      <a href="index.html">Манга</a><a href="my-library.html" aria-current="page">Миний сан</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap my-library-main">
+  <section class="my-library-hero">
+    <span class="section-kicker">PERSONAL COLLECTION</span>
+    <h1>Миний <span>манганы сан.</span></h1>
+    <p>Уншиж байгаа, дуусгасан, дараа унших мангануудаа нэг дор хадгалж, аккаунттайгаа синк хийгээрэй.</p>
+    <span id="myLibraryUser" class="my-library-user">Аккаунт шалгаж байна…</span>
+  </section>
+  <div id="myLibraryMessage" class="my-library-message" role="status" aria-live="polite">Унших жагсаалт ачаалж байна…</div>
+  <section id="myLibraryPanel" hidden>
+    <div class="my-library-stats" aria-label="Миний сангийн статистик">
+      <div><strong id="myCountAll">0</strong><span>Нийт манга</span></div>
+      <div><strong id="myCountReading">0</strong><span>Уншиж байгаа</span></div>
+      <div><strong id="myCountCompleted">0</strong><span>Дуусгасан</span></div>
+      <div><strong id="myCountPlanned">0</strong><span>Дараа унших</span></div>
+    </div>
+    <div class="my-library-tools">
+      <div id="myLibraryTabs" class="my-library-tabs" role="group" aria-label="Манганы жагсаалтыг шүүх">
+        <button type="button" class="my-library-tab" data-tab="all" aria-pressed="true">Бүгд</button>
+        <button type="button" class="my-library-tab" data-tab="reading" aria-pressed="false">Уншиж байгаа</button>
+        <button type="button" class="my-library-tab" data-tab="completed" aria-pressed="false">Дуусгасан</button>
+        <button type="button" class="my-library-tab" data-tab="planned" aria-pressed="false">Дараа унших</button>
+      </div>
+      <label for="myLibrarySearch" class="visually-hidden">Манганы нэрээр хайх</label>
+      <input id="myLibrarySearch" type="search" placeholder="Миний сангаас хайх…" autocomplete="off">
+    </div>
+    <div id="myLibraryGrid" class="my-library-grid" aria-live="polite"></div>
+    <a class="btn primary my-library-add" href="index.html#library">+ Өөр манга нэмэх</a>
+  </section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script src="catalog.js?v=admin-2"></script>
+<script src="my-library-store.js?v=my-library-2"></script>
+<script src="my-library.js?v=my-library-2"></script>
+</body>
+</html>
