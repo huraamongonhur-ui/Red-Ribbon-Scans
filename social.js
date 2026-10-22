@@ -65,10 +65,13 @@
   const acct = document.createElement('button');
   acct.className = 'btn acct'; acct.type = 'button';
   (isReader ? $('.reader-toolbar') : $('header .header-actions')).append(acct);
-  acct.onclick = () => session ? sb.auth.signOut() : openLogin();
+  acct.onclick = () => session ? profileUI.open() : openLogin();
   const renderAcct = () => {
-    acct.textContent = session ? `${session.user.user_metadata?.username || 'Хэрэглэгч'}${isAdmin ? ' (админ)' : ''}, гарах` : 'Нэвтрэх';
+    const name = profileUI?.getName() || session?.user?.user_metadata?.username || 'Хэрэглэгч';
+    acct.textContent = session ? '👤 ' + name + (isAdmin ? ' (админ)' : '') : 'Нэвтрэх';
+    acct.title = session ? 'Миний профайл' : 'Нэвтрэх';
   };
+  const profileUI = window.RRProfile.create(sb, () => renderAcct());
 
   // ---- үнэлгээний дундаж (нүүр хуудас) ----
   async function loadRatings() {
@@ -85,6 +88,7 @@
       box = document.createElement('section');
       box.className = 'wrap social';
       $('#end').after(box);
+      profileUI.recordRead(m.id, ch.n);
       drawSocial();
     } else setTimeout(ready, 150);
   }
@@ -146,10 +150,14 @@
   let started = false;
   sb.auth.onAuthStateChange((_ev, s) => {
     session = s;
+    profileUI.setSession(s);
     renderAcct();
     setTimeout(async () => {
       isAdmin = s ? !!(await sb.rpc('is_admin')).data : false;
       renderAcct();
+      if (s && isReader && typeof m !== 'undefined' && m && typeof ch !== 'undefined' && ch) {
+        profileUI.recordRead(m.id, ch.n);
+      }
       if (!started) {
         started = true;
         if (isReader) ready(); else loadRatings();
