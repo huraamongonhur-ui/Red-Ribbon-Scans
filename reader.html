@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=profile-2-1">
+<link rel="stylesheet" href="style.css?v=admin-2">
 </head>
 <body class="reader">
 <div id="prog"></div>
@@ -37,8 +37,10 @@
 <main id="view"></main>
 <nav class="end" id="end" aria-label="Бүлэг солих"></nav>
 <div class="zoom-hint" id="zoomHint" hidden>Scroll/ pinch to zoom • Drag to pan • Click edges to navigate</div>
-<script>
-const $=s=>document.querySelector(s);
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script src="catalog.js?v=admin-2"></script>
+<script>const $=s=>document.querySelector(s);
 const $$=s=>document.querySelectorAll(s);
 const histKey='rr_hist', maxHist=200;
 function addHist(mangaId,chapterNum){const h=getHist();const entry={m:mangaId,c:chapterNum,t:Date.now()};const i=h.findIndex(x=>x.m===mangaId&&x.c===chapterNum);if(i>=0)h.splice(i,1);h.unshift(entry);if(h.length>maxHist)h.pop();try{localStorage.setItem(histKey,JSON.stringify(h))}catch{}}
@@ -50,7 +52,7 @@ let zoom=1, panX=0, panY=0, isPanning=false, startX=0, startY=0;
 let touchStartDist=0, touchStartZoom=1;
 const ZOOM_MIN=1, ZOOM_MAX=4, ZOOM_STEP=0.2;
 
-fetch('manga.json').then(r=>r.json()).then(d=>{
+window.RRCatalog.load().then(d=>{
   m=d.find(x=>x.id===P.get('m'))||d[0];
   if(!m||!m.chapters||!m.chapters.length)return note('Бүлэг олдсонгүй.');
   idx=Math.max(0,m.chapters.findIndex(c=>String(c.n)===P.get('c')));
@@ -59,6 +61,7 @@ fetch('manga.json').then(r=>r.json()).then(d=>{
   $('#ttl').textContent=`${m.title} · Бүлэг ${ch.n}`;
   $('#ch').innerHTML=m.chapters.map((c,i)=>`<option value="${i}"${i===idx?' selected':''}>Бүлэг ${c.n}${c.title?' — '+c.title:''}</option>`).join('');
   urls=pagesOf(ch);
+  if(!urls.length)return note('Энэ бүлэгт зураг байхгүй байна.');
   applyDir();
   // Track reading history
   try { addHist(m.id, ch.n); } catch(e) {}
@@ -69,6 +72,10 @@ function note(t){$('#view').innerHTML=`<p class="note">${t}</p>`}
 
 function pagesOf(c){
   const s=c.pages||{};
+  if(Array.isArray(s.urls)){
+    return s.urls.filter(u=>typeof u==='string' && (/^https:\/\//i.test(u)||!u.includes(':')))
+      .map(u=>new URL(u,document.baseURI).href);
+  }
   if(s.base&&s.count){
     return Array.from({length:s.count},(_,i)=>new URL(s.base.replace(/^\/+/, '')+String(i+1).padStart(s.pad||0,'0')+(s.ext||'.jpg'),new URL('./',location.href)).href);
   }
@@ -313,8 +320,6 @@ themeBtn.onclick=()=>{const c=document.documentElement.getAttribute('data-theme'
 // Service Worker
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}
 </script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
-<script src="config.js"></script>
 <script src="profile.js?v=profile-2-1"></script>
 <script src="social.js?v=profile-2-1"></script>
 </body>
