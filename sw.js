@@ -1,4 +1,4 @@
-const CACHE_NAME='red-ribbon-v9';
+const CACHE_NAME='red-ribbon-v10';
 const STATIC_ASSETS=[
   './',
   './index.html',
@@ -16,7 +16,8 @@ const STATIC_ASSETS=[
   './admin.js',
   './admin.css',
   './manga.json',
-  './manifest.json'
+  './manifest.json',
+  './assets/red-ribbon-logo.webp'
 ];
 
 self.addEventListener('install',e=>{
