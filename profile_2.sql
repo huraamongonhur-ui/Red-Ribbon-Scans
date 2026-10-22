@@ -63,6 +63,15 @@ create policy "profile avatars: owner upload" on storage.objects
     (storage.foldername(name))[1] = (select auth.uid())::text
   );
 
+-- Storage API may need SELECT for owner-side object removal.
+drop policy if exists "profile avatars: owner select" on storage.objects;
+create policy "profile avatars: owner select" on storage.objects
+  for select to authenticated
+  using (
+    bucket_id = 'profile-avatars' and
+    (storage.foldername(name))[1] = (select auth.uid())::text
+  );
+
 drop policy if exists "profile avatars: owner delete" on storage.objects;
 create policy "profile avatars: owner delete" on storage.objects
   for delete to authenticated
