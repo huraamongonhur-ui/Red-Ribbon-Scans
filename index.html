@@ -389,7 +389,11 @@ function trapFocus(modal){
 function renderFavs(){
   const favs=visibleFavs();
   $('#favList').innerHTML=favs.length?favs.map(id=>{
-    const m=data.find(x=>x.id===id);if(!m)return '';
+    const m=data.find(x=>x.id===id);
+    if(!m)return `<div class="modal-item modal-item--favorite" data-manga="${esc(id)}">
+      <div class="modal-info"><strong>${esc(id)}</strong><span>Каталогоос хасагдсан манга</span></div>
+      <button class="fav-remove" type="button" data-id="${esc(id)}" aria-label="Хайртаас хасах">✕</button>
+    </div>`;
     const l=last(m), prog=getProgress(m);
     return `<div class="modal-item modal-item--favorite" data-manga="${esc(m.id)}">
       <a class="modal-entry" href="${href(m,l.n)}">
@@ -398,7 +402,7 @@ function renderFavs(){
       </a>
       <button class="fav-remove" type="button" data-id="${esc(m.id)}" aria-label="Хайртаас хасах">\u2715</button>
     </div>`}).join(''):'<p class="empty">Хайртал хоосон \u0431айна.</p>';
-  $('#favList .fav-remove').forEach(b=>b.onclick=async e=>{e.stopPropagation();b.disabled=true;try{await toggleFav(b.dataset.id);renderFavs()}catch(error){toast('Алдаа: '+(error?.message||'Хадгалж чадсангүй'),4500);b.disabled=false}});
+  $$('#favList .fav-remove').forEach(b=>b.onclick=async e=>{e.stopPropagation();b.disabled=true;try{await toggleFav(b.dataset.id);renderFavs()}catch(error){toast('Алдаа: '+(error?.message||'Хадгалж чадсангүй'),4500);b.disabled=false}});
 }
 
 function renderHist(){
@@ -444,6 +448,6 @@ if('serviceWorker' in navigator){
 renderSkeletons();
 </script>
 <script src="profile.js?v=favorites-fix-1"></script>
-<script src="social.js?v=favorites-fix-1"></script>
+<script src="social.js?v=site-audit-1"></script>
 </body>
 </html>

@@ -41,7 +41,8 @@
     }
     panel.hidden=false;
     const counts = store.getCounts();
-    $('#myCountAll').textContent=String(store.getEntries().length);
+    const allMangaIds = new Set([...store.getEntries().map(item => item.id), ...store.getFavoriteIds()]);
+    $('#myCountAll').textContent=String(allMangaIds.size);
     $('#myCountReading').textContent=String(counts.reading);
     $('#myCountCompleted').textContent=String(counts.completed);
     $('#myCountPlanned').textContent=String(counts.planned);
