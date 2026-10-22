@@ -51,3 +51,37 @@
   .my-library-tabs{gap:6px}
   .my-library-tab{padding:8px 10px;font-size:11px}
 }
+
+/* Favorites and add-manga picker improvements. */
+.my-library-stats{grid-template-columns:repeat(5,minmax(0,1fr))}
+.my-library-actions{display:flex;align-items:center;flex-wrap:wrap;gap:11px;margin-top:22px}
+.my-library-actions .btn{margin-top:0}
+.my-library-import{font-size:12px;line-height:1.45;border-radius:12px}
+.my-library-favorite{border:1px solid var(--line);border-radius:9px;padding:7px 10px;background:var(--paper);color:var(--mute);font-weight:800;font-size:11px;cursor:pointer;min-height:35px}
+.my-library-favorite.is-favorite{color:var(--red);border-color:rgba(229,56,79,.5)}
+.my-library-favorite:hover{border-color:var(--red)}
+.my-library-dialog{width:min(720px,calc(100vw - 22px));max-height:86dvh;padding:23px;background:var(--card);color:var(--ink);border-radius:20px;border:1px solid var(--line);overflow-y:auto;box-shadow:0 20px 75px rgba(0,0,0,.55)}
+.my-library-dialog::backdrop{background:rgba(0,0,0,.7);backdrop-filter:blur(7px)}
+.my-library-dialog-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:17px}
+.my-library-dialog-head h2{margin:3px 0 0;font-size:24px;font-weight:800}
+.my-library-dialog-head button{height:35px;width:35px;border-radius:10px;background:var(--paper);border:1px solid var(--line);color:var(--ink);cursor:pointer}
+.my-library-dialog #addMangaSearch{display:block;width:100%;min-width:0;margin-bottom:12px}
+.my-library-picker-results{display:flex;flex-direction:column;gap:8px}
+.my-library-picker-row{display:flex;align-items:center;justify-content:space-between;gap:14px;border:1px solid var(--line);background:var(--paper);padding:11px 13px;border-radius:12px}
+.my-library-picker-title{display:flex;flex-direction:column;gap:2px;min-width:0;overflow-wrap:anywhere}
+.my-library-picker-title strong{font-size:13px;line-height:1.4}
+.my-library-picker-title small{font-size:11px;color:var(--mute)}
+.my-library-picker-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.my-library-picker-actions select{min-width:120px;max-width:169px;width:169px;font-size:11px;padding:8px 11px;background:var(--card);color:var(--ink);border-radius:9px}
+.my-library-picker-heart{min-width:39px;min-height:37px;padding:7px 10px;font-size:21px;color:var(--red)}
+.my-library-picker-actions select:disabled,.my-library-favorite:disabled{opacity:.55;cursor:wait}
+@media(max-width:760px){
+  .my-library-stats{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:460px){
+  .my-library-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .my-library-dialog{padding:16px}
+  .my-library-picker-row{flex-direction:column;align-items:stretch}
+  .my-library-picker-actions{justify-content:space-between}
+  .my-library-picker-actions select{flex:1;max-width:none;width:auto}
+}
