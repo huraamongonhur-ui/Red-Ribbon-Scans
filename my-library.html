@@ -9,8 +9,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=my-library-2">
-<link rel="stylesheet" href="my-library.css?v=my-library-2">
+<link rel="stylesheet" href="style.css?v=favorites-fix-1">
+<link rel="stylesheet" href="my-library.css?v=favorites-fix-1">
 </head>
 <body class="my-library-page">
 <header class="site-header">
@@ -38,6 +38,7 @@
       <div><strong id="myCountReading">0</strong><span>Уншиж байгаа</span></div>
       <div><strong id="myCountCompleted">0</strong><span>Дуусгасан</span></div>
       <div><strong id="myCountPlanned">0</strong><span>Дараа унших</span></div>
+      <div><strong id="myCountFavorites">0</strong><span>Хайртай манга</span></div>
     </div>
     <div class="my-library-tools">
       <div id="myLibraryTabs" class="my-library-tabs" role="group" aria-label="Манганы жагсаалтыг шүүх">
@@ -45,18 +46,32 @@
         <button type="button" class="my-library-tab" data-tab="reading" aria-pressed="false">Уншиж байгаа</button>
         <button type="button" class="my-library-tab" data-tab="completed" aria-pressed="false">Дуусгасан</button>
         <button type="button" class="my-library-tab" data-tab="planned" aria-pressed="false">Дараа унших</button>
+        <button type="button" class="my-library-tab" data-tab="favorites" aria-pressed="false">♥ Хайртал</button>
       </div>
       <label for="myLibrarySearch" class="visually-hidden">Манганы нэрээр хайх</label>
       <input id="myLibrarySearch" type="search" placeholder="Миний сангаас хайх…" autocomplete="off">
     </div>
     <div id="myLibraryGrid" class="my-library-grid" aria-live="polite"></div>
-    <a class="btn primary my-library-add" href="index.html#library">+ Өөр манга нэмэх</a>
+    <div class="my-library-actions">
+      <button class="btn primary my-library-add" type="button" id="myLibraryAdd">+ Өөр манга нэмэх</button>
+      <button class="btn my-library-import" type="button" id="myLibraryImport" hidden>Энэ төхөөрөмжийн хуучин зүрхэлсэн мангуудыг синк хийх</button>
+    </div>
   </section>
 </main>
+<dialog id="addMangaDialog" class="my-library-dialog" aria-labelledby="addMangaTitle">
+  <div class="my-library-dialog-head">
+    <div><span class="section-kicker">ADD TO COLLECTION</span><h2 id="addMangaTitle">Манга нэмэх</h2></div>
+    <button type="button" id="addMangaClose" aria-label="Хаах">✕</button>
+  </div>
+  <label for="addMangaSearch" class="visually-hidden">Манга хайх</label>
+  <input id="addMangaSearch" type="search" placeholder="Нэмэх манга хайх…" autocomplete="off">
+  <p id="addMangaStatus" class="my-library-message" role="status" aria-live="polite"></p>
+  <div id="addMangaResults" class="my-library-picker-results"></div>
+</dialog>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
 <script src="catalog.js?v=admin-2"></script>
-<script src="my-library-store.js?v=my-library-2"></script>
-<script src="my-library.js?v=my-library-2"></script>
+<script src="my-library-store.js?v=favorites-fix-1"></script>
+<script src="my-library.js?v=favorites-fix-1"></script>
 </body>
 </html>
