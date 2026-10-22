@@ -154,7 +154,7 @@ function draw(){
   $('#grid').innerHTML=list.length?list.map(m=>{
     const l=last(m), h=hue(m.title), fav=isFav(m.id), prog=getProgress(m);
     const bg=`style="background:linear-gradient(160deg,hsl(${h} 45% 34%),hsl(${(h+35)%360} 50% 16%))"`;
-    const coverImg=m.cover?`<img src="${esc(m.cover)}" alt="" loading="lazy" onerror="handleCoverError(this, '${esc(m.title)}', ${h})">`:'';
+    const coverImg=m.cover?`<img src="${esc(m.cover.replace(/^\/+/, ''))}" alt="" loading="lazy" onerror="handleCoverError(this, '${esc(m.title)}', ${h})">`:'';
     return `<a class="card" href="${href(m,l.n)}" data-manga="${esc(m.id)}" role="listitem" tabindex="0">
       <div class="cover" ${bg}><span>${esc(m.title)}</span>${coverImg}${isNew(m)?'<i class="mark"></i>':''}${fav?'<i class="fav-badge" title="Хайртал">\u2605</i>':''}</div>
       <h2>${esc(m.title)}</h2>
@@ -227,7 +227,7 @@ function renderFavs(){
     const m=data.find(x=>x.id===id);if(!m)return '';
     const l=last(m), prog=getProgress(m);
     return `<a class="modal-item" href="${href(m,l.n)}" data-manga="${esc(m.id)}">
-      <div class="modal-cover" style="background:linear-gradient(160deg,hsl(${hue(m.title)} 45% 34%),hsl(${(hue(m.title)+35)%360} 50% 16%))">${m.cover?`<img src="${esc(m.cover)}" loading="lazy" onerror="this.remove()">`:''}</div>
+      <div class="modal-cover" style="background:linear-gradient(160deg,hsl(${hue(m.title)} 45% 34%),hsl(${(hue(m.title)+35)%360} 50% 16%))">${m.cover?`<img src="${esc(m.cover.replace(/^\/+/, ''))}" loading="lazy" onerror="this.remove()">`:''}</div>
       <div class="modal-info"><strong>${esc(m.title)}</strong><span>\u0411элэг ${esc(l.n)} ${prog>0?`\u00b7 ${prog}/${m.chapters.length} уншсан`:''}</span></div>
       <button class="fav-remove" data-id="${esc(m.id)}" aria-label="Хайртаас хасах">\u2715</button>
     </a>`}).join(''):'<p class="empty">Хайртал хоосон \u0431айна.</p>';
@@ -241,7 +241,7 @@ function renderHist(){
     const ch=m.chapters.find(c=>String(c.n)===String(h.c));
     const date=new Date(h.t).toLocaleString('mn-MN',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
     return `<a class="modal-item" href="${href(m,h.c)}" data-manga="${esc(m.id)}">
-      <div class="modal-cover" style="background:linear-gradient(160deg,hsl(${hue(m.title)} 45% 34%),hsl(${(hue(m.title)+35)%360} 50% 16%))">${m.cover?`<img src="${esc(m.cover)}" loading="lazy" onerror="this.remove()">`:''}</div>
+      <div class="modal-cover" style="background:linear-gradient(160deg,hsl(${hue(m.title)} 45% 34%),hsl(${(hue(m.title)+35)%360} 50% 16%))">${m.cover?`<img src="${esc(m.cover.replace(/^\/+/, ''))}" loading="lazy" onerror="this.remove()">`:''}</div>
       <div class="modal-info"><strong>${esc(m.title)}</strong><span>\u0411элэг ${esc(h.c)} ${ch?.title?' \u2014 '+esc(ch.title):''}</span><small>${date}</small></div>
     </a>`}).join(''):'<p class="empty">\u0422уух хоосон \u0431айна.</p>';
   if(hist.length){$('#histList').insertAdjacentHTML('beforeend',`<button class="btn clear-hist" style="margin-top:16px;width:100%">\u0422уухийг арилгах</button>`);$('#histList .clear-hist').onclick=clearHist;}
