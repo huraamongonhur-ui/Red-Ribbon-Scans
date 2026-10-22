@@ -59,7 +59,7 @@ for mdir in sorted(p for p in MANGA.iterdir() if p.is_dir()):
             "n": int(cdir.name),
             "title": old_c.get("title", ""),
             "date": old_c.get("date", today),
-            "pages": {"base": f"/manga/{quote(mid)}/{cdir.name}/", "count": len(imgs), "ext": ext, "pad": pad},
+            "pages": {"base": f"manga/{quote(mid)}/{cdir.name}/", "count": len(imgs), "ext": ext, "pad": pad},
         })
 
     if not chapters:
@@ -69,7 +69,7 @@ for mdir in sorted(p for p in MANGA.iterdir() if p.is_dir()):
         "id": mid,
         "title": info.get("title") or prev.get("title") or mid,
         "genres": info.get("genres") or prev.get("genres") or [],
-        "cover": f"/manga/{quote(mid)}/{quote(cover.name)}" if cover else "",
+        "cover": f"manga/{quote(mid)}/{quote(cover.name)}" if cover else "",
         "chapters": chapters,
     })
 
