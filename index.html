@@ -389,7 +389,11 @@ function trapFocus(modal){
 function renderFavs(){
   const favs=visibleFavs();
   $('#favList').innerHTML=favs.length?favs.map(id=>{
-    const m=data.find(x=>x.id===id);if(!m)return '';
+    const m=data.find(x=>x.id===id);
+    if(!m)return `<div class="modal-item modal-item--favorite" data-manga="${esc(id)}">
+      <div class="modal-info"><strong>${esc(id)}</strong><span>Каталогоос хасагдсан манга</span></div>
+      <button class="fav-remove" type="button" data-id="${esc(id)}" aria-label="Хайртаас хасах">✕</button>
+    </div>`;
     const l=last(m), prog=getProgress(m);
     return `<div class="modal-item modal-item--favorite" data-manga="${esc(m.id)}">
       <a class="modal-entry" href="${href(m,l.n)}">
