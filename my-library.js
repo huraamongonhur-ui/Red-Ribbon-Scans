@@ -120,7 +120,7 @@
       const heart = document.createElement('button');
       heart.type='button';
       heart.className='my-library-favorite'+(item.favorite?' is-favorite':'');
-      heart.textContent=item.favorite?'♥ Хайртаас хасах':'♡ Хайртад нэмэх';
+      heart.textContent=item.favorite?'♥ Дуртай манганы жагсаалтаас хасах':'♡ Дуртай мангад нэмэх';
       heart.setAttribute('aria-pressed',String(item.favorite));
       heart.onclick=async()=>{
         heart.disabled=true;
@@ -225,7 +225,7 @@
       const refresh=()=>{
         heart.textContent=store.isFavorite(manga.id)?'♥':'♡';
         heart.setAttribute('aria-pressed',String(store.isFavorite(manga.id)));
-        heart.title=store.isFavorite(manga.id)?'Хайртаас хасах':'Хайртад нэмэх';
+        heart.title=store.isFavorite(manga.id)?'Дуртай манганы жагсаалтаас хасах':'Дуртай мангад нэмэх';
       };
       refresh();
       heart.onclick=async()=>{
