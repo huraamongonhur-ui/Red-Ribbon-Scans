@@ -1,12 +1,15 @@
-const CACHE_NAME='red-ribbon-v6';
+const CACHE_NAME='red-ribbon-v7';
 const STATIC_ASSETS=[
   './',
   './index.html',
   './reader.html',
+  './admin.html',
   './style.css',
   './config.js',
   './social.js',
   './profile.js',
+  './catalog.js',
+  './admin.js',
   './manga.json',
   './manifest.json'
 ];
