@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=profile-2-1">
+<link rel="stylesheet" href="style.css?v=admin-2">
 <link rel="manifest" href="manifest.json">
 </head>
 <body>
@@ -153,8 +153,10 @@
 <footer class="site-footer"><div class="wrap foot"><span>© Red Ribbon Scans</span><span>Made for manga lovers.</span></div></footer>
 <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 <button id="backToTop" class="back-to-top" aria-label="Дээш о\u0447их" hidden>\u2191</button>
-<script>
-const $=s=>document.querySelector(s);
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script src="catalog.js?v=admin-2"></script>
+<script>const $=s=>document.querySelector(s);
 const $$=s=>document.querySelectorAll(s);
 const esc=s=>String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]));
 const debounce=(fn,ms)=>{let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),ms)}};
@@ -204,7 +206,7 @@ function renderFeature(){
   }
 }
 
-fetch('manga.json').then(r=>{if(!r.ok)throw Error('Catalog unavailable');return r.json()}).then(d=>{
+window.RRCatalog.load().then(d=>{
   if(!Array.isArray(d))throw Error('Invalid catalog');
   data=d.filter(m=>m && m.chapters && m.chapters.length);
   restoreUrlState();
@@ -380,8 +382,6 @@ if('serviceWorker' in navigator){
 
 renderSkeletons();
 </script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
-<script src="config.js"></script>
 <script src="profile.js?v=profile-2-1"></script>
 <script src="social.js?v=profile-2-1"></script>
 </body>
