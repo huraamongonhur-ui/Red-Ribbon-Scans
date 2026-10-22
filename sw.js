@@ -10,6 +10,7 @@ const STATIC_ASSETS=[
   './profile.js',
   './catalog.js',
   './admin.js',
+  './admin.css',
   './manga.json',
   './manifest.json'
 ];
