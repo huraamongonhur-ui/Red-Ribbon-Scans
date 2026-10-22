@@ -48,7 +48,7 @@
   // ---- толгой хэсгийн товч ----
   const acct = document.createElement('button');
   acct.className = 'btn acct'; acct.type = 'button';
-  (isReader ? $('.bar') : $('header .header-actions')).append(acct);
+  (isReader ? $('.reader-toolbar') : $('header .header-actions')).append(acct);
   acct.onclick = () => session ? sb.auth.signOut() : openLogin();
   const renderAcct = () => {
     acct.textContent = session ? `${session.user.user_metadata?.username || 'Хэрэглэгч'}${isAdmin ? ' (админ)' : ''}, гарах` : 'Нэвтрэх';

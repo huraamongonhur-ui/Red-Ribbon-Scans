@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b0e15">
+<meta name="description" content="Red Ribbon Scans — Мангагаа монгол хэлээр уншиж, хадгалж, үргэлжлүүлээрэй.">
 <title>Red Ribbon \u2014 \u041cонгол манга уншиг\u0447</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,48 +13,97 @@
 <link rel="manifest" href="manifest.json">
 </head>
 <body>
-<header class="wrap top">
-  <a class="brand" href="index.html">
-    <span class="tab" aria-hidden="true"></span>
-    <span><b class="name">Red Ribbon</b><small>\u041cонгол манга уншиг\u0447</small></span>
-  </a>
-  <div class="header-actions">
-    <button id="themeToggle" class="theme-btn" aria-label="Хороо солих" title="Хороо солих">
-      <svg class="sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-      <svg class="moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-    </button>
-    <a id="favoritesLink" class="btn fav-link" href="#favorites" aria-label="Хайртал" title="Хайртал (Ctrl+Shift+F)">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-      <span class="fav-count" hidden>0</span>
+
+<header class="site-header">
+  <div class="wrap top">
+    <a class="brand" href="index.html" aria-label="Red Ribbon Scans — Нүүр хуудас">
+      <span class="brand-mark" aria-hidden="true">R<span>.</span></span>
+      <span class="brand-copy"><b class="name">RED<span>RIBBON</span></b><small>SCANS / МОНГОЛ МАНГА</small></span>
     </a>
-    <a id="historyLink" class="btn hist-link" href="#history" aria-label="\u0423ншсан туух" title="\u0423ншсан туух (Ctrl+Shift+H)">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-    </a>
-    <button id="helpBtn" class="btn help-btn" aria-label="\u0422услам\u0436" title="\u0422услам\u0436 (?)">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-    </button>
+    <nav class="primary-nav" aria-label="Үндсэн цэс">
+      <a href="#library">Манга</a>
+      <a href="#about">Бидний тухай</a>
+    </nav>
+    <div class="header-actions">
+      <button id="themeToggle" class="theme-btn" type="button" aria-label="Өнгөний загвар солих" title="Өнгөний загвар солих">
+        <svg class="sun" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.2 4.2l1.4 1.4m12.8 12.8 1.4 1.4M1 12h2m18 0h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg>
+        <svg class="moon" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M21 12.8A9 9 0 0 1 11.2 3 7 7 0 1 0 21 12.8Z"/></svg>
+      </button>
+      <a id="favoritesLink" class="btn fav-link" href="#favorites" aria-label="Хадгалсан манга" title="Хадгалсан манга (Ctrl+Shift+F)">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21.2l7.8-7.7 1-1.1a5.5 5.5 0 0 0 0-7.8Z"/></svg>
+        <span class="fav-count" hidden>0</span>
+      </a>
+      <a id="historyLink" class="btn hist-link" href="#history" aria-label="Уншсан түүх" title="Уншсан түүх (Ctrl+Shift+H)">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      </a>
+      <button id="helpBtn" class="btn help-btn" type="button" aria-label="Тусламж" title="Тусламж (?)">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9 9a3 3 0 0 1 6 1c0 2-3 2.5-3 4"/><path d="M12 17h.01"/></svg>
+      </button>
+    </div>
   </div>
 </header>
+
 <main class="wrap">
-  <section class="hero">
-    <h1>Дуртай туухээ монгол хэлээр уншаарай</h1>
-    <a id="resume" class="resume" hidden></a>
-  </section>
-  <div class="tools">
-    <div class="search-wrap">
-      <input id="q" type="search" placeholder="\u041dэрээр хайх" aria-label="\u041dэрээр хайх" autocomplete="off">
-      <button id="clearSearch" class="clear-search" aria-label="Хайлт устгах" hidden>\u2715</button>
+  <section class="hero" id="home" aria-labelledby="heroTitle">
+    <div class="hero-copy">
+      <span class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> RED RIBBON SCANS · МОНГОЛООР</span>
+      <h1 id="heroTitle">Түүх бүр <span>шинэ ертөнц.</span></h1>
+      <p class="hero-subtitle">Дуртай мангагаа монгол хэлээр унш. Шинэ бүлгүүдийг нээж, уншсан газраасаа үргэлжлүүлээрэй.</p>
+      <div class="hero-actions">
+        <a class="btn primary hero-cta" href="#library">Манга үзэх <span aria-hidden="true">↗</span></a>
+        <a id="resume" class="resume" hidden></a>
+      </div>
+      <div class="hero-stats" aria-label="Манга цуглуулгын мэдээлэл">
+        <div><strong id="mangaCount">—</strong><span>Манга</span></div>
+        <div><strong id="chapterCount">—</strong><span>Бүлэг</span></div>
+        <div class="hero-stat-note"><span class="live-indicator" aria-hidden="true"></span><span>Уншихад бэлэн</span></div>
+      </div>
     </div>
-    <select id="sort" aria-label="\u042dрэм\u0431элэх">
-      <option value="new">\u0428инэ \u0431элгээр</option>
-      <option value="name">\u041dэрээр</option>
-      <option value="progress">\u0423ргэл\u0436лэг\u0447и\u0434</option>
-    </select>
-  </div>
-  <div id="resultCount" class="result-count" aria-live="polite"></div>
-  <div id="chips" class="chips" role="tablist" aria-label="\u0416анр шуултуур"></div>
-  <div id="grid" class="grid" role="list" aria-live="polite"></div>
-  
+    <div class="hero-visual" id="heroFeature" hidden>
+      <div class="hero-halo" aria-hidden="true"></div>
+      <span class="hero-symbol hero-symbol-one" aria-hidden="true">✦</span>
+      <span class="hero-symbol hero-symbol-two" aria-hidden="true">+</span>
+      <a id="featureLink" class="feature-card" href="#library">
+        <div class="feature-cover">
+          <div id="featureFallback" class="feature-fallback"></div>
+          <img id="featureImg" alt="" hidden>
+          <span class="feature-bookmark">RR</span>
+        </div>
+        <div class="feature-caption">
+          <small>ОНЦЛОХ МАНГА</small>
+          <strong id="featureTitle"></strong>
+          <span id="featureChapter"></span>
+          <span class="feature-arrow" aria-hidden="true">↗</span>
+        </div>
+      </a>
+    </div>
+  </section>
+  <section class="library" id="library" aria-labelledby="libraryTitle">
+    <div class="library-heading">
+      <div>
+        <span class="section-kicker">THE COLLECTION</span>
+        <h2 id="libraryTitle">Манга цуглуулга<span class="heading-dot">.</span></h2>
+        <p>Дараагийн унших түүхээ эндээс олоорой.</p>
+      </div>
+      <span class="library-count" id="libraryCount" aria-live="polite">Манга ачаалж байна…</span>
+    </div>
+    <div class="tools">
+      <div class="search-wrap">
+        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+        <input id="q" type="search" placeholder="Манганы нэрээр хайх..." aria-label="Манганы нэрээр хайх" autocomplete="off">
+        <button id="clearSearch" type="button" class="clear-search" aria-label="Хайлт цэвэрлэх" hidden>✕</button>
+      </div>
+      <label class="visually-hidden" for="sort">Эрэмбэлэх</label>
+      <select id="sort" aria-label="Эрэмбэлэх">
+        <option value="new">Сүүлд нэмэгдсэн</option>
+        <option value="name">Нэрээр</option>
+        <option value="progress">Үргэлжлүүлж унших</option>
+      </select>
+    </div>
+    <div id="resultCount" class="result-count" aria-live="polite"></div>
+    <div id="chips" class="chips" role="group" aria-label="Жанраар шүүх"></div>
+    <div id="grid" class="grid" role="list" aria-live="polite"></div>
+  </section>
   <dialog id="favModal" class="modal" aria-labelledby="favTitle">
     <div class="modal-header">
       <h2 id="favTitle">Хайртал</h2>
@@ -92,8 +143,14 @@
       </ul>
     </div>
   </dialog>
+
+  <section class="about-panel" id="about" aria-label="Red Ribbon Scans тухай">
+    <div class="about-emblem" aria-hidden="true">R.</div>
+    <div><span class="section-kicker">MADE FOR READERS</span><h2>Манга. Монгол хэлээр. Хүссэн үедээ.</h2><p>Red Ribbon Scans — манга унших, хадгалах, дуртай түүхээ үргэлжлүүлэх нэг газар.</p></div>
+    <a href="#home" class="btn about-link">Дээш очих ↑</a>
+  </section>
 </main>
-<footer class="wrap foot">Red Ribbon Scans</footer>
+<footer class="site-footer"><div class="wrap foot"><span>© Red Ribbon Scans</span><span>Made for manga lovers.</span></div></footer>
 <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 <button id="backToTop" class="back-to-top" aria-label="Дээш о\u0447их" hidden>\u2191</button>
 <script>
@@ -122,50 +179,95 @@ function isInHist(mangaId,chapterNum){return getHist().some(x=>x.m===mangaId&&x.
 
 function toast(msg,ms=2500){const t=$('#toast');t.textContent=msg;t.hidden=false;t.classList.add('show');setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.hidden=true,200)},ms)}
 
-function renderSkeletons(n=8){$('#grid').innerHTML=Array.from({length:n},()=>`<a class="card skeleton"><div class="cover"></div><h2><span></span><span></span></h2><div class="meta"><span></span></div></a>`).join('')}
+function renderSkeletons(n=6){
+  $('#grid').innerHTML=Array.from({length:n},()=>'<div class="card skeleton" role="listitem" aria-hidden="true"><div class="cover"></div><div class="card-body"><div class="skeleton-line"></div><div class="skeleton-line"></div></div></div>').join('');
+}
 
-fetch('manga.json').then(r=>r.json()).then(d=>{
-  data=d.filter(m=>m.chapters&&m.chapters.length);
+function renderFeature(){
+  $('#mangaCount').textContent=String(data.length);
+  $('#chapterCount').textContent=String(data.reduce((sum,m)=>sum+m.chapters.length,0));
+  const m=[...data].sort((a,b)=>new Date(last(b).date)-new Date(last(a).date))[0];
+  if(!m){$('#heroFeature').hidden=true;return}
+  $('#heroFeature').hidden=false;
+  $('#featureLink').href=href(m,last(m).n);
+  $('#featureTitle').textContent=m.title;
+  $('#featureChapter').textContent='Бүлэг '+last(m).n+' · Унших';
+  $('#featureFallback').textContent=m.title;
+  const cover=$('#featureImg');
+  if(m.cover){
+    cover.src=m.cover.replace(/^\/+/, '');
+    cover.alt=m.title+' нүүр зураг';
+    cover.hidden=false;
+    cover.onerror=()=>{cover.hidden=true};
+  }else{
+    cover.hidden=true;
+  }
+}
+
+fetch('manga.json').then(r=>{if(!r.ok)throw Error('Catalog unavailable');return r.json()}).then(d=>{
+  if(!Array.isArray(d))throw Error('Invalid catalog');
+  data=d.filter(m=>m && m.chapters && m.chapters.length);
   restoreUrlState();
-  chips();draw();resume();updateFavCount();
-}).catch(()=>{$('#grid').innerHTML='<p class="empty">\u0416агсаалт\u044bг а\u0447аал\u0436 \u0447а\u0434сангуй. manga.json \u0444айлаа шалгана уу.</p>'});
+  chips();draw();resume();renderFeature();updateFavCount();
+}).catch(()=>{
+  $('#grid').innerHTML='<p class="empty">Манганы жагсаалтыг ачаалж чадсангүй. Хуудсыг дахин ачаална уу.</p>';
+  $('#libraryCount').textContent='Ачаалахад алдаа гарлаа';
+  $('#mangaCount').textContent='0';
+  $('#chapterCount').textContent='0';
+});
 
 function chips(){
   const all=[...new Set(data.flatMap(m=>m.genres||[]))].sort();
-  $('#chips').innerHTML=['',...all].map(x=>`<button class="btn" role="tab" data-g="${esc(x)}" aria-pressed="${x===g}" aria-selected="${x===g}">${x?esc(x):'\u0411эг\u0434'}</button>`).join('');
+  $('#chips').innerHTML=['',...all].map(x=>
+    '<button class="btn" type="button" data-g="'+esc(x)+'" aria-pressed="'+(x===g)+'">'+(x?esc(x):'Бүгд')+'</button>'
+  ).join('');
 }
 
 function draw(){
   let list=data.filter(m=>m.title.toLowerCase().includes(q)&&(!g||(m.genres||[]).includes(g)));
   list.sort(sort==='name'?(a,b)=>a.title.localeCompare(b.title,'mn'):sort==='progress'?(a,b)=>getProgress(b)-getProgress(a):(a,b)=>new Date(last(b).date)-new Date(last(a).date));
-  
-  const favs=getFavs();
-  if(sort==='progress') list=list.filter(m=>getProgress(m)>0);
-  
-  // Update result count
+  if(sort==='progress')list=list.filter(m=>getProgress(m)>0);
+
+  $('#libraryCount').textContent=list.length+' манга';
   const countEl=$('#resultCount');
-  if(q||g){
-    countEl.textContent=`${list.length} манга ол\u0434лоо`;
-    countEl.hidden=false;
-  }else{
-    countEl.hidden=true;
-  }
-  
+  countEl.hidden=!(q||g||sort==='progress');
+  countEl.textContent=list.length+' үр дүн олдлоо';
+
   $('#grid').innerHTML=list.length?list.map(m=>{
-    const l=last(m), h=hue(m.title), fav=isFav(m.id), prog=getProgress(m);
-    const bg=`style="background:linear-gradient(160deg,hsl(${h} 45% 34%),hsl(${(h+35)%360} 50% 16%))"`;
-    const coverImg=m.cover?`<img src="${esc(m.cover.replace(/^\/+/, ''))}" alt="" loading="lazy" onerror="handleCoverError(this, '${esc(m.title)}', ${h})">`:'';
-    return `<a class="card" href="${href(m,l.n)}" data-manga="${esc(m.id)}" role="listitem" tabindex="0">
-      <div class="cover" ${bg}><span>${esc(m.title)}</span>${coverImg}${isNew(m)?'<i class="mark"></i>':''}${fav?'<i class="fav-badge" title="Хайртал">\u2605</i>':''}</div>
-      <h2>${esc(m.title)}</h2>
-      <div class="meta">
-        <span>\u0411элэг ${esc(l.n)}${isNew(m)?' <b>\u0428инэ</b>':''}${window.RR&&RR[m.id]?' <b class="rt">\u2605 '+RR[m.id]+'</b>':''}</span>
-        ${prog>0?`<span class="prog-wrap"><progress class="prog" value="${prog}" max="${m.chapters.length}"></progress><span class="prog-text">${prog}/${m.chapters.length}</span></span>`:''}
-      </div></a>`}).join('')
-    :'<p class="empty">\u0422аарах манга ол\u0434сонгуй. Хайлтаа \u0446\u044bр\u0447илнээ юю.</p>';
-  
-  $$('#grid .card').forEach((el,i)=>{el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();el.click()}});el.addEventListener('click',e=>{if(e.target.closest('.fav-badge')){e.preventDefault();toggleFav(el.dataset.manga)}})});
+    const latest=last(m),h=hue(m.title),fav=isFav(m.id),progress=getProgress(m);
+    const bg='style="background:linear-gradient(160deg,hsl('+h+' 50% 31%),hsl('+((h+35)%360)+' 49% 15%))"';
+    const coverImg=m.cover?'<img src="'+esc(m.cover.replace(/^\/+/, ''))+'" alt="" loading="lazy" decoding="async">':'';
+    const rating=window.RR?.[m.id];
+    return '<article class="card" role="listitem">'+
+      '<a class="card-link" href="'+href(m,latest.n)+'" aria-label="'+esc(m.title)+' · Бүлэг '+esc(latest.n)+'">'+
+        '<div class="cover" '+bg+'><span class="cover-name">'+esc(m.title)+'</span>'+coverImg+
+          (isNew(m)?'<span class="mark">ШИНЭ</span>':'')+'</div>'+
+        '<div class="card-body">'+
+          '<div class="card-genre">'+esc((m.genres||[])[0]||'MANGA / МАНГА')+'</div>'+
+          '<h3>'+esc(m.title)+'</h3>'+
+          '<div class="meta"><span class="chapter-label">Бүлэг '+esc(latest.n)+'</span>'+
+          (rating?'<b class="rt">★ '+esc(rating)+'</b>':'')+
+          (progress>0?'<span class="prog-wrap"><progress class="prog" value="'+progress+'" max="'+m.chapters.length+'"></progress><span class="prog-text">'+progress+'/'+m.chapters.length+'</span></span>':'')+
+          '</div>'+
+        '</div>'+
+      '</a>'+
+      '<button type="button" class="fav-toggle'+(fav?' is-favorite':'')+'" data-fav="'+esc(m.id)+'" aria-pressed="'+fav+'" aria-label="'+(fav?'Хадгалснаас хасах: ':'Хадгалах: ')+esc(m.title)+'">'+
+        '<svg viewBox="0 0 24 24" aria-hidden="true" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21.2l7.8-7.8a5.5 5.5 0 0 0 0-7.8Z"/></svg>'+
+      '</button>'+
+    '</article>';
+  }).join(''):'<p class="empty">Илэрц олдсонгүй. Хайлтын үгээ эсвэл шүүлтүүрээ өөрчилнө үү.</p>';
 }
+
+$('#grid').addEventListener('click',e=>{
+  const b=e.target.closest('button[data-fav]');
+  if(!b)return;
+  const id=b.dataset.fav;
+  toggleFav(id);
+  [...$('#grid').querySelectorAll('button[data-fav]')].find(el=>el.dataset.fav===id)?.focus();
+});
+$('#grid').addEventListener('error',e=>{
+  if(e.target.matches('.cover img'))e.target.remove();
+},true);
 
 function getProgress(m){
   const h=getHist();return h.filter(x=>x.m===m.id).length
@@ -191,7 +293,7 @@ function resume(){
 
 function restoreUrlState(){
   const p=new URLSearchParams(location.search);
-  if(p.has('q')){q=p.get('q');$('#q').value=q}
+  if(p.has('q')){q=p.get('q').trim().toLowerCase();$('#q').value=p.get('q');$('#clearSearch').hidden=!q}
   if(p.has('g')){g=p.get('g')}
   if(p.has('sort')){sort=p.get('sort');$('#sort').value=sort}
 }
@@ -226,11 +328,13 @@ function renderFavs(){
   $('#favList').innerHTML=favs.length?favs.map(id=>{
     const m=data.find(x=>x.id===id);if(!m)return '';
     const l=last(m), prog=getProgress(m);
-    return `<a class="modal-item" href="${href(m,l.n)}" data-manga="${esc(m.id)}">
+    return `<div class="modal-item modal-item--favorite" data-manga="${esc(m.id)}">
+      <a class="modal-entry" href="${href(m,l.n)}">
       <div class="modal-cover" style="background:linear-gradient(160deg,hsl(${hue(m.title)} 45% 34%),hsl(${(hue(m.title)+35)%360} 50% 16%))">${m.cover?`<img src="${esc(m.cover.replace(/^\/+/, ''))}" loading="lazy" onerror="this.remove()">`:''}</div>
       <div class="modal-info"><strong>${esc(m.title)}</strong><span>\u0411элэг ${esc(l.n)} ${prog>0?`\u00b7 ${prog}/${m.chapters.length} уншсан`:''}</span></div>
-      <button class="fav-remove" data-id="${esc(m.id)}" aria-label="Хайртаас хасах">\u2715</button>
-    </a>`}).join(''):'<p class="empty">Хайртал хоосон \u0431айна.</p>';
+      </a>
+      <button class="fav-remove" type="button" data-id="${esc(m.id)}" aria-label="Хайртаас хасах">\u2715</button>
+    </div>`}).join(''):'<p class="empty">Хайртал хоосон \u0431айна.</p>';
   $$('#favList .fav-remove').forEach(b=>b.onclick=e=>{e.stopPropagation();toggleFav(b.dataset.id);renderFavs();updateFavCount()});
 }
 
@@ -250,7 +354,7 @@ function renderHist(){
 const themeBtn=$('#themeToggle');
 const prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;
 const stored=localStorage.getItem('theme');
-const initTheme=stored||(prefersDark?'dark':'light');
+const initTheme=stored||'dark';
 document.documentElement.setAttribute('data-theme',initTheme);
 themeBtn.onclick=()=>{const c=document.documentElement.getAttribute('data-theme');const n=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('theme',n);};
 
@@ -259,7 +363,7 @@ addEventListener('keydown',e=>{
     if(e.key==='F'){e.preventDefault();$('#favoritesLink').click()}
     if(e.key==='H'){e.preventDefault();$('#historyLink').click()}
   }
-  if(e.key==='?'){e.preventDefault();$('#helpBtn').click()}
+  if(e.key==='?'&&!e.target.closest('input,textarea,select,[contenteditable]')){e.preventDefault();$('#helpBtn').click()}
   if(e.key==='Escape'){favModal.close();histModal.close();helpModal.close()}
 });
 
