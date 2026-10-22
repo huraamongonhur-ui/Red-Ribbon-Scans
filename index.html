@@ -7,7 +7,7 @@
 <link rel="icon" type="image/webp" href="assets/red-ribbon-logo.webp?v=logo-1">
 <link rel="apple-touch-icon" href="assets/red-ribbon-logo.webp?v=logo-1">
 <meta name="description" content="Red Ribbon Scans — Мангагаа монгол хэлээр уншиж, хадгалж, үргэлжлүүлээрэй.">
-<title>Red Ribbon \u2014 \u041cонгол манга уншиг\u0447</title>
+<title>Red Ribbon — Монгол манга уншигч</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
@@ -110,40 +110,40 @@
   </section>
   <dialog id="favModal" class="modal" aria-labelledby="favTitle">
     <div class="modal-header">
-      <h2 id="favTitle">Хайртал</h2>
-      <button class="modal-close" aria-label="Хаах">\u2715</button>
+      <h2 id="favTitle">Дуртай манга</h2>
+      <button class="modal-close" aria-label="Хаах">✕</button>
     </div>
     <div id="favList" class="modal-list"></div>
   </dialog>
   
   <dialog id="histModal" class="modal" aria-labelledby="histTitle">
     <div class="modal-header">
-      <h2 id="histTitle">\u0423ншсан туух</h2>
-      <button class="modal-close" aria-label="Хаах">\u2715</button>
+      <h2 id="histTitle">Уншсан түүх</h2>
+      <button class="modal-close" aria-label="Хаах">✕</button>
     </div>
     <div id="histList" class="modal-list"></div>
   </dialog>
   
   <dialog id="helpModal" class="modal" aria-labelledby="helpTitle">
     <div class="modal-header">
-      <h2 id="helpTitle">\u0422услам\u0436</h2>
-      <button class="modal-close" aria-label="Хаах">\u2715</button>
+      <h2 id="helpTitle">Тусламж</h2>
+      <button class="modal-close" aria-label="Хаах">✕</button>
     </div>
     <div class="help-content">
-      <h3>\u0413ол тов\u0447</h3>
+      <h3>Гарын товчлол</h3>
       <ul>
-        <li><kbd>Ctrl+Shift+F</kbd> \u2014 Хайртал</li>
-        <li><kbd>Ctrl+Shift+H</kbd> \u2014 \u0423ншсан туух</li>
-        <li><kbd>?</kbd> \u2014 \u0422услам\u0436</li>
-        <li><kbd>Esc</kbd> \u2014 \u041cо\u0434ал хаах</li>
+        <li><kbd>Ctrl+Shift+F</kbd> — Дуртай манга</li>
+        <li><kbd>Ctrl+Shift+H</kbd> — Уншсан түүх</li>
+        <li><kbd>?</kbd> — Тусламж</li>
+        <li><kbd>Esc</kbd> — Цонх хаах</li>
       </ul>
-      <h3>\u0423ншиг\u0447 \u0434отор</h3>
+      <h3>Унших үед</h3>
       <ul>
-        <li><kbd>\u2190 \u2192</kbd> \u2014 Хуу\u0434ас солих</li>
-        <li><kbd>+</kbd> <kbd>-</kbd> \u2014 \u0417оом</li>
-        <li><kbd>0</kbd> \u2014 \u0417оом тэглэх</li>
-        <li><kbd>D</kbd> \u2014 \u0423ншиг\u0447ийн \u0447иглэл солих (LTR/RTL)</li>
-        <li><kbd>Двойн товш</kbd> \u2014 \u0417оом тоглох/\u0431агасгах</li>
+        <li><kbd>← →</kbd> — Хуудас солих</li>
+        <li><kbd>+</kbd> <kbd>-</kbd> — Томруулах/жижигрүүлэх</li>
+        <li><kbd>0</kbd> — Томруулалтыг хэвийн болгох</li>
+        <li><kbd>D</kbd> — Уншигчийн чиглэл солих (LTR/RTL)</li>
+        <li><kbd>Давхар товших</kbd> — Томруулах/жижигрүүлэх</li>
       </ul>
     </div>
   </dialog>
@@ -156,7 +156,7 @@
 </main>
 <footer class="site-footer"><div class="wrap foot"><span>© Red Ribbon Scans</span><span>Made for manga lovers.</span></div></footer>
 <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-<button id="backToTop" class="back-to-top" aria-label="Дээш о\u0447их" hidden>\u2191</button>
+<button id="backToTop" class="back-to-top" aria-label="Дээш очих" hidden>↑</button>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
 <script src="catalog.js?v=admin-2"></script>
@@ -192,12 +192,12 @@ async function toggleFav(id){
   if(store?.isSignedIn()){
     const isSaved=store.isFavorite(id);
     await store.setFavorite(id,!isSaved);
-    toast(isSaved?'Хайртаас хаслаа.':'Хайртад хадгаллаа.');
+    toast(isSaved?'Дуртай манганы жагсаалтаас хаслаа.':'Дуртай манганы жагсаалтад хадгаллаа.');
   } else {
     const f=getFavs(),i=f.indexOf(id);
     if(i>=0)f.splice(i,1);else f.unshift(id);
     setFavs(f);
-    toast(i>=0?'Энэ төхөөрөмжийн хайртлаас хаслаа.':'Энэ төхөөрөмжийн хайртад нэмлээ.');
+    toast(i>=0?'Энэ төхөөрөмжийн дуртай манганы жагсаалтаас хаслаа.':'Энэ төхөөрөмжийн дуртай манганы жагсаалтад нэмлээ.');
     draw();
   }
   updateFavCount();
@@ -349,7 +349,7 @@ function resume(){
     if(!m)return;
     const a=$('#resume');
     a.href=href(m,r.c);
-    a.innerHTML=`<small>\u0423ргэл\u0436лэлэх</small><b>${esc(m.title)}</b> \u00b7 \u0411элэг ${esc(r.c)}`;
+    a.innerHTML=`<small>Ургэлжлэлэх</small><b>${esc(m.title)}</b> · Бүлэг ${esc(r.c)}`;
     a.hidden=false;
   }catch(e){}
 }
@@ -392,16 +392,16 @@ function renderFavs(){
     const m=data.find(x=>x.id===id);
     if(!m)return `<div class="modal-item modal-item--favorite" data-manga="${esc(id)}">
       <div class="modal-info"><strong>${esc(id)}</strong><span>Каталогоос хасагдсан манга</span></div>
-      <button class="fav-remove" type="button" data-id="${esc(id)}" aria-label="Хайртаас хасах">✕</button>
+      <button class="fav-remove" type="button" data-id="${esc(id)}" aria-label="Дуртай манганы жагсаалтаас хасах">✕</button>
     </div>`;
     const l=last(m), prog=getProgress(m);
     return `<div class="modal-item modal-item--favorite" data-manga="${esc(m.id)}">
       <a class="modal-entry" href="${href(m,l.n)}">
       <div class="modal-cover" style="background:linear-gradient(160deg,hsl(${hue(m.title)} 45% 34%),hsl(${(hue(m.title)+35)%360} 50% 16%))">${m.cover?`<img src="${esc(m.cover.replace(/^\/+/, ''))}" loading="lazy" onerror="this.remove()">`:''}</div>
-      <div class="modal-info"><strong>${esc(m.title)}</strong><span>\u0411элэг ${esc(l.n)} ${prog>0?`\u00b7 ${prog}/${m.chapters.length} уншсан`:''}</span></div>
+      <div class="modal-info"><strong>${esc(m.title)}</strong><span>Бүлэг ${esc(l.n)} ${prog>0?`· ${prog}/${m.chapters.length} уншсан`:''}</span></div>
       </a>
-      <button class="fav-remove" type="button" data-id="${esc(m.id)}" aria-label="Хайртаас хасах">\u2715</button>
-    </div>`}).join(''):'<p class="empty">Хайртал хоосон \u0431айна.</p>';
+      <button class="fav-remove" type="button" data-id="${esc(m.id)}" aria-label="Дуртай манганы жагсаалтаас хасах">✕</button>
+    </div>`}).join(''):'<p class="empty">Дуртай манганы жагсаалт хоосон байна.</p>';
   $$('#favList .fav-remove').forEach(b=>b.onclick=async e=>{e.stopPropagation();b.disabled=true;try{await toggleFav(b.dataset.id);renderFavs()}catch(error){toast('Алдаа: '+(error?.message||'Хадгалж чадсангүй'),4500);b.disabled=false}});
 }
 
@@ -413,9 +413,9 @@ function renderHist(){
     const date=new Date(h.t).toLocaleString('mn-MN',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
     return `<a class="modal-item" href="${href(m,h.c)}" data-manga="${esc(m.id)}">
       <div class="modal-cover" style="background:linear-gradient(160deg,hsl(${hue(m.title)} 45% 34%),hsl(${(hue(m.title)+35)%360} 50% 16%))">${m.cover?`<img src="${esc(m.cover.replace(/^\/+/, ''))}" loading="lazy" onerror="this.remove()">`:''}</div>
-      <div class="modal-info"><strong>${esc(m.title)}</strong><span>\u0411элэг ${esc(h.c)} ${ch?.title?' \u2014 '+esc(ch.title):''}</span><small>${date}</small></div>
-    </a>`}).join(''):'<p class="empty">\u0422уух хоосон \u0431айна.</p>';
-  if(hist.length){$('#histList').insertAdjacentHTML('beforeend',`<button class="btn clear-hist" style="margin-top:16px;width:100%">\u0422уухийг арилгах</button>`);$('#histList .clear-hist').onclick=clearHist;}
+      <div class="modal-info"><strong>${esc(m.title)}</strong><span>Бүлэг ${esc(h.c)} ${ch?.title?' — '+esc(ch.title):''}</span><small>${date}</small></div>
+    </a>`}).join(''):'<p class="empty">Түүх хоосон байна.</p>';
+  if(hist.length){$('#histList').insertAdjacentHTML('beforeend',`<button class="btn clear-hist" style="margin-top:16px;width:100%">Түүхийг арилгах</button>`);$('#histList .clear-hist').onclick=clearHist;}
 }
 
 const themeBtn=$('#themeToggle');
