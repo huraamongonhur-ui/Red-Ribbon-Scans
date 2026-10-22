@@ -46,6 +46,10 @@ test('Favorites popup handles empty, normal and deleted manga', () => {
   assert.match(list.innerHTML, /Хайртал хоосон/);
   assert.equal(typeof button.onclick, 'function');
   ids=['old-manga'];
+  available.push({id:'old-manga',title:'Existing manga',chapters:[{n:1}]});
+  render();
+  assert.match(list.innerHTML,/Existing manga/);
+  available.length=0;
   render();
   assert.match(list.innerHTML,/Каталогоос хасагдсан манга/);
   assert.match(list.innerHTML,/fav-remove/);
