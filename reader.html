@@ -17,6 +17,7 @@
   <select id="ch" aria-label="Бүлэг сонгох"></select>
   <button class="btn" id="mode" type="button"></button>
   <button class="dir-btn" id="dirBtn" type="button" aria-label="Уншигчийн чиглэл" title="Уншигчийн чиглэл (LTR/RTL)">⇄</button>
+  <button class="fullscreen-btn" id="fsBtn" type="button" aria-label="Дэлгэц дэлгэх" title="Дэлгэц дэлгэх (F)">⛶</button>
   <button id="themeToggle" class="theme-btn" aria-label="Хороо солих" title="Хороо солих">
     <svg class="sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
     <svg class="moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -27,6 +28,10 @@
 <div class="zoom-hint" id="zoomHint" hidden>Scroll/ pinch to zoom • Drag to pan • Click edges to navigate</div>
 <script>
 const $=s=>document.querySelector(s);
+const $$=s=>document.querySelectorAll(s);
+const histKey='rr_hist', maxHist=200;
+function addHist(mangaId,chapterNum){const h=getHist();const entry={m:mangaId,c:chapterNum,t:Date.now()};const i=h.findIndex(x=>x.m===mangaId&&x.c===chapterNum);if(i>=0)h.splice(i,1);h.unshift(entry);if(h.length>maxHist)h.pop();try{localStorage.setItem(histKey,JSON.stringify(h))}catch{}}
+function getHist(){try{return JSON.parse(localStorage.getItem(histKey)||'[]')}catch{return[]}}
 const P=new URLSearchParams(location.search);
 let m,idx=0,ch,urls=[],p=0,mode=localStorage.getItem('rr_mode')||'scroll';
 let dir=localStorage.getItem('rr_dir')||'ltr'; // ltr or rtl
@@ -44,6 +49,8 @@ fetch('manga.json').then(r=>r.json()).then(d=>{
   $('#ch').innerHTML=m.chapters.map((c,i)=>`<option value="${i}"${i===idx?' selected':''}>Бүлэг ${c.n}${c.title?' — '+c.title:''}</option>`).join('');
   urls=pagesOf(ch);
   applyDir();
+  // Track reading history
+  try { addHist(m.id, ch.n); } catch(e) {}
   show();
 }).catch(()=>note('manga.json файлыг ачаалж чадсангүй.'));
 
@@ -246,10 +253,12 @@ addEventListener('keydown',e=>{
     if(e.key==='-'){zoomAt(1-ZOOM_STEP,innerWidth/2,innerHeight/2)}
     if(e.key==='0'){resetZoom()}
     if(e.key==='d'||e.key==='D'){toggleDir()}
+    if(e.key==='f'||e.key==='F'){toggleFullscreen()}
   }else{
     if(e.key==='ArrowRight')chapter(1);
     if(e.key==='ArrowLeft')chapter(-1);
     if(e.key==='d'||e.key==='D'){toggleDir()}
+    if(e.key==='f'||e.key==='F'){toggleFullscreen()}
   }
 });
 
@@ -268,6 +277,8 @@ $('#ch').onchange=e=>chapter(e.target.value-idx);
 $('#mode').onclick=()=>{mode=mode==='page'?'scroll':'page';try{localStorage.setItem('rr_mode',mode)}catch(e){}show()};
 $('#view').onclick=e=>{if(mode==='page'&&zoom<=1.05)step(e.clientX>innerWidth/2?1:-1)};
 $('#dirBtn').onclick=toggleDir;
+$('#fsBtn').onclick=toggleFullscreen;
+function toggleFullscreen(){if(!document.fullscreenElement){document.documentElement.requestFullscreen().catch(()=>{});$('#fsBtn').textContent='⛶'}else{document.exitFullscreen();$('#fsBtn').textContent='⛶'}}
 
 // Pointer events for zoom/pan
 addEventListener('wheel',handleWheel,{passive:false});

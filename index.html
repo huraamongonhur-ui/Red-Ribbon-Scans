@@ -28,6 +28,9 @@
     <a id="historyLink" class="btn hist-link" href="#history" aria-label="\u0423\u043d\u0448\u0441\u0430\u043d \u0442\u0443\u0443\u0445" title="\u0423\u043d\u0448\u0441\u0430\u043d \u0442\u0443\u0443\u0445 (Ctrl+Shift+H)">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
     </a>
+    <button id="helpBtn" class="btn help-btn" aria-label="\u0422\u0443\u0441\u043b\u0430\u043c\u0436" title="\u0422\u0443\u0441\u043b\u0430\u043c\u0436 (?)">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    </button>
   </div>
 </header>
 <main class="wrap">
@@ -36,34 +39,63 @@
     <a id="resume" class="resume" hidden></a>
   </section>
   <div class="tools">
-    <input id="q" type="search" placeholder="\u041d\u044d\u0440\u044d\u044d\u0440 \u0445\u0430\u0439\u0445" aria-label="\u041d\u044d\u0440\u044d\u044d\u0440 \u0445\u0430\u0439\u0445" autocomplete="off">
+    <div class="search-wrap">
+      <input id="q" type="search" placeholder="\u041d\u044d\u0440\u044d\u044d\u0440 \u0445\u0430\u0439\u0445" aria-label="\u041d\u044d\u0440\u044d\u044d\u0440 \u0445\u0430\u0439\u0445" autocomplete="off">
+      <button id="clearSearch" class="clear-search" aria-label="\u0425\u0430\u0439\u043b\u0442 \u0443\u0441\u0442\u0433\u0430\u0445" hidden>\u2715</button>
+    </div>
     <select id="sort" aria-label="\u042d\u0440\u044d\u043c\u0431\u044d\u043b\u044d\u0445">
       <option value="new">\u0428\u0438\u043d\u044d \u0431\u044d\u043b\u0433\u044d\u044d\u0440</option>
       <option value="name">\u041d\u044d\u0440\u044d\u044d\u0440</option>
       <option value="progress">\u0423\u0440\u0433\u044d\u043b\u0436\u043b\u044d\u0433\u0447\u0438\u0434</option>
     </select>
   </div>
+  <div id="resultCount" class="result-count" aria-live="polite"></div>
   <div id="chips" class="chips" role="tablist" aria-label="\u0416\u0430\u043d\u0440 \u0448\u0443\u0443\u043b\u0442\u0443\u0443\u0440"></div>
   <div id="grid" class="grid" role="list" aria-live="polite"></div>
   
-  <dialog id="favModal" class="modal">
+  <dialog id="favModal" class="modal" aria-labelledby="favTitle">
     <div class="modal-header">
-      <h2>\u0425\u0430\u0439\u0440\u0442\u0430\u043b</h2>
+      <h2 id="favTitle">\u0425\u0430\u0439\u0440\u0442\u0430\u043b</h2>
       <button class="modal-close" aria-label="\u0425\u0430\u0430\u0445">\u2715</button>
     </div>
     <div id="favList" class="modal-list"></div>
   </dialog>
   
-  <dialog id="histModal" class="modal">
+  <dialog id="histModal" class="modal" aria-labelledby="histTitle">
     <div class="modal-header">
-      <h2>\u0423\u043d\u0448\u0441\u0430\u043d \u0442\u0443\u0443\u0445</h2>
+      <h2 id="histTitle">\u0423\u043d\u0448\u0441\u0430\u043d \u0442\u0443\u0443\u0445</h2>
       <button class="modal-close" aria-label="\u0425\u0430\u0430\u0445">\u2715</button>
     </div>
     <div id="histList" class="modal-list"></div>
   </dialog>
+  
+  <dialog id="helpModal" class="modal" aria-labelledby="helpTitle">
+    <div class="modal-header">
+      <h2 id="helpTitle">\u0422\u0443\u0441\u043b\u0430\u043c\u0436</h2>
+      <button class="modal-close" aria-label="\u0425\u0430\u0430\u0445">\u2715</button>
+    </div>
+    <div class="help-content">
+      <h3>\u0413\u043e\u043b \u0442\u043e\u0432\u0447</h3>
+      <ul>
+        <li><kbd>Ctrl+Shift+F</kbd> \u2014 \u0425\u0430\u0439\u0440\u0442\u0430\u043b</li>
+        <li><kbd>Ctrl+Shift+H</kbd> \u2014 \u0423\u043d\u0448\u0441\u0430\u043d \u0442\u0443\u0443\u0445</li>
+        <li><kbd>?</kbd> \u2014 \u0422\u0443\u0441\u043b\u0430\u043c\u0436</li>
+        <li><kbd>Esc</kbd> \u2014 \u041c\u043e\u0434\u0430\u043b \u0445\u0430\u0430\u0445</li>
+      </ul>
+      <h3>\u0423\u043d\u0448\u0438\u0433\u0447 \u0434\u043e\u0442\u043e\u0440</h3>
+      <ul>
+        <li><kbd>\u2190 \u2192</kbd> \u2014 \u0425\u0443\u0443\u0434\u0430\u0441 \u0441\u043e\u043b\u0438\u0445</li>
+        <li><kbd>+</kbd> <kbd>-</kbd> \u2014 \u0417\u043e\u043e\u043c</li>
+        <li><kbd>0</kbd> \u2014 \u0417\u043e\u043e\u043c \u0442\u044d\u0433\u043b\u044d\u0445</li>
+        <li><kbd>D</kbd> \u2014 \u0423\u043d\u0448\u0438\u0433\u0447\u0438\u0439\u043d \u0447\u0438\u0433\u043b\u044d\u043b \u0441\u043e\u043b\u0438\u0445 (LTR/RTL)</li>
+        <li><kbd>\u0414\u0432\u043e\u0439\u043d \u0442\u043e\u0432\u0448</kbd> \u2014 \u0417\u043e\u043e\u043c \u0442\u043e\u0433\u043b\u043e\u0445/\u0431\u0430\u0433\u0430\u0441\u0433\u0430\u0445</li>
+      </ul>
+    </div>
+  </dialog>
 </main>
 <footer class="wrap foot">Red Ribbon Scans</footer>
 <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+<button id="backToTop" class="back-to-top" aria-label="\u0414\u044d\u044d\u0448 \u043e\u0447\u0438\u0445" hidden>\u2191</button>
 <script>
 const $=s=>document.querySelector(s);
 const $$=s=>document.querySelectorAll(s);
@@ -110,11 +142,20 @@ function draw(){
   const favs=getFavs();
   if(sort==='progress') list=list.filter(m=>getProgress(m)>0);
   
+  // Update result count
+  const countEl=$('#resultCount');
+  if(q||g){
+    countEl.textContent=`${list.length} \u043c\u0430\u043d\u0433\u0430 \u043e\u043b\u0434\u043b\u043e\u043e`;
+    countEl.hidden=false;
+  }else{
+    countEl.hidden=true;
+  }
+  
   $('#grid').innerHTML=list.length?list.map(m=>{
     const l=last(m), h=hue(m.title), fav=isFav(m.id), prog=getProgress(m);
     const bg=`style="background:linear-gradient(160deg,hsl(${h} 45% 34%),hsl(${(h+35)%360} 50% 16%))"`;
     const coverImg=m.cover?`<img src="${esc(m.cover)}" alt="" loading="lazy" onerror="handleCoverError(this, '${esc(m.title)}', ${h})">`:'';
-    return `<a class="card" href="${href(m,l.n)}" data-manga="${esc(m.id)}" role="listitem">
+    return `<a class="card" href="${href(m,l.n)}" data-manga="${esc(m.id)}" role="listitem" tabindex="0">
       <div class="cover" ${bg}><span>${esc(m.title)}</span>${coverImg}${isNew(m)?'<i class="mark"></i>':''}${fav?'<i class="fav-badge" title="\u0425\u0430\u0439\u0440\u0442\u0430\u043b">\u2605</i>':''}</div>
       <h2>${esc(m.title)}</h2>
       <div class="meta">
@@ -123,7 +164,7 @@ function draw(){
       </div></a>`}).join('')
     :'<p class="empty">\u0422\u0430\u0430\u0440\u0430\u0445 \u043c\u0430\u043d\u0433\u0430 \u043e\u043b\u0434\u0441\u043e\u043d\u0433\u0443\u0439. \u0425\u0430\u0439\u043b\u0442\u0430\u0430 \u0446\u044b\u0440\u0447\u0438\u043b\u043d\u044d\u044d \u044e\u044e.</p>';
   
-  $$('#grid .card').forEach((el,i)=>{el.tabIndex=0;el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();el.click()}});el.addEventListener('click',e=>{if(e.target.closest('.fav-badge')){e.preventDefault();toggleFav(el.dataset.manga)}})});
+  $$('#grid .card').forEach((el,i)=>{el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();el.click()}});el.addEventListener('click',e=>{if(e.target.closest('.fav-badge')){e.preventDefault();toggleFav(el.dataset.manga)}})});
 }
 
 function getProgress(m){
@@ -131,8 +172,8 @@ function getProgress(m){
 }
 
 function handleCoverError(img,title,h){
-  img.remove();
   const cover=img.closest('.cover');
+  img.remove();
   if(cover) cover.style.background=`linear-gradient(160deg,hsl(${h} 45% 34%),hsl(${(h+35)%360} 50% 16%))`;
 }
 
@@ -157,15 +198,28 @@ function restoreUrlState(){
 function saveUrlState(){const p=new URLSearchParams();if(q)p.set('q',q);if(g)p.set('g',g);if(sort!=='new')p.set('sort',sort);history.replaceState(null,'',p.toString()?'?'+p.toString():location.pathname)}
 
 const debouncedDraw=debounce(()=>{draw();saveUrlState()},300);
-$('#q').oninput=e=>{q=e.target.value.trim().toLowerCase();debouncedDraw()};
+$('#q').oninput=e=>{q=e.target.value.trim().toLowerCase();$('#clearSearch').hidden=!q;debouncedDraw()};
+$('#clearSearch').onclick=()=>{q='';$('#q').value='';$('#clearSearch').hidden=true;draw();saveUrlState()};
 $('#sort').onchange=e=>{sort=e.target.value;draw();saveUrlState()};
 $('#chips').onclick=e=>{const b=e.target.closest('button');if(!b)return;g=b.dataset.g||'';chips();draw();saveUrlState()};
 
-const favModal=$('#favModal'), histModal=$('#histModal');
-$('#favoritesLink').onclick=e=>{e.preventDefault();renderFavs();favModal.showModal()};
-$('#historyLink').onclick=e=>{e.preventDefault();renderHist();histModal.showModal()};
-$$('.modal-close').forEach(b=>b.onclick=()=>{favModal.close();histModal.close()});
-[favModal,histModal].forEach(m=>m.onclick=e=>{if(e.target===m)m.close()});
+const favModal=$('#favModal'), histModal=$('#histModal'), helpModal=$('#helpModal');
+$('#favoritesLink').onclick=e=>{e.preventDefault();renderFavs();favModal.showModal();trapFocus(favModal)};
+$('#historyLink').onclick=e=>{e.preventDefault();renderHist();histModal.showModal();trapFocus(histModal)};
+$('#helpBtn').onclick=e=>{e.preventDefault();helpModal.showModal();trapFocus(helpModal)};
+$$('.modal-close').forEach(b=>b.onclick=()=>{favModal.close();histModal.close();helpModal.close()});
+[favModal,histModal,helpModal].forEach(m=>m.onclick=e=>{if(e.target===m)m.close()});
+
+function trapFocus(modal){
+  const focusable=modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+  if(!focusable.length)return;
+  const first=focusable[0], last=focusable[focusable.length-1];
+  modal.addEventListener('keydown',e=>{
+    if(e.key!=='Tab')return;
+    if(e.shiftKey){if(document.activeElement===first){e.preventDefault();last.focus()}}
+    else{if(document.activeElement===last){e.preventDefault();first.focus()}}
+  });
+}
 
 function renderFavs(){
   const favs=getFavs();
@@ -205,8 +259,16 @@ addEventListener('keydown',e=>{
     if(e.key==='F'){e.preventDefault();$('#favoritesLink').click()}
     if(e.key==='H'){e.preventDefault();$('#historyLink').click()}
   }
-  if(e.key==='Escape'){favModal.close();histModal.close()}
+  if(e.key==='?'){e.preventDefault();$('#helpBtn').click()}
+  if(e.key==='Escape'){favModal.close();histModal.close();helpModal.close()}
 });
+
+// Back to top
+const backToTop=$('#backToTop');
+addEventListener('scroll',()=>{
+  backToTop.hidden=scrollY<300;
+});
+backToTop.onclick=()=>scrollTo({top:0,behavior:'smooth'});
 
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('sw.js').catch(()=>{});
