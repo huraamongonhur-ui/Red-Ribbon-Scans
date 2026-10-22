@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=my-library-2">
+<link rel="stylesheet" href="style.css?v=favorites-fix-1">
 <link rel="manifest" href="manifest.json">
 </head>
 <body>
@@ -158,7 +158,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
 <script src="catalog.js?v=admin-2"></script>
-<script src="my-library-store.js?v=my-library-2"></script>
+<script src="my-library-store.js?v=favorites-fix-1"></script>
 <script>const $=s=>document.querySelector(s);
 const $$=s=>document.querySelectorAll(s);
 const esc=s=>String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]));
@@ -171,11 +171,35 @@ const isNew=m=>Date.now()-new Date(last(m).date)<14*864e5;
 const href=(m,n)=>`reader.html?m=${encodeURIComponent(m.id)}&c=${n}`;
 const favKey='rr_favs', histKey='rr_hist', maxHist=200;
 
-function getFavs(){try{return JSON.parse(localStorage.getItem(favKey)||'[]')}catch{return[]}}
+function getFavs(){
+  try {const values=JSON.parse(localStorage.getItem(favKey)||'[]');return Array.isArray(values)?values:[]}
+  catch {return []}
+}
 function setFavs(a){try{localStorage.setItem(favKey,JSON.stringify(a))}catch{}}
-function toggleFav(id){const f=getFavs();const i=f.indexOf(id);if(i>=0)f.splice(i,1);else f.unshift(id);setFavs(f);updateFavCount();draw();toast(i>=0?'Хайртаас хасаг\u0434лаа': 'Хайрта\u0434 нэмэг\u0434лее')}
-function isFav(id){return getFavs().includes(id)}
-function updateFavCount(){const c=getFavs().length;const el=$('#favoritesLink .fav-count');el.textContent=c;el.hidden=c===0}
+function visibleFavs(){
+  const store=window.RRLibraryStore;
+  return store?.isSignedIn()?store.getFavoriteIds():getFavs();
+}
+function isFav(id){return visibleFavs().includes(id)}
+function updateFavCount(){
+  const c=visibleFavs().length, el=$('#favoritesLink .fav-count');
+  el.textContent=c;el.hidden=c===0;
+}
+async function toggleFav(id){
+  const store=window.RRLibraryStore;
+  if(store?.isSignedIn()){
+    const isSaved=store.isFavorite(id);
+    await store.setFavorite(id,!isSaved);
+    toast(isSaved?'Хайртаас хаслаа.':'Хайртад хадгаллаа.');
+  } else {
+    const f=getFavs(),i=f.indexOf(id);
+    if(i>=0)f.splice(i,1);else f.unshift(id);
+    setFavs(f);
+    toast(i>=0?'Энэ төхөөрөмжийн хайртлаас хаслаа.':'Энэ төхөөрөмжийн хайртад нэмлээ.');
+    draw();
+  }
+  updateFavCount();
+}
 
 function getHist(){try{return JSON.parse(localStorage.getItem(histKey)||'[]')}catch{return[]}}
 function addHist(mangaId,chapterNum){const h=getHist();const entry={m:mangaId,c:chapterNum,t:Date.now()};const i=h.findIndex(x=>x.m===mangaId&&x.c===chapterNum);if(i>=0)h.splice(i,1);h.unshift(entry);if(h.length>maxHist)h.pop();try{localStorage.setItem(histKey,JSON.stringify(h))}catch{}}
@@ -268,12 +292,17 @@ function draw(){
   }).join(''):'<p class="empty">Илэрц олдсонгүй. Хайлтын үгээ эсвэл шүүлтүүрээ өөрчилнө үү.</p>';
 }
 
-$('#grid').addEventListener('click',e=>{
+$('#grid').addEventListener('click',async e=>{
   const b=e.target.closest('button[data-fav]');
-  if(!b)return;
+  if(!b||b.disabled)return;
   const id=b.dataset.fav;
-  toggleFav(id);
-  [...$('#grid').querySelectorAll('button[data-fav]')].find(el=>el.dataset.fav===id)?.focus();
+  b.disabled=true;
+  try { await toggleFav(id); }
+  catch(error) { toast('Зүрхлэхэд алдаа гарлаа: '+(error?.message||'Тодорхойгүй'),4500); }
+  finally {
+    const button=[...$('#grid').querySelectorAll('button[data-fav]')].find(el=>el.dataset.fav===id);
+    if(button){button.disabled=false;button.focus();}
+  }
 });
 $('#grid').addEventListener('change',async e=>{
   const picker=e.target.closest('select[data-library]');
@@ -295,7 +324,7 @@ $('#grid').addEventListener('change',async e=>{
     toast('Алдаа: '+(error?.message||'Хадгалж чадсангүй'),4200);
   }finally{picker.disabled=false;}
 });
-window.addEventListener('rr-library-change',()=>{if(data.length)draw()});
+window.addEventListener('rr-library-change',()=>{if(data.length)draw();updateFavCount();if(document.querySelector('#favModal')?.open)renderFavs()});
 
 $('#grid').addEventListener('error',e=>{
   if(e.target.matches('.cover img'))e.target.remove();
@@ -356,7 +385,7 @@ function trapFocus(modal){
 }
 
 function renderFavs(){
-  const favs=getFavs();
+  const favs=visibleFavs();
   $('#favList').innerHTML=favs.length?favs.map(id=>{
     const m=data.find(x=>x.id===id);if(!m)return '';
     const l=last(m), prog=getProgress(m);
@@ -367,7 +396,7 @@ function renderFavs(){
       </a>
       <button class="fav-remove" type="button" data-id="${esc(m.id)}" aria-label="Хайртаас хасах">\u2715</button>
     </div>`}).join(''):'<p class="empty">Хайртал хоосон \u0431айна.</p>';
-  $$('#favList .fav-remove').forEach(b=>b.onclick=e=>{e.stopPropagation();toggleFav(b.dataset.id);renderFavs();updateFavCount()});
+  $('#favList .fav-remove').forEach(b=>b.onclick=async e=>{e.stopPropagation();b.disabled=true;try{await toggleFav(b.dataset.id);renderFavs()}catch(error){toast('Алдаа: '+(error?.message||'Хадгалж чадсангүй'),4500);b.disabled=false}});
 }
 
 function renderHist(){
@@ -413,6 +442,6 @@ if('serviceWorker' in navigator){
 renderSkeletons();
 </script>
 <script src="profile.js?v=admin-2"></script>
-<script src="social.js?v=my-library-2"></script>
+<script src="social.js?v=favorites-fix-1"></script>
 </body>
 </html>
