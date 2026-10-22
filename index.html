@@ -177,50 +177,95 @@ function isInHist(mangaId,chapterNum){return getHist().some(x=>x.m===mangaId&&x.
 
 function toast(msg,ms=2500){const t=$('#toast');t.textContent=msg;t.hidden=false;t.classList.add('show');setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.hidden=true,200)},ms)}
 
-function renderSkeletons(n=8){$('#grid').innerHTML=Array.from({length:n},()=>`<a class="card skeleton"><div class="cover"></div><h2><span></span><span></span></h2><div class="meta"><span></span></div></a>`).join('')}
+function renderSkeletons(n=6){
+  $('#grid').innerHTML=Array.from({length:n},()=>'<div class="card skeleton" role="listitem" aria-hidden="true"><div class="cover"></div><div class="card-body"><div class="skeleton-line"></div><div class="skeleton-line"></div></div></div>').join('');
+}
 
-fetch('manga.json').then(r=>r.json()).then(d=>{
-  data=d.filter(m=>m.chapters&&m.chapters.length);
+function renderFeature(){
+  $('#mangaCount').textContent=String(data.length);
+  $('#chapterCount').textContent=String(data.reduce((sum,m)=>sum+m.chapters.length,0));
+  const m=[...data].sort((a,b)=>new Date(last(b).date)-new Date(last(a).date))[0];
+  if(!m){$('#heroFeature').hidden=true;return}
+  $('#heroFeature').hidden=false;
+  $('#featureLink').href=href(m,last(m).n);
+  $('#featureTitle').textContent=m.title;
+  $('#featureChapter').textContent='Бүлэг '+last(m).n+' · Унших';
+  $('#featureFallback').textContent=m.title;
+  const cover=$('#featureImg');
+  if(m.cover){
+    cover.src=m.cover.replace(/^\/+/, '');
+    cover.alt=m.title+' нүүр зураг';
+    cover.hidden=false;
+    cover.onerror=()=>{cover.hidden=true};
+  }else{
+    cover.hidden=true;
+  }
+}
+
+fetch('manga.json').then(r=>{if(!r.ok)throw Error('Catalog unavailable');return r.json()}).then(d=>{
+  if(!Array.isArray(d))throw Error('Invalid catalog');
+  data=d.filter(m=>m && m.chapters && m.chapters.length);
   restoreUrlState();
-  chips();draw();resume();updateFavCount();
-}).catch(()=>{$('#grid').innerHTML='<p class="empty">\u0416агсаалт\u044bг а\u0447аал\u0436 \u0447а\u0434сангуй. manga.json \u0444айлаа шалгана уу.</p>'});
+  chips();draw();resume();renderFeature();updateFavCount();
+}).catch(()=>{
+  $('#grid').innerHTML='<p class="empty">Манганы жагсаалтыг ачаалж чадсангүй. Хуудсыг дахин ачаална уу.</p>';
+  $('#libraryCount').textContent='Ачаалахад алдаа гарлаа';
+  $('#mangaCount').textContent='0';
+  $('#chapterCount').textContent='0';
+});
 
 function chips(){
   const all=[...new Set(data.flatMap(m=>m.genres||[]))].sort();
-  $('#chips').innerHTML=['',...all].map(x=>`<button class="btn" role="tab" data-g="${esc(x)}" aria-pressed="${x===g}" aria-selected="${x===g}">${x?esc(x):'\u0411эг\u0434'}</button>`).join('');
+  $('#chips').innerHTML=['',...all].map(x=>
+    '<button class="btn" type="button" data-g="'+esc(x)+'" aria-pressed="'+(x===g)+'">'+(x?esc(x):'Бүгд')+'</button>'
+  ).join('');
 }
 
 function draw(){
   let list=data.filter(m=>m.title.toLowerCase().includes(q)&&(!g||(m.genres||[]).includes(g)));
   list.sort(sort==='name'?(a,b)=>a.title.localeCompare(b.title,'mn'):sort==='progress'?(a,b)=>getProgress(b)-getProgress(a):(a,b)=>new Date(last(b).date)-new Date(last(a).date));
-  
-  const favs=getFavs();
-  if(sort==='progress') list=list.filter(m=>getProgress(m)>0);
-  
-  // Update result count
+  if(sort==='progress')list=list.filter(m=>getProgress(m)>0);
+
+  $('#libraryCount').textContent=list.length+' манга';
   const countEl=$('#resultCount');
-  if(q||g){
-    countEl.textContent=`${list.length} манга ол\u0434лоо`;
-    countEl.hidden=false;
-  }else{
-    countEl.hidden=true;
-  }
-  
+  countEl.hidden=!(q||g||sort==='progress');
+  countEl.textContent=list.length+' үр дүн олдлоо';
+
   $('#grid').innerHTML=list.length?list.map(m=>{
-    const l=last(m), h=hue(m.title), fav=isFav(m.id), prog=getProgress(m);
-    const bg=`style="background:linear-gradient(160deg,hsl(${h} 45% 34%),hsl(${(h+35)%360} 50% 16%))"`;
-    const coverImg=m.cover?`<img src="${esc(m.cover.replace(/^\/+/, ''))}" alt="" loading="lazy" onerror="handleCoverError(this, '${esc(m.title)}', ${h})">`:'';
-    return `<a class="card" href="${href(m,l.n)}" data-manga="${esc(m.id)}" role="listitem" tabindex="0">
-      <div class="cover" ${bg}><span>${esc(m.title)}</span>${coverImg}${isNew(m)?'<i class="mark"></i>':''}${fav?'<i class="fav-badge" title="Хайртал">\u2605</i>':''}</div>
-      <h2>${esc(m.title)}</h2>
-      <div class="meta">
-        <span>\u0411элэг ${esc(l.n)}${isNew(m)?' <b>\u0428инэ</b>':''}${window.RR&&RR[m.id]?' <b class="rt">\u2605 '+RR[m.id]+'</b>':''}</span>
-        ${prog>0?`<span class="prog-wrap"><progress class="prog" value="${prog}" max="${m.chapters.length}"></progress><span class="prog-text">${prog}/${m.chapters.length}</span></span>`:''}
-      </div></a>`}).join('')
-    :'<p class="empty">\u0422аарах манга ол\u0434сонгуй. Хайлтаа \u0446\u044bр\u0447илнээ юю.</p>';
-  
-  $$('#grid .card').forEach((el,i)=>{el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();el.click()}});el.addEventListener('click',e=>{if(e.target.closest('.fav-badge')){e.preventDefault();toggleFav(el.dataset.manga)}})});
+    const latest=last(m),h=hue(m.title),fav=isFav(m.id),progress=getProgress(m);
+    const bg='style="background:linear-gradient(160deg,hsl('+h+' 50% 31%),hsl('+((h+35)%360)+' 49% 15%))"';
+    const coverImg=m.cover?'<img src="'+esc(m.cover.replace(/^\/+/, ''))+'" alt="" loading="lazy" decoding="async">':'';
+    const rating=window.RR?.[m.id];
+    return '<article class="card" role="listitem">'+
+      '<a class="card-link" href="'+href(m,latest.n)+'" aria-label="'+esc(m.title)+' · Бүлэг '+esc(latest.n)+'">'+
+        '<div class="cover" '+bg+'><span class="cover-name">'+esc(m.title)+'</span>'+coverImg+
+          (isNew(m)?'<span class="mark">ШИНЭ</span>':'')+'</div>'+
+        '<div class="card-body">'+
+          '<div class="card-genre">'+esc((m.genres||[])[0]||'MANGA / МАНГА')+'</div>'+
+          '<h3>'+esc(m.title)+'</h3>'+
+          '<div class="meta"><span class="chapter-label">Бүлэг '+esc(latest.n)+'</span>'+
+          (rating?'<b class="rt">★ '+esc(rating)+'</b>':'')+
+          (progress>0?'<span class="prog-wrap"><progress class="prog" value="'+progress+'" max="'+m.chapters.length+'"></progress><span class="prog-text">'+progress+'/'+m.chapters.length+'</span></span>':'')+
+          '</div>'+
+        '</div>'+
+      '</a>'+
+      '<button type="button" class="fav-toggle'+(fav?' is-favorite':'')+'" data-fav="'+esc(m.id)+'" aria-pressed="'+fav+'" aria-label="'+(fav?'Хадгалснаас хасах: ':'Хадгалах: ')+esc(m.title)+'">'+
+        '<svg viewBox="0 0 24 24" aria-hidden="true" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21.2l7.8-7.8a5.5 5.5 0 0 0 0-7.8Z"/></svg>'+
+      '</button>'+
+    '</article>';
+  }).join(''):'<p class="empty">Илэрц олдсонгүй. Хайлтын үгээ эсвэл шүүлтүүрээ өөрчилнө үү.</p>';
 }
+
+$('#grid').addEventListener('click',e=>{
+  const b=e.target.closest('button[data-fav]');
+  if(!b)return;
+  const id=b.dataset.fav;
+  toggleFav(id);
+  [...$('#grid').querySelectorAll('button[data-fav]')].find(el=>el.dataset.fav===id)?.focus();
+});
+$('#grid').addEventListener('error',e=>{
+  if(e.target.matches('.cover img'))e.target.remove();
+},true);
 
 function getProgress(m){
   const h=getHist();return h.filter(x=>x.m===m.id).length
@@ -246,7 +291,7 @@ function resume(){
 
 function restoreUrlState(){
   const p=new URLSearchParams(location.search);
-  if(p.has('q')){q=p.get('q');$('#q').value=q}
+  if(p.has('q')){q=p.get('q').trim().toLowerCase();$('#q').value=p.get('q');$('#clearSearch').hidden=!q}
   if(p.has('g')){g=p.get('g')}
   if(p.has('sort')){sort=p.get('sort');$('#sort').value=sort}
 }
@@ -305,7 +350,7 @@ function renderHist(){
 const themeBtn=$('#themeToggle');
 const prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;
 const stored=localStorage.getItem('theme');
-const initTheme=stored||(prefersDark?'dark':'light');
+const initTheme=stored||'dark';
 document.documentElement.setAttribute('data-theme',initTheme);
 themeBtn.onclick=()=>{const c=document.documentElement.getAttribute('data-theme');const n=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('theme',n);};
 
@@ -314,7 +359,7 @@ addEventListener('keydown',e=>{
     if(e.key==='F'){e.preventDefault();$('#favoritesLink').click()}
     if(e.key==='H'){e.preventDefault();$('#historyLink').click()}
   }
-  if(e.key==='?'){e.preventDefault();$('#helpBtn').click()}
+  if(e.key==='?'&&!e.target.closest('input,textarea,select,[contenteditable]')){e.preventDefault();$('#helpBtn').click()}
   if(e.key==='Escape'){favModal.close();histModal.close();helpModal.close()}
 });
 
