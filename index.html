@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="mn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Red Ribbon — Монгол манга уншигч</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="wrap top">
+  <a class="brand" href="index.html">
+    <span class="tab" aria-hidden="true"></span>
+    <span><b class="name">Red Ribbon</b><small>Монгол манга уншигч</small></span>
+  </a>
+</header>
+<main class="wrap">
+  <section class="hero">
+    <h1>Дуртай түүхээ монгол хэлээр уншаарай</h1>
+    <a id="resume" class="resume" hidden></a>
+  </section>
+  <div class="tools">
+    <input id="q" type="search" placeholder="Нэрээр хайх" aria-label="Нэрээр хайх">
+    <select id="sort" aria-label="Эрэмбэлэх">
+      <option value="new">Шинэ бүлгээр</option>
+      <option value="name">Нэрээр</option>
+    </select>
+  </div>
+  <div id="chips" class="chips"></div>
+  <div id="grid" class="grid"></div>
+</main>
+<footer class="wrap foot">Red Ribbon Scans</footer>
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let data=[],q='',g='',sort='new';
+const last=m=>m.chapters[m.chapters.length-1];
+const hue=t=>{let h=0;for(const c of t)h=(h*31+c.charCodeAt(0))%360;return h};
+const isNew=m=>Date.now()-new Date(last(m).date)<14*864e5;
+const href=(m,n)=>`reader.html?m=${encodeURIComponent(m.id)}&c=${n}`;
+
+fetch('manga.json').then(r=>r.json()).then(d=>{
+  data=d.filter(m=>m.chapters&&m.chapters.length);
+  chips();draw();resume();
+}).catch(()=>{$('#grid').innerHTML='<p class="empty">Жагсаалтыг ачаалж чадсангүй. manga.json файлаа шалгана уу.</p>'});
+
+function chips(){
+  const all=[...new Set(data.flatMap(m=>m.genres||[]))];
+  $('#chips').innerHTML=['',...all].map(x=>`<button class="btn" data-g="${esc(x)}" aria-pressed="${x===g}">${x?esc(x):'Бүгд'}</button>`).join('');
+}
+function draw(){
+  let list=data.filter(m=>m.title.toLowerCase().includes(q)&&(!g||(m.genres||[]).includes(g)));
+  list.sort(sort==='name'?(a,b)=>a.title.localeCompare(b.title,'mn'):(a,b)=>new Date(last(b).date)-new Date(last(a).date));
+  $('#grid').innerHTML=list.length?list.map(m=>{
+    const l=last(m),h=hue(m.title);
+    const bg=`style="background:linear-gradient(160deg,hsl(${h} 45% 34%),hsl(${(h+35)%360} 50% 16%))"`;
+    return `<a class="card" href="${href(m,l.n)}">
+      <div class="cover" ${bg}><span>${esc(m.title)}</span>${m.cover?`<img src="${esc(m.cover)}" alt="" loading="lazy" onerror="this.remove()">`:''}${isNew(m)?'<i class="mark"></i>':''}</div>
+      <h2>${esc(m.title)}</h2>
+      <div class="meta">Бүлэг ${esc(l.n)}${isNew(m)?'<b>Шинэ</b>':''}${window.RR&&RR[m.id]?`<b class="rt">★ ${RR[m.id]}</b>`:''}</div></a>`}).join('')
+    :'<p class="empty">Таарах манга олдсонгүй. Хайлтаа өөрчилнө үү.</p>';
+}
+function resume(){
+  try{
+    const r=JSON.parse(localStorage.getItem('rr_last')||'null');
+    const m=r&&data.find(x=>x.id===r.m);
+    if(!m)return;
+    const a=$('#resume');
+    a.href=href(m,r.c);
+    a.innerHTML=`<small>Үргэлжлүүлэх</small><b>${esc(m.title)}</b> · Бүлэг ${esc(r.c)}`;
+    a.hidden=false;
+  }catch(e){}
+}
+$('#q').oninput=e=>{q=e.target.value.trim().toLowerCase();draw()};
+$('#sort').onchange=e=>{sort=e.target.value;draw()};
+$('#chips').onclick=e=>{const b=e.target.closest('button');if(!b)return;g=b.dataset.g;chips();draw()};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script src="social.js"></script>
+</body>
+</html>

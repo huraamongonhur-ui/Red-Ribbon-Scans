@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="mn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Унших — Red Ribbon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="reader">
+<div id="prog"></div>
+<header class="bar">
+  <a class="btn" href="index.html">Жагсаалт</a>
+  <div class="ttl" id="ttl"></div>
+  <select id="ch" aria-label="Бүлэг сонгох"></select>
+  <button class="btn" id="mode" type="button"></button>
+</header>
+<main id="view"></main>
+<nav class="end" id="end" aria-label="Бүлэг солих"></nav>
+<script>
+const $=s=>document.querySelector(s);
+const P=new URLSearchParams(location.search);
+let m,idx=0,ch,urls=[],p=0,mode=localStorage.getItem('rr_mode')||'scroll';
+
+fetch('manga.json').then(r=>r.json()).then(d=>{
+  m=d.find(x=>x.id===P.get('m'))||d[0];
+  if(!m||!m.chapters||!m.chapters.length)return note('Бүлэг олдсонгүй.');
+  idx=Math.max(0,m.chapters.findIndex(c=>String(c.n)===P.get('c')));
+  ch=m.chapters[idx];
+  document.title=`${m.title} · Бүлэг ${ch.n} — Red Ribbon`;
+  $('#ttl').textContent=`${m.title} · Бүлэг ${ch.n}`;
+  $('#ch').innerHTML=m.chapters.map((c,i)=>`<option value="${i}"${i===idx?' selected':''}>Бүлэг ${c.n}${c.title?' — '+c.title:''}</option>`).join('');
+  urls=pagesOf(ch);
+  show();
+}).catch(()=>note('manga.json файлыг ачаалж чадсангүй.'));
+
+function note(t){$('#view').innerHTML=`<p class="note">${t}</p>`}
+
+function pagesOf(c){
+  const s=c.pages||{};
+  if(s.base&&s.count){
+    return Array.from({length:s.count},(_,i)=>s.base+String(i+1).padStart(s.pad||0,'0')+(s.ext||'.jpg'));
+  }
+  // demo pages, so the reader can be tried before real images are added
+  return Array.from({length:5},(_,i)=>'data:image/svg+xml,'+encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1200"><rect width="800" height="1200" fill="#eceef1"/><rect x="40" y="40" width="720" height="1120" fill="none" stroke="#15171D" stroke-width="4"/><text x="400" y="620" font-size="48" font-family="sans-serif" text-anchor="middle" fill="#15171D">Хуудас ${i+1}</text></svg>`));
+}
+
+function show(){
+  const v=$('#view');
+  document.body.classList.toggle('paged',mode==='page');
+  $('#mode').textContent=mode==='page'?'Гүйлгэж унших':'Хуудсаар унших';
+  v.innerHTML='';
+  if(mode==='scroll'){
+    urls.forEach((u,i)=>{const im=new Image();im.className='pg';im.alt='Хуудас '+(i+1);im.loading=i<2?'eager':'lazy';im.src=u;v.append(im)});
+    scrollTo(0,0);p=0;
+  }else{
+    const im=new Image();im.className='pg';im.id='pg';v.append(im);setPage(p);
+  }
+  nav();progress();
+}
+
+function setPage(i){
+  p=Math.min(Math.max(i,0),urls.length-1);
+  const im=$('#pg');im.src=urls[p];im.alt='Хуудас '+(p+1);
+  if(urls[p+1])new Image().src=urls[p+1];
+  nav();progress();save();scrollTo(0,0);
+}
+
+function nav(){
+  const prev=m.chapters[idx-1],next=m.chapters[idx+1];
+  const count=mode==='page'?`<span>${p+1} / ${urls.length}</span>`:'';
+  $('#end').innerHTML=
+    `<button class="btn" id="bp" type="button">${mode==='page'?'Өмнөх хуудас':'Өмнөх бүлэг'}</button>${count}`+
+    `<button class="btn primary" id="bn" type="button">${mode==='page'?'Дараагийн хуудас':'Дараагийн бүлэг'}</button>`;
+  $('#bp').disabled=mode==='scroll'&&!prev||mode==='page'&&p===0&&!prev;
+  $('#bn').disabled=mode==='scroll'&&!next||mode==='page'&&p===urls.length-1&&!next;
+  $('#bp').onclick=()=>mode==='page'?step(-1):chapter(-1);
+  $('#bn').onclick=()=>mode==='page'?step(1):chapter(1);
+}
+
+function step(d){
+  const j=p+d;
+  if(j<0||j>=urls.length)return chapter(d);
+  setPage(j);
+}
+function chapter(d){
+  const c=m.chapters[idx+d];
+  if(c)location.search=`?m=${encodeURIComponent(m.id)}&c=${c.n}`;
+}
+function progress(){
+  let r;
+  if(mode==='page')r=urls.length>1?p/(urls.length-1):1;
+  else{const h=document.documentElement;r=h.scrollHeight>innerHeight?scrollY/(h.scrollHeight-innerHeight):1}
+  $('#prog').style.width=Math.min(1,Math.max(0,r))*100+'%';
+}
+function save(){
+  try{localStorage.setItem('rr_last',JSON.stringify({m:m.id,c:ch.n,p}))}catch(e){}
+}
+
+let tick=false;
+addEventListener('scroll',()=>{
+  if(mode!=='scroll'||tick)return;
+  tick=true;
+  requestAnimationFrame(()=>{
+    tick=false;progress();
+    const ims=[...document.querySelectorAll('.pg')];
+    const i=ims.findIndex(im=>im.getBoundingClientRect().bottom>innerHeight*.4);
+    p=i<0?ims.length-1:i;save();
+  });
+});
+$('#ch').onchange=e=>chapter(e.target.value-idx);
+$('#mode').onclick=()=>{mode=mode==='page'?'scroll':'page';try{localStorage.setItem('rr_mode',mode)}catch(e){}show()};
+$('#view').onclick=e=>{if(mode==='page')step(e.clientX>innerWidth/2?1:-1)};
+addEventListener('keydown',e=>{
+  if(mode!=='page'||e.target.tagName==='SELECT')return;
+  if(e.key==='ArrowRight')step(1);
+  if(e.key==='ArrowLeft')step(-1);
+});
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script src="social.js"></script>
+</body>
+</html>
