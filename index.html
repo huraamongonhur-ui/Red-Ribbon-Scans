@@ -326,11 +326,13 @@ function renderFavs(){
   $('#favList').innerHTML=favs.length?favs.map(id=>{
     const m=data.find(x=>x.id===id);if(!m)return '';
     const l=last(m), prog=getProgress(m);
-    return `<a class="modal-item" href="${href(m,l.n)}" data-manga="${esc(m.id)}">
+    return `<div class="modal-item modal-item--favorite" data-manga="${esc(m.id)}">
+      <a class="modal-entry" href="${href(m,l.n)}">
       <div class="modal-cover" style="background:linear-gradient(160deg,hsl(${hue(m.title)} 45% 34%),hsl(${(hue(m.title)+35)%360} 50% 16%))">${m.cover?`<img src="${esc(m.cover.replace(/^\/+/, ''))}" loading="lazy" onerror="this.remove()">`:''}</div>
       <div class="modal-info"><strong>${esc(m.title)}</strong><span>\u0411элэг ${esc(l.n)} ${prog>0?`\u00b7 ${prog}/${m.chapters.length} уншсан`:''}</span></div>
-      <button class="fav-remove" data-id="${esc(m.id)}" aria-label="Хайртаас хасах">\u2715</button>
-    </a>`}).join(''):'<p class="empty">Хайртал хоосон \u0431айна.</p>';
+      </a>
+      <button class="fav-remove" type="button" data-id="${esc(m.id)}" aria-label="Хайртаас хасах">\u2715</button>
+    </div>`}).join(''):'<p class="empty">Хайртал хоосон \u0431айна.</p>';
   $$('#favList .fav-remove').forEach(b=>b.onclick=e=>{e.stopPropagation();toggleFav(b.dataset.id);renderFavs();updateFavCount()});
 }
 
