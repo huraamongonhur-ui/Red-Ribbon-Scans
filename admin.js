@@ -94,6 +94,7 @@
   function resetMangaForm() {
     activeId=null;current=null;
     $('#mangaForm').reset();
+    for (const el of ['#mangaTitle','#mangaGenres','#mangaCover']) $(el).disabled = false;
     $('#mangaId').readOnly=false;
     $('#mangaFormHeading').textContent='Шинэ манга нэмэх';
     $('#saveManga').disabled=false;
