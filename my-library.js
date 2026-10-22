@@ -8,6 +8,12 @@
   let sb = null, store = null, tab = 'all', currentId = null;
 
   const tell = text => { message.textContent = text; };
+  const getLocalFavorites = () => {
+    try {
+      const values=JSON.parse(localStorage.getItem('rr_favs')||'[]');
+      return Array.isArray(values) ? [...new Set(values.filter(id=>typeof id==='string'))] : [];
+    } catch {return [];}
+  };
   const sel = (name,text,value) => {
     const element = document.createElement('option');
     element.value=value;element.textContent=text;return element;
@@ -39,14 +45,22 @@
     $('#myCountReading').textContent=String(counts.reading);
     $('#myCountCompleted').textContent=String(counts.completed);
     $('#myCountPlanned').textContent=String(counts.planned);
-    tell('Таны жагсаалт аккаунттай холбогдсон. Өөр төхөөрөмжөөс нэвтрэхэд мөн харагдана.');
+    $('#myCountFavorites').textContent=String(store.getFavoriteCount());
+    tell(store.isFavoritesReady()
+      ? 'Жагсаалт болон зүрхэлсэн манганууд аккаунттай синк хийгдэнэ.'
+      : 'Ангиллууд ажиллаж байна. Зүрхэлсэн мангануудаа синк хийхийн тулд favorites_cloud.sql-г Supabase дээр Run хийнэ үү.');
+    const localFavs = getLocalFavorites().filter(id => !store.isFavorite(id) && catalogue.has(id));
+    $('#myLibraryImport').hidden = !store.isFavoritesReady() || !localFavs.length;
     $('#myLibraryTabs').querySelectorAll('[data-tab]').forEach(button => {
       button.setAttribute('aria-pressed',String(button.dataset.tab === tab));
     });
 
     const filter = $('#myLibrarySearch').value.trim().toLocaleLowerCase();
-    const entries = store.getEntries()
-      .filter(item => (tab === 'all' || item.status === tab))
+    const ids = new Set([...store.getEntries().map(x=>x.id),...store.getFavoriteIds()]);
+    const entries = [...ids].map(id => ({
+      id, status:store.getStatus(id), favorite:store.isFavorite(id)
+    }))
+      .filter(item => tab==='all' || (tab==='favorites' ? item.favorite : item.status===tab))
       .filter(item => (catalogue.get(item.id)?.title || item.id).toLocaleLowerCase().includes(filter))
       .sort((a,b) => (catalogue.get(a.id)?.title || a.id).localeCompare(catalogue.get(b.id)?.title || b.id,'mn'));
     const grid = $('#myLibraryGrid');
@@ -90,7 +104,8 @@
       for(const [value,heading] of Object.entries(window.RRMyLibrary.labels)) {
         select.append(sel('status',heading,value));
       }
-      select.append(sel('status','Жагсаалтаас хасах',''));
+      select.prepend(sel('status','Ангилал сонгох…',''));
+
       select.value=item.status;
       select.onchange=async () => {
         const previous=item.status;
@@ -101,6 +116,17 @@
       };
       label.append(select);
       information.append(label);
+      const heart = document.createElement('button');
+      heart.type='button';
+      heart.className='my-library-favorite'+(item.favorite?' is-favorite':'');
+      heart.textContent=item.favorite?'♥ Хайртаас хасах':'♡ Хайртад нэмэх';
+      heart.setAttribute('aria-pressed',String(item.favorite));
+      heart.onclick=async()=>{
+        heart.disabled=true;
+        try { await store.setFavorite(item.id,!store.isFavorite(item.id)); }
+        catch(error){ alert('Зүрхлэхэд алдаа гарлаа: '+(error?.message||'Алдаа'));heart.disabled=false; }
+      };
+      information.append(heart);
       const last = recent.get(item.id);
       const chapter = last?.chapter || manga?.chapters?.[0]?.n;
       if (manga && chapter != null) {
@@ -140,13 +166,105 @@
     render();
   }
 
+  const picker = $('#addMangaDialog');
+  const pickerSearch = $('#addMangaSearch');
+  const pickerStatus = $('#addMangaStatus');
+  $('#myLibraryAdd').onclick = () => {
+    pickerSearch.value = '';
+    renderPicker();
+    if (!picker.open) picker.showModal();
+    pickerSearch.focus();
+  };
+  $('#addMangaClose').onclick = () => picker.close();
+  picker.addEventListener('click',event => {if(event.target===picker)picker.close();});
+  pickerSearch.oninput=renderPicker;
+
+  function renderPicker() {
+    const box=$('#addMangaResults');
+    box.replaceChildren();
+    const q=pickerSearch.value.trim().toLocaleLowerCase();
+    const candidates=[...catalogue.values()]
+      .filter(m=>m.chapters?.length && m.title.toLocaleLowerCase().includes(q))
+      .sort((a,b)=>a.title.localeCompare(b.title,'mn'))
+      .slice(0,40);
+    pickerStatus.textContent=candidates.length
+      ? 'Манга сонгоод ангиллаа өөрчлөх эсвэл зүрхэлж болно.'
+      : 'Тохирох манга алга.';
+    for(const manga of candidates){
+      const row=document.createElement('div');
+      row.className='my-library-picker-row';
+      const text=document.createElement('div');
+      text.className='my-library-picker-title';
+      const name=document.createElement('strong');
+      name.textContent=manga.title;
+      const info=document.createElement('small');
+      info.textContent=manga.chapters.length+' бүлэг';
+      text.append(name,info);
+      const actions=document.createElement('div');
+      actions.className='my-library-picker-actions';
+      const select=document.createElement('select');
+      select.setAttribute('aria-label',manga.title+' — жагсаалт');
+      select.append(sel('status','Ангилалгүй',''));
+      for(const [value,title] of Object.entries(window.RRMyLibrary.labels)){
+        select.append(sel('status',title,value));
+      }
+      select.value=store?.getStatus(manga.id)||'';
+      select.onchange=async()=>{
+        select.disabled=true;
+        try {
+          await store.setStatus(manga.id,select.value);
+          pickerStatus.textContent='Жагсаалт хадгалагдлаа.';
+        } catch(error){
+          select.value=store.getStatus(manga.id)||'';
+          pickerStatus.textContent='Хадгалж чадсангүй: '+(error?.message||'Алдаа');
+        } finally{select.disabled=false;}
+      };
+      const heart=document.createElement('button');
+      heart.type='button';heart.className='btn my-library-picker-heart';
+      const refresh=()=>{
+        heart.textContent=store.isFavorite(manga.id)?'♥':'♡';
+        heart.setAttribute('aria-pressed',String(store.isFavorite(manga.id)));
+        heart.title=store.isFavorite(manga.id)?'Хайртаас хасах':'Хайртад нэмэх';
+      };
+      refresh();
+      heart.onclick=async()=>{
+        heart.disabled=true;
+        try {
+          await store.setFavorite(manga.id,!store.isFavorite(manga.id));
+          refresh();
+          pickerStatus.textContent='Зүрхний сонголт хадгалагдлаа.';
+        }catch(error){pickerStatus.textContent='Зүрхлэхэд алдаа: '+(error?.message||'Алдаа');}
+        finally{heart.disabled=false;}
+      };
+      actions.append(select,heart);
+      row.append(text,actions);box.append(row);
+    }
+  }
+
+  $('#myLibraryImport').onclick=async()=>{
+    const local=getLocalFavorites().filter(id=>catalogue.has(id) && !store.isFavorite(id));
+    if(!local.length)return;
+    if(!confirm(local.length+' ширхэг энэ төхөөрөмжийн зүрхэлсэн мангыг одоогийн аккаунтад нэмэх үү?'))return;
+    const button=$('#myLibraryImport');button.disabled=true;
+    let succeeded=0;
+    try {
+      for(const id of local){
+        await store.setFavorite(id,true);
+        succeeded++;
+      }
+      tell(succeeded+' зүрхэлсэн манга аккаунттай синк хийгдлээ. Хуучин жагсаалт энэ төхөөрөмж дээр хэвээр байна.');
+    }catch(error){
+      tell(succeeded+' манга импортлогдлоо, цааш үргэлжлүүлэхэд алдаа гарлаа: '+(error?.message||'Алдаа'));
+    }finally{button.disabled=false;}
+  };
+
   $('#myLibraryTabs').onclick=event => {
     const button=event.target.closest('[data-tab]');
     if (!button) return;
     tab=button.dataset.tab;render();
   };
   $('#myLibrarySearch').oninput=render;
-  window.addEventListener('rr-library-change',render);
+  window.addEventListener('rr-library-change',()=>{render();if(picker.open)renderPicker()});
 
   try {
     sb=await window.RRCatalog.client();
