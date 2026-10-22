@@ -1,4 +1,4 @@
-const CACHE_NAME='red-ribbon-v5';
+const CACHE_NAME='red-ribbon-v6';
 const STATIC_ASSETS=[
   './',
   './index.html',
@@ -30,8 +30,8 @@ self.addEventListener('fetch',e=>{
   if(url.origin!==self.location.origin)return;
   // Never cache runtime configuration or API responses.
   if(url.pathname.startsWith('/api/'))return;
-  // Keep manga metadata and HTML fresh; only fall back to cached data offline.
-  if(e.request.mode==='navigate'||url.pathname.endsWith('/manga.json')){
+  // Keep HTML, metadata, JS and CSS fresh; use cached assets only when offline.
+  if(e.request.mode==='navigate'||url.pathname.endsWith('/manga.json')||/\.(?:js|css)$/.test(url.pathname)){
     e.respondWith(fetch(e.request).then(res=>{
       if(res.ok){const copy=res.clone();caches.open(CACHE_NAME).then(cache=>cache.put(e.request,copy));}
       return res;
