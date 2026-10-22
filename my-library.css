@@ -1,0 +1,53 @@
+/* My Library 2.0 — responsive private bookshelf */
+.my-library-page{min-height:100vh;background:var(--paper)}
+.library-top{padding-bottom:18px}
+.library-nav{display:flex;align-items:center;gap:18px;font-size:13px;font-weight:800}
+.library-nav a{padding:8px 0;color:var(--mute)}
+.library-nav [aria-current=page]{color:var(--red)}
+.my-library-main{padding-top:43px;padding-bottom:80px}
+.my-library-hero{margin-bottom:25px;padding:36px 36px 30px;border-radius:22px;border:1px solid var(--line);background:var(--card)}
+.my-library-hero h1{font-size:clamp(32px,6vw,59px);max-width:none;margin:10px 0 12px;letter-spacing:-.055em}
+.my-library-hero h1 span{color:var(--red)}
+.my-library-hero p{color:var(--mute);font-size:14px;line-height:1.8;margin:0 0 17px;max-width:650px}
+.my-library-user{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.02em;color:var(--red);background:rgba(229,56,79,.09);padding:8px 13px;border:1px solid rgba(229,56,79,.25);border-radius:20px}
+.my-library-message{font-size:12px;color:var(--mute);line-height:1.75;margin:0 0 22px;min-height:24px}
+.my-library-login{display:inline-block;margin-top:7px}
+.my-library-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin-bottom:27px}
+.my-library-stats>div{min-width:0;border:1px solid var(--line);border-radius:15px;padding:20px 17px;background:var(--card)}
+.my-library-stats strong{display:block;color:var(--ink);font-size:29px;line-height:1.2;font-weight:800}
+.my-library-stats span{display:block;color:var(--mute);font-size:11px;margin-top:5px}
+.my-library-tools{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:15px;margin:0 0 23px}
+.my-library-tabs{display:flex;gap:8px;flex-wrap:wrap}
+.my-library-tab{font:inherit;font-size:12px;font-weight:800;padding:10px 15px;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:12px;cursor:pointer}
+.my-library-tab:hover{border-color:var(--red)}
+.my-library-tab[aria-pressed=true]{color:#fff;background:var(--red);border-color:var(--red)}
+#myLibrarySearch{min-width:195px;width:min(270px,100%);border-radius:12px}
+.my-library-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:16px}
+.my-library-card{min-width:0;display:grid;grid-template-columns:109px minmax(0,1fr);gap:15px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px}
+.my-library-cover{min-height:157px;border-radius:11px;background:linear-gradient(145deg,#a72b4b,#1a233c);overflow:hidden}
+.my-library-cover img{display:block;width:100%;height:100%;object-fit:cover}
+.my-library-info{display:flex;flex-direction:column;min-width:0;gap:8px}
+.my-library-info h2{font-size:16px;line-height:1.35;letter-spacing:-.025em;margin:3px 0 0;overflow-wrap:anywhere}
+.my-library-info p{font-size:11px;color:var(--mute);margin:0}
+.my-library-label{display:flex;flex-direction:column;font-weight:700;font-size:11px;color:var(--mute);gap:5px;margin-top:auto}
+.my-library-label select{display:block;width:100%;min-width:0;padding:8px 12px;border-radius:9px;font-size:12px;color:var(--ink);background:var(--paper)}
+.my-library-read{display:block;font-size:12px;text-align:center;padding:9px 12px;border-radius:9px}
+.my-library-empty{grid-column:1/-1;border:1px dashed var(--line);border-radius:16px;padding:50px 26px;background:var(--card);color:var(--mute);text-align:center;font-size:14px;line-height:1.75}
+.my-library-add{display:inline-block;margin-top:27px;font-size:12px;border-radius:12px}
+@media(max-width:700px){
+  .my-library-main{padding-top:21px}
+  .my-library-hero{padding:26px 23px}
+  .my-library-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  .my-library-stats>div{padding:16px}
+  .my-library-tools{align-items:stretch}
+  #myLibrarySearch{width:100%}
+}
+@media(max-width:440px){
+  .library-top{flex-wrap:wrap}
+  .library-nav{width:100%;gap:18px;justify-content:flex-start}
+  .my-library-hero h1{font-size:38px}
+  .my-library-grid{grid-template-columns:1fr}
+  .my-library-card{grid-template-columns:96px minmax(0,1fr);gap:11px}
+  .my-library-tabs{gap:6px}
+  .my-library-tab{padding:8px 10px;font-size:11px}
+}
