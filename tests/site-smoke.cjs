@@ -43,7 +43,7 @@ test('Favorites popup handles empty, normal and deleted manga', () => {
   const render = new Function(...Object.keys(bindings),renderSource+';return renderFavs;')
     (...Object.values(bindings));
   render();
-  assert.match(list.innerHTML, /Хайртал хоосон/);
+  assert.match(list.innerHTML, /Дуртай манганы жагсаалт хоосон/);
   assert.equal(typeof button.onclick, 'function');
   ids=['old-manga'];
   available.push({id:'old-manga',title:'Existing manga',chapters:[{n:1}]});
@@ -94,4 +94,23 @@ test('Reader terminal failures end social loading retries', () => {
   assert.match(inline('reader.html'),/RR_READER_STATE='error'/);
   assert.match(read('social.js'),/RR_READER_STATE !== 'error'/);
   assert.match(read('sw.js'),/red-ribbon-v11/);
+});
+
+
+test('homepage HTML has real Mongolian characters, not literal Unicode escape codes', () => {
+  const html=read('index.html');
+  const beforeScript=html.split('<script')[0];
+  assert.doesNotMatch(beforeScript,/\\u[0-9a-f]{4}/i);
+  assert.match(beforeScript, /Уншсан түүх/);
+  assert.match(beforeScript, /Тусламж/);
+  assert.match(beforeScript, /Дуртай манга/);
+  assert.match(beforeScript, /Бүлэг/);
+  assert.doesNotMatch(html,/Бэлэг|Үргэлжлэлэх|туух|Двойн товш/);
+});
+
+test('cloud Favorites message accurately describes account syncing', () => {
+  const profile=read('profile.js');
+  assert.doesNotMatch(profile,/Дуртай манга зөвхөн энэ төхөөрөмж дээр/);
+  assert.match(profile,/isFavoritesReady/);
+  assert.match(read('my-library.html'),/♥ Дуртай манга/);
 });
