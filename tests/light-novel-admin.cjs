@@ -22,7 +22,7 @@ test('migration includes RLS on all draft/editorial and reader tables',()=>{
  const extra=read('light_novel_admin_extra.sql');
  for(const table of ['ln_novels','ln_chapters','ln_reviewers','ln_glossary','ln_review_notes',
                      'ln_chapter_versions','ln_subscriptions','ln_read_events']){
-  assert.match(sql,new RegExp('alter table public\\\\.'+table+' enable row level security'));
+  assert.match(sql,new RegExp('alter table public\\.'+table+' enable row level security'));
  }
  assert.match(sql,/publication_status='published'/);
  assert.match(sql,/status='scheduled' and release_at<=now\(\)/);
