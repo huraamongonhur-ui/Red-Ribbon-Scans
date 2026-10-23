@@ -2,15 +2,21 @@
    Content is passed through textContent rather than interpolated into HTML. */
 (() => {
 "use strict";
-const novel = window.RR_LIGHT_NOVEL;
-if (!novel) return;
+const novels = Array.isArray(window.RR_LIGHT_NOVELS) ? window.RR_LIGHT_NOVELS : [];
+const selectedId = new URLSearchParams(location.search).get("novel");
+const novel = novels.find(item => item && item.id === selectedId) || (!selectedId ? novels[0] : null);
+if (!novel && document.body.dataset.page !== "catalog") {
+  const main=document.querySelector("main");
+  if (main) main.textContent="Зохиол олдсонгүй. Light Novel каталог руу буцна уу.";
+  return;
+}
 const $ = (s, root=document) => root.querySelector(s);
 const $$ = (s, root=document) => Array.from(root.querySelectorAll(s));
 const storage = {
   get(key, fallback) { try { const raw=localStorage.getItem(key); return raw===null?fallback:JSON.parse(raw); } catch { return fallback; } },
   set(key, value) { try { localStorage.setItem(key,JSON.stringify(value)); } catch { /* private mode / quota */ } }
 };
-const prefix = "rr-ln-v2-"+novel.id+"-";
+const prefix = "rr-ln-v2-"+(novel?.id || "catalog")+"-";
 const el = (tag, attrs={}, text="") => {
   const node=document.createElement(tag);
   Object.entries(attrs).forEach(([key,value]) => {
@@ -21,9 +27,59 @@ const el = (tag, attrs={}, text="") => {
   if (text) node.textContent=text;
   return node;
 };
-const chapters = novel.volumes.flatMap(volume => volume.chapters.map(chapter=>({...chapter, volumeNumber:volume.number})));
-const chapterUrl = id => "light-novel-reader.html?c="+encodeURIComponent(id);
+const chapters = novel ? novel.volumes.flatMap(volume => volume.chapters.map(chapter=>({...chapter, volumeNumber:volume.number}))) : [];
+const detailUrl = id => "light-novel-detail.html?novel="+encodeURIComponent(id);
+const chapterUrl = id => "light-novel-reader.html?novel="+encodeURIComponent(novel.id)+"&c="+encodeURIComponent(id);
 const persistedProgress = () => storage.get(prefix+"progress", null);
+
+
+function initCatalog(){
+  const search=$("#novelSearch");
+  const genre=$("#novelGenre");
+  const results=$("#novelCatalogGrid");
+  const count=$("#novelCatalogCount");
+  const empty=$("#novelCatalogEmpty");
+  const genres=Array.from(new Set(novels.flatMap(n=>Array.isArray(n.genres)?n.genres:[]))).sort((a,b)=>a.localeCompare(b,"mn"));
+  genres.forEach(name=>genre.append(el("option",{value:name},name)));
+  const readyCount=novels.filter(n=>n.volumes?.some(v=>v.chapters?.length)).length;
+  $("#novelCatalogTotal").textContent=String(novels.length);
+  $("#novelCatalogReadable").textContent=String(readyCount);
+
+  const render=()=>{
+    const query=search.value.trim().toLocaleLowerCase();
+    const selected=genre.value;
+    const matches=novels.filter(n=>{
+      if(selected && !n.genres.includes(selected))return false;
+      return [n.title,n.subtitle,n.author,...n.genres].filter(Boolean).join(" ").toLocaleLowerCase().includes(query);
+    });
+    results.replaceChildren();
+    empty.hidden=matches.length>0;
+    count.textContent=matches.length+" зохиол";
+    for(const book of matches){
+      const article=el("article",{className:"ln-catalog-card"});
+      const link=el("a",{className:"ln-catalog-cover",href:detailUrl(book.id)});
+      link.append(el("img",{src:book.cover,alt:book.title+" — нүүр зургийн загвар",loading:"lazy",width:"600",height:"880"}));
+      const info=el("div",{className:"ln-catalog-content"});
+      info.append(el("div",{className:"ln-kicker"},book.status||"Танилцуулга"));
+      const h=el("h2");
+      h.append(el("a",{href:detailUrl(book.id)},book.title));
+      info.append(h,el("p",{className:"ln-muted ln-catalog-subtitle"},book.subtitle||""));
+      const tags=el("div",{className:"ln-tags"});
+      (book.genres||[]).slice(0,3).forEach(t=>tags.append(el("span",{className:"ln-tag"},t)));
+      info.append(tags);
+      const actions=el("div",{className:"ln-catalog-actions"});
+      actions.append(el("a",{className:"ln-button small",href:detailUrl(book.id)},"Дэлгэрэнгүй →"));
+      const first=book.volumes?.flatMap(v=>v.chapters||[])[0];
+      if(first)actions.append(el("a",{className:"ln-button small primary",href:"light-novel-reader.html?novel="+encodeURIComponent(book.id)+"&c="+encodeURIComponent(first.id)},"Унших"));
+      info.append(actions);
+      article.append(link,info);
+      results.append(article);
+    }
+  };
+  search.addEventListener("input",render);
+  genre.addEventListener("change",render);
+  render();
+}
 
 function initDetail(){
   $("#novelTitle").textContent=novel.title;
@@ -39,9 +95,15 @@ function initDetail(){
   for (const genre of novel.genres) $("#novelGenres").append(el("span",{className:"ln-tag"},genre));
 
   const saved = persistedProgress();
+  $("#detailBack").href="light-novels.html";
   const begin = $("#startReading");
-  begin.href=chapterUrl(saved && chapters.some(ch=>ch.id===saved.chapterId)?saved.chapterId:chapters[0].id);
-  begin.textContent=saved?"↗ Үргэлжлүүлэн унших":"↗ Уншиж эхлэх";
+  const firstChapter=chapters[0];
+  if(firstChapter){
+    begin.href=chapterUrl(saved && chapters.some(ch=>ch.id===saved.chapterId)?saved.chapterId:firstChapter.id);
+    begin.textContent=saved?"↗ Үргэлжлүүлэн унших":"↗ Уншиж эхлэх";
+  } else {
+    begin.removeAttribute("href");begin.setAttribute("aria-disabled","true");begin.textContent="Унших бүлэг хараахан алга";
+  }
   const bookmark=$("#bookmarkNovel");
   const redrawBookmark=()=>{
     const chosen=!!storage.get(prefix+"bookmark",false);
@@ -97,6 +159,7 @@ function initDetail(){
 }
 
 function initReader(){
+  $("#readerBack").href=detailUrl(novel.id);
   const requested=new URLSearchParams(location.search).get("c");
   const index=Math.max(0,chapters.findIndex(ch=>ch.id===requested));
   const chapter=chapters[index];
@@ -218,6 +281,7 @@ function initReader(){
   } else sync();
 }
 
-if(document.body.dataset.page==="detail")initDetail();
+if(document.body.dataset.page==="catalog")initCatalog();
+else if(document.body.dataset.page==="detail")initDetail();
 else if(document.body.dataset.page==="reader")initReader();
 })();
