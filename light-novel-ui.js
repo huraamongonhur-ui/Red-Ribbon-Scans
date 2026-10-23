@@ -191,6 +191,7 @@ function initReader(){
     const pct=Math.min(100,Math.max(0,y/distance*100));
     track.style.width=pct.toFixed(1)+"%";
     percentage.textContent=Math.round(pct)+"% уншсан";
+    $(".ln-progress-track").setAttribute("aria-valuenow",String(Math.round(pct)));
     const diff=y-lastY;
     if(Math.abs(diff)>5){
       if(y<90 || diff<0 || !settingsPanel.hidden) nav.classList.remove("is-hidden");
