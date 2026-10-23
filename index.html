@@ -14,6 +14,7 @@
 <link rel="stylesheet" href="style.css?v=discover-1">
 <link rel="stylesheet" href="features.css?v=features-8">
 <link rel="stylesheet" href="extras.css?v=rr4">
+<link rel="stylesheet" href="simple-comix.css?v=clean-1">
 <link rel="manifest" href="manifest.json">
 </head>
 <body>
@@ -57,8 +58,8 @@
   <section class="hero" id="home" aria-labelledby="heroTitle">
     <div class="hero-copy">
       <span class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> RED RIBBON SCANS · МОНГОЛООР</span>
-      <h1 id="heroTitle">Түүх бүр <span>шинэ ертөнц.</span></h1>
-      <p class="hero-subtitle">Дуртай мангагаа монгол хэлээр унш. Шинэ бүлгүүдийг нээж, уншсан газраасаа үргэлжлүүлээрэй.</p>
+      <h1 id="heroTitle">Монгол манга. <span>Шууд унш.</span></h1>
+      <p class="hero-subtitle">Мангагаа сонгоод, хүссэн бүлгээ унш. Уншсан газраасаа үргэлжлүүлэхэд амар.</p>
       <div class="hero-actions">
         <a class="btn primary hero-cta" href="#library">Манга үзэх <span aria-hidden="true">↗</span></a>
         <a id="resume" class="resume" hidden></a>
@@ -88,16 +89,11 @@
       </a>
     </div>
   </section>
-  <section class="home-feature-section" id="latest" aria-labelledby="latestHeading">
-    <div class="library-heading"><div><span class="section-kicker">LATEST UPDATES</span>
-      <h2 id="latestHeading">Шинэ бүлгүүд</h2>
-      <p>Сүүлд нийтлэгдсэн бүлгүүдийг эндээс уншаарай.</p></div></div>
-    <div id="latestUpdates" class="home-feature-list" aria-live="polite"></div>
-  </section>
+  <div class="browse-layout">
   <section class="library" id="library" aria-labelledby="libraryTitle">
     <div class="library-heading">
       <div>
-        <span class="section-kicker">THE COLLECTION</span>
+        <span class="section-kicker">КАТАЛОГ</span>
         <h2 id="libraryTitle">Манга цуглуулга<span class="heading-dot">.</span></h2>
         <p>Дараагийн унших түүхээ эндээс олоорой.</p>
       </div>
@@ -129,8 +125,15 @@
     <div id="chips" class="chips" role="group" aria-label="Жанраар шүүх"></div>
     <div id="grid" class="grid" role="list" aria-live="polite"></div>
   </section>
+  <aside class="home-feature-section" id="latest" aria-labelledby="latestHeading">
+    <div class="library-heading"><div><span class="section-kicker">ШИНЭЧЛЭЛТ</span>
+      <h2 id="latestHeading">Шинэ бүлгүүд</h2>
+      <p>Сүүлд нийтлэгдсэн бүлгүүдийг эндээс уншаарай.</p></div></div>
+    <div id="latestUpdates" class="home-feature-list" aria-live="polite"></div>
+  </aside>
+  </div>
   <section class="home-feature-section" id="forYou" aria-labelledby="forYouHeading">
-      <span class="section-kicker">FOR YOU</span><h2 id="forYouHeading">Танд санал болгох манга</h2>
+      <span class="section-kicker">САНАЛ БОЛГОХ</span><h2 id="forYouHeading">Танд санал болгох манга</h2>
       <p>Энэ төхөөрөмж дээрх уншсан түүх болон дуртай жанраас санал болгоно. AI, серверийн нэмэлт зардалгүй.</p>
       <div id="recommendations" class="home-feature-list" aria-live="polite"></div>
   </section>
@@ -307,7 +310,7 @@ function draw(){
     const latest=last(m),h=hue(m.title),fav=isFav(m.id),progress=getProgress(m);
     const next=window.RRDiscover.nextChapter(m,getHist());
     const bg='style="background:linear-gradient(160deg,hsl('+h+' 50% 31%),hsl('+((h+35)%360)+' 49% 15%))"';
-    const coverImg=m.cover?'<img src="'+esc(m.cover.replace(/^\/+/, ''))+'" alt="" loading="lazy" decoding="async">':'';
+    const coverImg=m.cover?'<img src="'+esc(m.cover.replace(/^\/+/, ''))+'" alt="" loading="lazy" decoding="async" onerror="this.remove()">':'';
     const rating=window.RR?.[m.id];
     return '<article class="card" role="listitem">'+
       '<a class="card-link" href="'+href(m,latest.n)+'" aria-label="'+esc(m.title)+' · Бүлэг '+esc(latest.n)+'">'+
@@ -326,11 +329,11 @@ function draw(){
       '<button type="button" class="fav-toggle'+(fav?' is-favorite':'')+'" data-fav="'+esc(m.id)+'" aria-pressed="'+fav+'" aria-label="'+(fav?'Хадгалснаас хасах: ':'Хадгалах: ')+esc(m.title)+'">'+
         '<svg viewBox="0 0 24 24" aria-hidden="true" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21.2l7.8-7.8a5.5 5.5 0 0 0 0-7.8Z"/></svg>'+
       '</button>'+
-      '<div class="card-library-picker"><label for="library-'+esc(m.id)+'">Миний сан</label>'+
+      '<details class="card-manage"><summary>＋ Миний сан</summary><div class="card-library-picker"><label for="library-'+esc(m.id)+'">Миний сан</label>'+
       '<select id="library-'+esc(m.id)+'" data-library="'+esc(m.id)+'" aria-label="'+esc(m.title)+' — жагсаалт">'+
       '<option value=""'+(!window.RRLibraryStore?.getStatus(m.id)?' selected':'')+'>Жагсаалтад нэмэх…</option>'+
       Object.entries(window.RRMyLibrary.labels).map(([key,label])=>'<option value="'+key+'"'+(window.RRLibraryStore?.getStatus(m.id)===key?' selected':'')+'>'+esc(label)+'</option>').join('')+
-      '</select></div>'+
+      '</select></div></details>'+
       '<div class="card-quick-actions">'+
         '<a class="btn" href="manga.html?m='+encodeURIComponent(m.id)+'" aria-label="Мэдээлэл: '+esc(m.title)+'">Мэдээлэл</a>'+
         '<a class="btn card-next" href="'+href(m,next.chapter)+'" aria-label="'+esc(next.label+': '+m.title)+'">'+

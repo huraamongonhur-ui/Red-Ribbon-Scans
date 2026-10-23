@@ -18,11 +18,20 @@
    const latest=$('#latestUpdates');latest.replaceChildren();
    const items=window.RRFeatures.updates(all,9);
    for(const item of items){
-     const card=make('article','');card.className='home-feature-card';
-     card.append(make('p',item.date||'Шинэ бүлэг'),make('h3',item.title));
-     const a=make('a','Бүлэг '+item.chapter+' →');
-     a.href='reader.html?m='+encodeURIComponent(item.manga_id)+'&c='+encodeURIComponent(item.chapter);
-     card.append(a);latest.append(card);
+     const article=document.createElement('article');article.className='home-update-card';
+     const link=document.createElement('a');link.className='home-update-link';
+     link.href='reader.html?m='+encodeURIComponent(item.manga_id)+'&c='+encodeURIComponent(item.chapter);
+     const thumb=document.createElement('span');thumb.className='home-update-cover';
+     if(item.cover){
+       const img=document.createElement('img');
+       img.src=item.cover;img.alt='';img.loading='lazy';img.decoding='async';
+       img.onerror=()=>img.remove();thumb.append(img);
+     }
+     const info=document.createElement('span');info.className='home-update-content';
+     const title=make('strong',item.title),chapter=make('span','Бүлэг '+item.chapter);
+     const date=make('small',item.date||'Шинэ');
+     info.append(title,chapter,date);link.append(thumb,info);article.append(link);
+     latest.append(article);
    }
    if(!items.length)latest.textContent='Одоогоор бүлэг алга.';
    const out=$('#recommendations');out.replaceChildren();

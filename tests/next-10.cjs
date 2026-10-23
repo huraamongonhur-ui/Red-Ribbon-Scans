@@ -126,7 +126,7 @@ test('cross-device library combines reading history and synced chapter progress'
 
 test('service worker precaches all new routes and scripts',()=>{
  const src=read('sw.js');
- assert.match(src,/red-ribbon-v16/);
+ assert.match(src,/red-ribbon-v17/);
  for(const file of ['stats.html','stats.js','site-extras.js','reader-extras.js','admin-bulk.js','admin-activity.js','extras.css']){
    assert.ok(src.includes("'./"+file+"'"),file);
  }
