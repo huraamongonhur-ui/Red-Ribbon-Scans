@@ -12,6 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css?v=discover-1">
+<link rel="stylesheet" href="features.css?v=features-8">
 <link rel="manifest" href="manifest.json">
 </head>
 <body>
@@ -26,6 +27,7 @@
       <a href="#library">Манга</a>
       <a href="#about">Бидний тухай</a>
       <a href="my-library.html">Миний сан</a>
+      <a href="feedback.html">Манга хүсэлт</a>
     </nav>
     <div class="header-actions">
       <a class="btn my-library-header" href="my-library.html" title="Миний манганы сан" aria-label="Миний манганы сан">📚 <span>Миний сан</span></a>
@@ -82,6 +84,12 @@
       </a>
     </div>
   </section>
+  <section class="home-feature-section" id="latest" aria-labelledby="latestHeading">
+    <div class="library-heading"><div><span class="section-kicker">LATEST UPDATES</span>
+      <h2 id="latestHeading">Шинэ бүлгүүд</h2>
+      <p>Сүүлд нийтлэгдсэн бүлгүүдийг эндээс уншаарай.</p></div></div>
+    <div id="latestUpdates" class="home-feature-list" aria-live="polite"></div>
+  </section>
   <section class="library" id="library" aria-labelledby="libraryTitle">
     <div class="library-heading">
       <div>
@@ -105,9 +113,22 @@
       </select>
       <button id="randomManga" class="btn random-manga-btn" type="button" title="Санамсаргүй манга сонгох">🎲 Санамсаргүй манга</button>
     </div>
+    <div class="advanced-filters" aria-label="Нарийвчилсан хайлт">
+       <label for="minChapters">Бүлгийн тоо</label>
+       <select id="minChapters"><option value="0">Бүгд</option><option value="5">5+</option>
+       <option value="10">10+</option><option value="25">25+</option><option value="50">50+</option></select>
+       <label for="minRating">Хамгийн бага үнэлгээ</label>
+       <select id="minRating"><option value="0">Бүх үнэлгээ</option>
+       <option value="3">★ 3+</option><option value="4">★ 4+</option><option value="4.5">★ 4.5+</option></select>
+    </div>
     <div id="resultCount" class="result-count" aria-live="polite"></div>
     <div id="chips" class="chips" role="group" aria-label="Жанраар шүүх"></div>
     <div id="grid" class="grid" role="list" aria-live="polite"></div>
+  </section>
+  <section class="home-feature-section" id="forYou" aria-labelledby="forYouHeading">
+      <span class="section-kicker">FOR YOU</span><h2 id="forYouHeading">Танд санал болгох манга</h2>
+      <p>Энэ төхөөрөмж дээрх уншсан түүх болон дуртай жанраас санал болгоно. AI, серверийн нэмэлт зардалгүй.</p>
+      <div id="recommendations" class="home-feature-list" aria-live="polite"></div>
   </section>
   <dialog id="favModal" class="modal" aria-labelledby="favTitle">
     <div class="modal-header">
@@ -163,6 +184,7 @@
 <script src="catalog.js?v=admin-2"></script>
 <script src="my-library-store.js?v=favorites-fix-1"></script>
 <script src="discover.js?v=discover-1"></script>
+<script src="features.js?v=features-8"></script>
 <script>const $=s=>document.querySelector(s);
 const $$=s=>document.querySelectorAll(s);
 const esc=s=>String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]));
@@ -242,6 +264,7 @@ window.RRCatalog.load().then(d=>{
   data=d.filter(m=>m && m.chapters && m.chapters.length);
   restoreUrlState();
   chips();draw();resume();renderFeature();updateFavCount();
+  window.dispatchEvent(new CustomEvent('rr-catalog-loaded',{detail:data}));
 }).catch(()=>{
   $('#grid').innerHTML='<p class="empty">Манганы жагсаалтыг ачаалж чадсангүй. Хуудсыг дахин ачаална уу.</p>';
   $('#libraryCount').textContent='Ачаалахад алдаа гарлаа';
@@ -257,7 +280,10 @@ function chips(){
 }
 
 function draw(){
-  let list=data.filter(m=>m.title.toLowerCase().includes(q)&&(!g||(m.genres||[]).includes(g)));
+  let list=window.RRFeatures.filterManga(data,{
+    q,genre:g,minChapters:Number($('#minChapters').value),
+    minRating:Number($('#minRating').value),ratings:window.RR||{}
+  });
   list.sort(sort==='name'?(a,b)=>a.title.localeCompare(b.title,'mn'):sort==='progress'?(a,b)=>getProgress(b)-getProgress(a):(a,b)=>new Date(last(b).date)-new Date(last(a).date));
   if(sort==='progress')list=list.filter(m=>getProgress(m)>0);
 
@@ -294,6 +320,7 @@ function draw(){
       Object.entries(window.RRMyLibrary.labels).map(([key,label])=>'<option value="'+key+'"'+(window.RRLibraryStore?.getStatus(m.id)===key?' selected':'')+'>'+esc(label)+'</option>').join('')+
       '</select></div>'+
       '<div class="card-quick-actions">'+
+        '<a class="btn" href="manga.html?m='+encodeURIComponent(m.id)+'" aria-label="Мэдээлэл: '+esc(m.title)+'">Мэдээлэл</a>'+
         '<a class="btn card-next" href="'+href(m,next.chapter)+'" aria-label="'+esc(next.label+': '+m.title)+'">'+
           esc(next.label)+' →</a>'+
         '<button class="btn card-share" type="button" data-share="'+esc(m.id)+'" aria-label="Холбоос хуваалцах: '+esc(m.title)+'">Хуваалцах</button>'+
@@ -424,6 +451,8 @@ const debouncedDraw=debounce(()=>{draw();saveUrlState()},300);
 $('#q').oninput=e=>{q=e.target.value.trim().toLowerCase();$('#clearSearch').hidden=!q;debouncedDraw()};
 $('#clearSearch').onclick=()=>{q='';$('#q').value='';$('#clearSearch').hidden=true;draw();saveUrlState()};
 $('#sort').onchange=e=>{sort=e.target.value;draw();saveUrlState()};
+$('#minChapters').onchange=draw;
+$('#minRating').onchange=draw;
 $('#chips').onclick=e=>{const b=e.target.closest('button');if(!b)return;g=b.dataset.g||'';chips();draw();saveUrlState()};
 
 const favModal=$('#favModal'), histModal=$('#histModal'), helpModal=$('#helpModal');
@@ -507,5 +536,6 @@ renderSkeletons();
 </script>
 <script src="profile.js?v=favorites-fix-1"></script>
 <script src="social.js?v=site-audit-1"></script>
+<script src="features-home.js?v=features-8"></script>
 </body>
 </html>
