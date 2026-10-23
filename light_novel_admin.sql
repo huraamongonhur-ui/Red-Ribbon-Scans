@@ -77,16 +77,19 @@ alter table public.ln_review_notes enable row level security;
 alter table public.ln_chapter_versions enable row level security;
 alter table public.ln_subscriptions enable row level security;
 alter table public.ln_read_events enable row level security;
-create policy "ln novel read" on public.ln_novels for select to anon,authenticated
-using(publication_status='published' or (select public.is_admin()) or
- (auth.uid() is not null and public.is_ln_reviewer(id)));
+create policy "ln novel public read" on public.ln_novels for select to anon
+using(publication_status='published');
+create policy "ln novel member read" on public.ln_novels for select to authenticated
+using(publication_status='published' or (select public.is_admin()) or public.is_ln_reviewer(id));
 create policy "ln novel write" on public.ln_novels for all to authenticated
 using((select public.is_admin())) with check((select public.is_admin()));
-create policy "ln chapter read" on public.ln_chapters for select to anon,authenticated
+create policy "ln chapter public read" on public.ln_chapters for select to anon
+using((status='published' or (status='scheduled' and release_at<=now()))
+ and exists(select 1 from public.ln_novels n where n.id=novel_id and n.publication_status='published'));
+create policy "ln chapter member read" on public.ln_chapters for select to authenticated
 using(((status='published' or (status='scheduled' and release_at<=now()))
- and exists(select 1 from public.ln_novels n where n.id=novel_id
-  and n.publication_status='published')) or (select public.is_admin())
- or (auth.uid() is not null and public.is_ln_reviewer(novel_id)));
+ and exists(select 1 from public.ln_novels n where n.id=novel_id and n.publication_status='published'))
+ or (select public.is_admin()) or public.is_ln_reviewer(novel_id));
 create policy "ln chapter write" on public.ln_chapters for all to authenticated
 using((select public.is_admin())) with check((select public.is_admin()));
 create policy "ln reviewer read" on public.ln_reviewers for select to authenticated
