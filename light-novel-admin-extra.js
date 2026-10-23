@@ -101,9 +101,24 @@ $("#laReviewerForm").onsubmit=async e=>{
  }catch(err){msg(err);}
 };
 async function refreshReviewNotes(){
- const sel=$("#laReviewChapterPick"),box=$("#laReviewNotes");sel.replaceChildren();box.replaceChildren();
+ const novelSelect=$("#laReviewerNovelPick"),sel=$("#laReviewChapterPick"),box=$("#laReviewNotes"),preview=$("#laReviewReading");
+ const previousNovel=novelSelect.value||nov();
+ const previousChapter=sel.value;
+ novelSelect.replaceChildren();sel.replaceChildren();box.replaceChildren();preview.replaceChildren();
+ studio.state.novels.forEach(n=>{const o=dom("option",n.title);o.value=n.id;novelSelect.append(o);});
+ novelSelect.value=studio.state.novels.some(n=>n.id===previousNovel)?previousNovel:nov();
  studio.state.chapters.forEach(c=>{const o=dom("option",c.title);o.value=c.id;sel.append(o);});
+ if(previousChapter&&studio.state.chapters.some(c=>c.id===previousChapter))sel.value=previousChapter;
  if(!sel.value)return;
+ const chapter=studio.state.chapters.find(c=>c.id===sel.value);
+ preview.append(dom("h3",chapter?.title||""));
+ for(const block of chapter?.blocks||[]){
+   if(block.type==="paragraph")preview.append(dom("p",block.text||""));
+   else if(block.type==="illustration"&&/^https:\/\//i.test(block.src||"")){
+     const img=document.createElement("img");img.src=block.src;img.alt=block.alt||"Зураг";
+     img.loading="lazy";img.style.maxWidth="100%";preview.append(img);
+   }
+ }
  const notes=await get(studio.state.sb.from("ln_review_notes").select("note,created_at,user_id")
   .eq("chapter_id",sel.value).order("created_at",{ascending:false}).limit(50));
  notes.forEach(n=>{const row=dom("article","");
@@ -113,6 +128,7 @@ async function refreshReviewNotes(){
  if(!notes.length)box.append(dom("p","Тэмдэглэл байхгүй."));
 }
 $("#laReviewChapterPick").onchange=()=>refreshReviewNotes().catch(msg);
+$("#laReviewerNovelPick").onchange=async e=>{studio.state.novel=e.target.value;studio.state.chapter=null;try{await studio.loadChapters();}catch(err){msg(err);}};
 $("#laReviewNoteForm").onsubmit=async e=>{
  e.preventDefault();
  const id=field("#laReviewChapterPick"),note=field("#laReviewNote").trim();
