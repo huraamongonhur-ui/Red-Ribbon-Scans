@@ -28,7 +28,7 @@ function setFormChapter(c){
   $("#laChapterSlug").readOnly=!!c;
   $("#laVolumeNumber").value=c?.volume_number||1;
   $("#laChapterStatus").value=c?.status||"draft";
-  $("#laReleaseAt").value=c?.release_at?new Date(c.release_at).toISOString().slice(0,16):"";
+  $("#laReleaseAt").value=c?.release_at?new Date(new Date(c.release_at).getTime()-new Date(c.release_at).getTimezoneOffset()*60000).toISOString().slice(0,16):"";
   $("#laChapterText").value=window.RRNovelQuality.textFromBlocks(c?.blocks||[]);
   $("#laVersions").replaceChildren();
   renderChapters();
@@ -73,7 +73,7 @@ async function loadChapters(){
   window.dispatchEvent(new Event("rr-ln-selection"));
 }
 $("#laNovelPick").onchange=async e=>{state.novel=e.target.value;state.chapter=null;setFormNovel(currentNovel());try{await loadChapters()}catch(err){note(errorText(err));}};
-$("#laNewNovel").onclick=()=>{setFormNovel(null);$("#laNovelMsg").textContent="Шинэ зохиол. Хадгалсны дараа сонгож бүлэг нэмнэ."};
+$("#laNewNovel").onclick=()=>{state.novel=null;state.chapter=null;state.chapters=[];setFormNovel(null);renderChapters();$("#laNovelPick").value="";$("#laNovelMsg").textContent="Шинэ зохиол. Хадгалсны дараа сонгож бүлэг нэмнэ."};
 $("#laNovelForm").onsubmit=async e=>{
  e.preventDefault();if(!state.isAdmin)return;
  const n=currentNovel();
