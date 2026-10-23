@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="mn">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0f172a">
+<meta name="description" content="Red Ribbon Scans — өөрийн тохиргоотой Light Novel уншигч">
+<title>Light Novel унших — Red Ribbon Scans</title>
+<link rel="icon" type="image/webp" href="assets/red-ribbon-logo.webp">
+<link rel="stylesheet" href="light-novel.css?v=2">
+</head>
+<body class="ln-ui ln-reader" data-page="reader" data-reader-theme="dark">
+<div class="ln-progress-track" role="progressbar" aria-label="Унших явц" aria-valuemin="0" aria-valuemax="100"><div id="readingProgress" class="ln-progress-fill"></div></div>
+<header id="readerTop" class="ln-reader-top">
+  <div class="ln-shell">
+    <a href="light-novels.html" class="ln-button ghost small" aria-label="Зохиолын хуудас руу буцах">← <span class="ln-label-wide">Буцах</span></a>
+    <div class="ln-reader-title" id="readerHeaderTitle">Light Novel<small id="readerHeaderSubtitle">Удиртгал</small></div>
+    <nav class="ln-reader-nav-buttons" aria-label="Уншигчийн удирдлага">
+      <button class="ln-button small ln-icon-button ln-chapter-menu" type="button" aria-label="Бүлгийн жагсаалт">☷</button>
+      <button id="settingsToggle" class="ln-button small ln-icon-button" type="button" aria-controls="readerSettings" aria-expanded="false" aria-label="Унших тохиргоо">⚙</button>
+    </nav>
+  </div>
+</header>
+<aside id="readerSettings" class="ln-settings" aria-label="Унших тохиргоо" hidden>
+  <h2>Унших тохиргоо</h2>
+  <div class="ln-setting-group">
+    <label for="fontSize"><span>Үсгийн хэмжээ</span><output id="fontSizeValue" for="fontSize">19px</output></label>
+    <input id="fontSize" type="range" min="14" max="30" step="1" value="19">
+  </div>
+  <div class="ln-setting-group">
+    <label for="fontFamily">Үсгийн төрөл</label>
+    <select id="fontFamily"><option value="serif">Serif — Номын хэв маяг</option><option value="sans">Sans-serif — Энгийн</option></select>
+  </div>
+  <div class="ln-setting-group">
+    <label for="lineSpacing"><span>Мөр хоорондын зай</span><output id="lineSpacingValue" for="lineSpacing">1.95</output></label>
+    <input id="lineSpacing" type="range" min="1.4" max="2.5" step=".05" value="1.95">
+  </div>
+  <div class="ln-setting-group">
+    <label>Унших өнгө</label>
+    <div class="ln-theme-options" role="group" aria-label="Унших өнгө">
+      <button class="ln-theme-option" data-theme="light" type="button" aria-pressed="false">Light</button>
+      <button class="ln-theme-option" data-theme="dark" type="button" aria-pressed="true">Dark</button>
+      <button class="ln-theme-option" data-theme="sepia" type="button" aria-pressed="false">Sepia</button>
+      <button class="ln-theme-option" data-theme="oled" type="button" aria-pressed="false">OLED</button>
+    </div>
+  </div>
+  <button id="resetSettings" class="ln-button small" type="button">Анхны тохиргоо</button>
+</aside>
+<main class="ln-reader-main">
+  <article id="readingSurface" class="ln-reading-surface">
+    <p class="ln-reader-kicker">Red Ribbon Scans · Light Novel · Орчуулгын дээж</p>
+    <h1 id="readerChapterTitle">Удиртгал</h1>
+    <div id="readingBody" class="ln-reading-body" data-font="serif"></div>
+  </article>
+  <nav class="ln-chapter-bottom" aria-label="Хэсэг солих">
+    <a class="ln-button ln-prev" href="#" aria-disabled="true">← Өмнөх</a>
+    <button class="ln-button ln-chapter-menu" type="button" aria-label="Хэсгийн жагсаалт">☷ Жагсаалт</button>
+    <a class="ln-button primary ln-next" href="#">Дараах →</a>
+  </nav>
+  <p class="ln-percent" id="progressPercent" aria-live="off">0% уншсан</p>
+  <p class="ln-percent">Энэ бол хоёр хуваасан богино дээж. Бүрэн боть биш · <span id="readerPosition">1 / 2 хэсэг</span></p>
+</main>
+<dialog class="ln-modal" id="chapterModal" aria-labelledby="chapterModalTitle">
+  <div class="ln-modal-head"><strong id="chapterModalTitle">Хэсэг сонгох</strong><button id="closeChapterModal" class="ln-button small" type="button" aria-label="Хаах">✕</button></div>
+  <div class="ln-modal-content" id="chapterLinks"></div>
+</dialog>
+<dialog class="ln-modal ln-lightbox" id="imageModal" aria-label="Томруулсан зураг">
+  <div class="ln-modal-head"><strong>Зураг харах</strong><button id="closeImageModal" class="ln-button small" type="button" aria-label="Зургийг хаах">✕</button></div>
+  <img id="expandedIllustration" class="ln-modal-image" alt="">
+</dialog>
+<script src="light-novel-data.js?v=2"></script>
+<script src="light-novel-ui.js?v=2"></script>
+</body>
+</html>
