@@ -1,6 +1,6 @@
 /* Standalone content adapter. Keep manuscripts in review until approved for publication.
    Illustration files are original layout placeholders, not images from the novel. */
-window.RR_LIGHT_NOVEL = {
+window.RR_LIGHT_NOVELS = [{
   id: "mushoku-tensei",
   title: "Mushoku Tensei: Jobless Reincarnation",
   subtitle: "Ажилгүй хүний дахин төрөлт",
@@ -46,4 +46,4 @@ window.RR_LIGHT_NOVEL = {
       ]
     }
   ]
-};
+}];
