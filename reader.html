@@ -12,6 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css?v=logo-1">
+<link rel="stylesheet" href="features.css?v=features-8">
 </head>
 <body class="reader">
 <div id="prog"></div>
@@ -35,6 +36,9 @@
     </select>
     <a class="btn reader-library-link" href="my-library.html" title="Миний сан">Миний сан</a>
     <button class="btn" id="mode" type="button" aria-label="Унших горим солих"></button>
+    <button class="btn" id="readerSettingsBtn" type="button" aria-label="Унших тохиргоо">⚙ Тохиргоо</button>
+    <a id="readerReport" class="btn" href="feedback.html?kind=report">Алдаа мэдээлэх</a>
+    <span id="readerImageStatus" class="reader-image-status" role="status" aria-live="polite"></span>
     <button class="dir-btn" id="dirBtn" type="button" aria-label="Унших чиглэл солих" title="Унших чиглэл (LTR/RTL)">⇄</button>
     <button class="fullscreen-btn" id="fsBtn" type="button" aria-label="Дэлгэц дүүргэх" title="Дэлгэц дүүргэх (F)">⛶</button>
     <button id="themeToggle" class="theme-btn" type="button" aria-label="Өнгөний загвар солих" title="Өнгөний загвар солих">
@@ -45,7 +49,15 @@
 </header>
 <main id="view"></main>
 <nav class="end" id="end" aria-label="Бүлэг солих"></nav>
-<div class="zoom-hint" id="zoomHint" hidden>Scroll/ pinch to zoom • Drag to pan • Click edges to navigate</div>
+<div class="zoom-hint" id="zoomHint" hidden>Хулгана эсвэл хоёр хуруугаар томруулж, чирж шилжүүлнэ.</div>
+<dialog id="readerSettings" class="reader-settings" aria-labelledby="readerSettingsTitle">
+  <h2 id="readerSettingsTitle">Унших тохиргоо</h2>
+  <label for="readerFit"><span>Зургийн өргөн</span>
+  <select id="readerFit"><option value="normal">Энгийн</option>
+  <option value="narrow">Нарийн</option><option value="wide">Дэлгэц дүүрэн</option></select></label>
+  <p class="feature-muted">Энэ төхөөрөмжид хадгалагдана. Унших горимыг дээд талын товчоор сольж болно.</p>
+  <button id="readerSettingsClose" type="button" class="btn primary">Хаах</button>
+</dialog>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
 <script src="catalog.js?v=admin-2"></script>
@@ -61,6 +73,20 @@ let dir=localStorage.getItem('rr_dir')||'ltr'; // ltr or rtl
 let zoom=1, panX=0, panY=0, isPanning=false, startX=0, startY=0;
 let touchStartDist=0, touchStartZoom=1;
 const ZOOM_MIN=1, ZOOM_MAX=4, ZOOM_STEP=0.2;
+let loadedPages=new Set(),failedPages=new Set();
+function updateImageStatus(){
+  const status=$('#readerImageStatus');
+  status.textContent=urls.length
+    ? 'Зураг '+loadedPages.size+' / '+urls.length+(failedPages.size?' · Алдаа '+failedPages.size:'')
+    : '';
+}
+function attachImageStatus(img,i){
+  img.addEventListener('load',()=>{loadedPages.add(i);failedPages.delete(i);updateImageStatus()});
+  img.addEventListener('error',()=>{
+    failedPages.add(i);loadedPages.delete(i);updateImageStatus();
+    $('#readerImageStatus').textContent+=' · Алдаа мэдээлэх боломжтой';
+  });
+}
 
 window.RR_READER_STATE='loading';
 window.RRCatalog.load().then(d=>{
@@ -113,6 +139,7 @@ function pagesOf(c){
 function show(){
   const v=$('#view');
   document.body.classList.toggle('paged',mode==='page');
+  loadedPages=new Set();failedPages=new Set();updateImageStatus();
   $('#mode').textContent=mode==='page'?'Гүйлгэж унших':'Хуудсаар унших';
   v.innerHTML='';
   if(mode==='scroll'){
@@ -121,6 +148,7 @@ function show(){
       im.className='pg';
       im.alt='Хуудас '+(i+1);
       im.loading=i<2?'eager':'lazy';
+      attachImageStatus(im,i);
       im.src=u;
       im.style.transform='';
       v.append(im);
@@ -131,6 +159,7 @@ function show(){
     const im=new Image();
     im.className='pg';
     im.id='pg';
+    attachImageStatus(im,p);
     v.append(im);
     setPage(p);
     preloadImages(p,3);
@@ -177,6 +206,8 @@ function progress(){
   if(mode==='page')r=urls.length>1?p/(urls.length-1):1;
   else{const h=document.documentElement;r=h.scrollHeight>innerHeight?scrollY/(h.scrollHeight-innerHeight):1}
   $('#prog').style.width=Math.min(1,Math.max(0,r))*100+'%';
+  if(m&&ch)$('#readerReport').href='feedback.html?kind=report&m='+
+    encodeURIComponent(m.id)+'&c='+encodeURIComponent(ch.n)+'&p='+encodeURIComponent(p+1);
 }
 function save(){
   try{localStorage.setItem('rr_last',JSON.stringify({m:m.id,c:ch.n,p}))}catch(e){}
@@ -339,6 +370,17 @@ $('#readerLibraryStatus').onchange=async e=>{
 };
 $('#ch').onchange=e=>chapter(e.target.value-idx);
 $('#mode').onclick=()=>{mode=mode==='page'?'scroll':'page';try{localStorage.setItem('rr_mode',mode)}catch(e){}show()};
+const fit=$('#readerFit');
+const applyFit=value=>{
+  document.body.classList.toggle('reader-narrow',value==='narrow');
+  document.body.classList.toggle('reader-wide',value==='wide');
+};
+const savedFit=localStorage.getItem('rr_reader_fit')||'normal';
+fit.value=['normal','narrow','wide'].includes(savedFit)?savedFit:'normal';
+applyFit(fit.value);
+fit.onchange=()=>{applyFit(fit.value);try{localStorage.setItem('rr_reader_fit',fit.value)}catch{}};
+$('#readerSettingsBtn').onclick=()=>$('#readerSettings').showModal();
+$('#readerSettingsClose').onclick=()=>$('#readerSettings').close();
 $('#view').onclick=e=>{if(mode==='page'&&zoom<=1.05)step((e.clientX>innerWidth/2?1:-1)*(dir==='rtl'?-1:1))};
 $('#dirBtn').onclick=toggleDir;
 $('#fsBtn').onclick=toggleFullscreen;

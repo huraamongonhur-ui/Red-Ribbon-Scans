@@ -1,0 +1,27 @@
+<!doctype html><html lang="mn"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b0e15"><meta name="description" content="Red Ribbon Scans манганы мэдээлэл, бүлэг, үнэлгээ">
+<link rel="icon" type="image/webp" href="assets/red-ribbon-logo.webp">
+<link rel="stylesheet" href="style.css?v=features-8"><link rel="stylesheet" href="features.css?v=features-8">
+<title>Манганы мэдээлэл — Red Ribbon Scans</title></head><body class="feature-page">
+<header class="feature-header wrap"><a href="index.html">← Манга цуглуулга</a><a href="my-library.html">Миний сан</a></header>
+<main class="wrap feature-main">
+<div id="mangaNotice" role="status" aria-live="polite">Манганы мэдээлэл ачаалж байна…</div>
+<section id="mangaDetail" hidden>
+<div class="details-hero"><div class="details-cover" id="detailCover"></div>
+<div class="details-copy"><span class="section-kicker">MANGA DETAILS 2.0</span><h1 id="detailTitle"></h1>
+<p id="detailDescription" class="details-description"></p><div id="detailGenres" class="details-tags"></div>
+<p id="detailMeta" class="feature-muted"></p>
+<div class="details-actions"><a id="detailStart" class="btn primary">Унших →</a>
+<button id="detailHeart" type="button" class="btn" disabled>♡ Дуртайд нэмэх</button>
+<select id="detailStatus" aria-label="Миний сангийн ангилал" disabled>
+<option value="">Миний санд нэмэх…</option><option value="reading">Уншиж байгаа</option>
+<option value="completed">Дуусгасан</option><option value="planned">Дараа унших</option></select></div>
+<a id="detailReport" href="feedback.html?kind=report" class="feature-muted">Алдаа мэдээлэх</a>
+</div></div>
+<section class="feature-section"><h2>Бүлгүүд</h2><div id="detailChapters" class="details-chapters"></div></section>
+</section></main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script><script src="catalog.js?v=features-8"></script>
+<script src="my-library-store.js?v=favorites-fix-1"></script><script src="manga-detail.js?v=features-8"></script>
+</body></html>

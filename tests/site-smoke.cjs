@@ -12,9 +12,9 @@ const inline = file => [...read(file).matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\
 test('local scripts and page inline scripts parse', () => {
   for (const file of [
     'social.js','profile.js','admin.js','my-library.js','my-library-store.js',
-    'catalog.js','discover.js','sw.js'
+    'catalog.js','discover.js','features.js','features-home.js','manga-detail.js','feedback.js','admin-workflow.js','sw.js'
   ]) assert.doesNotThrow(() => new Function(read(file)), file);
-  for (const file of ['index.html','reader.html','admin.html','my-library.html'])
+  for (const file of ['index.html','reader.html','admin.html','my-library.html','manga.html','feedback.html'])
     assert.doesNotThrow(() => new Function(inline(file)), file);
 });
 
@@ -93,7 +93,7 @@ test('Reader honors requested manga and chapter IDs', () => {
 test('Reader terminal failures end social loading retries', () => {
   assert.match(inline('reader.html'),/RR_READER_STATE='error'/);
   assert.match(read('social.js'),/RR_READER_STATE !== 'error'/);
-  assert.match(read('sw.js'),/red-ribbon-v14/);
+  assert.match(read('sw.js'),/red-ribbon-v15/);
 });
 
 
@@ -138,7 +138,7 @@ test('My Library exposes safe manual refresh for cross-device updates', () => {
   assert.match(read('my-library.js'),/await Promise\.all\(\[window\.RRCatalog\.load\(\),store\.refresh\(\)\]\)/);
   assert.match(read('my-library-store.js'),/function refresh\(\)/);
   assert.match(read('my-library-store.js'),/ticket!==generation \|\| targetId!==userId/);
-  assert.match(read('sw.js'),/red-ribbon-v14/);
+  assert.match(read('sw.js'),/red-ribbon-v15/);
 });
 
 
@@ -187,5 +187,73 @@ test('homepage renders quick actions and random button', () => {
   assert.match(html,/data-share/);
   assert.match(html,/card-quick-actions/);
   assert.match(html,/discover.js\?v=discover-1/);
-  assert.match(read('sw.js'),/red-ribbon-v14/);
+  assert.match(read('sw.js'),/red-ribbon-v15/);
+});
+
+
+test('all eight feature entry points and required SQL are wired',()=>{
+ const home=read('index.html');
+ for(const key of ['latestUpdates','recommendations','minChapters','minRating','manga.html','feedback.html','rr-catalog-loaded'])
+   assert.match(home,new RegExp(key));
+ const admin=read('admin.html');
+ for(const key of ['workflowPanel','adminTickets','adminWorkflow','mangaDescription','admin-workflow.js'])
+   assert.match(admin,new RegExp(key));
+ const reader=read('reader.html');
+ for(const key of ['readerSettings','readerImageStatus','readerReport','attachImageStatus','features.css'])
+   assert.match(reader,new RegExp(key));
+ const catalog=read('catalog.js');
+ assert.match(catalog,/description:typeof m\.description/);
+ const sql=read('community_3.sql');
+ for(const key of ["enable row level security","submissions create own new","submissions admin updates","workflow admin read","alter table public.catalog_manga add column"])
+   assert.ok(sql.includes(key),'missing SQL: '+key);
+ for(const file of ['manga.html','feedback.html','manga-detail.js','feedback.js','features-home.js','admin-workflow.js'])
+   assert.match(read('sw.js'),new RegExp(file.replace('.','\\.')));
+});
+
+test('latest updates and filtering handle actual chapter dates and rating thresholds',()=>{
+ const browser={};
+ new Function('window',read('features.js'))(browser);
+ const a={id:'a',title:'Alpha',genres:['Action'],chapters:[{n:1,date:'2026-01-01'},{n:2,date:'2026-02-02'}]};
+ const b={id:'b',title:'Beta',genres:['Drama'],chapters:[{n:1,date:'2026-03-03'}]};
+ const result=browser.RRFeatures.updates([a,b],3);
+ assert.equal(result[0].manga_id,'b');
+ assert.equal(result[1].chapter,2);
+ assert.equal(browser.RRFeatures.filterManga([a,b],{q:'alpha',minChapters:2}).length,1);
+ assert.equal(browser.RRFeatures.filterManga([a,b],{minChapters:2,minRating:4,ratings:{a:4.5}})[0].id,'a');
+ assert.equal(browser.RRFeatures.filterManga([a,b],{minRating:4,ratings:{}}).length,0);
+});
+
+test('recommendations favor same genres, excluding seen and favorites',()=>{
+ const browser={};
+ new Function('window',read('features.js'))(browser);
+ const list=[
+  {id:'read',title:'Read',genres:['Fantasy'],chapters:[{n:1}]},
+  {id:'fav',title:'Favorite',genres:['Romance'],chapters:[{n:1}]},
+  {id:'good',title:'Good',genres:['Romance'],chapters:[{n:1}]},
+  {id:'other',title:'Other',genres:['Horror'],chapters:[{n:1}]}
+ ];
+ const recs=browser.RRFeatures.recommendations(list,[{m:'read',c:1}],['fav'],5);
+ assert.equal(recs.length,2);
+ assert.equal(recs[0].id,'good');
+ assert.equal(recs.some(r=>r.id==='fav'||r.id==='read'),false);
+});
+
+test('feedback is authenticated, admin workflow checks permissions',()=>{
+ const feedback=read('feedback.js'),workflow=read('admin-workflow.js'),sql=read('community_3.sql');
+ assert.match(feedback,/sb\.auth\.getUser/);
+ assert.match(feedback,/reader_submissions/);
+ assert.match(feedback,/user_id:uid/);
+ assert.match(workflow,/sb\.rpc\('is_admin'\)/);
+ assert.match(workflow,/manga_workflow/);
+ assert.match(sql,/admin_note=''[\s\S]*\)/);
+ assert.match(sql,/for update to authenticated using \(\(select public\.is_admin\(\)\)\)/);
+});
+
+test('reader reports include manga, chapter, page and width persists locally',()=>{
+ const reader=read('reader.html');
+ assert.match(reader,/encodeURIComponent\(m\.id\)/);
+ assert.match(reader,/encodeURIComponent\(ch\.n\)/);
+ assert.match(reader,/encodeURIComponent\(p\+1\)/);
+ assert.match(reader,/rr_reader_fit/);
+ assert.match(reader,/readerSettingsBtn/);
 });

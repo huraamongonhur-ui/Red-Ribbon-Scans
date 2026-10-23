@@ -1,0 +1,35 @@
+/* Responsive features shared by Details, Community and admin supplements. */
+.feature-page{min-height:100vh;background:var(--paper)}.feature-header{display:flex;justify-content:space-between;gap:16px;padding-block:22px;font-size:13px;font-weight:800;color:var(--red)}
+.feature-main{padding-block:20px 85px}.feature-main h1{font-size:clamp(29px,5vw,52px);letter-spacing:-.04em;margin:10px 0 18px}
+.feature-muted{font-size:13px;color:var(--mute);line-height:1.7}.feature-section{border:1px solid var(--line);border-radius:18px;background:var(--card);padding:22px;margin:23px 0}
+.feature-section h2{font-size:21px}.details-hero{display:grid;grid-template-columns:minmax(150px,240px) minmax(0,1fr);gap:27px;align-items:start}
+.details-cover{aspect-ratio:2/3;background:linear-gradient(145deg,#a62246,#1b1a31);border-radius:15px;overflow:hidden}.details-cover img{width:100%;height:100%;object-fit:cover}
+.details-copy h1{font-size:clamp(28px,5vw,45px);line-height:1.2;margin:8px 0 14px}.details-description{color:var(--mute);max-width:65ch;font-size:14px;white-space:pre-line;line-height:1.85}
+.details-tags,.details-actions{display:flex;flex-wrap:wrap;gap:8px;margin:15px 0}.details-tags .details-tag{border:1px solid var(--line);border-radius:30px;padding:5px 11px;font-size:11px;font-weight:800}
+.details-actions .btn,.details-actions select{font-size:12px;min-height:40px}.details-chapters{display:flex;flex-direction:column;gap:8px}
+.details-chapter{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:14px 16px;border:1px solid var(--line);border-radius:10px}
+.details-chapter:hover{border-color:var(--red)}.details-chapter small{color:var(--mute);white-space:nowrap}
+.feature-form{display:grid;gap:9px;margin:22px 0;max-width:650px}.feature-form label{font-size:12px;font-weight:800}
+.feature-form input,.feature-form select,.feature-form textarea{width:100%;min-width:0;color:var(--ink);background:var(--paper);border-radius:11px}
+.feature-form textarea{font:inherit;padding:11px 13px;border:1px solid var(--line)}.feature-form .btn{justify-self:start}
+.feature-stack{display:grid;gap:9px}.feature-ticket{border:1px solid var(--line);border-radius:11px;padding:14px;display:grid;gap:5px}
+.feature-ticket small,.feature-ticket p{font-size:12px;color:var(--mute);margin:0}
+.home-feature-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:16px 0}
+.home-feature-card{border:1px solid var(--line);border-radius:15px;background:var(--card);padding:17px;min-width:0}
+.home-feature-card h3{font-size:15px;margin:9px 0 4px;overflow-wrap:anywhere}.home-feature-card p{font-size:12px;color:var(--mute);margin:0 0 12px}
+.home-feature-card a{font-size:12px;font-weight:800;color:var(--red)}
+.home-feature-section{margin:20px 0 40px}.home-feature-section h2{font-size:23px;margin:12px 0}
+.advanced-filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:7px 0 19px}
+.advanced-filters label{font-size:11px;font-weight:800;color:var(--mute)}
+.advanced-filters select{padding:9px 10px;font-size:12px;min-width:130px}
+.reader-settings{width:min(430px,calc(100vw - 25px));border:1px solid var(--line);border-radius:17px;padding:20px;background:var(--card);color:var(--ink)}
+.reader-settings::backdrop{background:rgba(0,0,0,.75)}
+.reader-settings label{display:flex;align-items:center;gap:12px;padding:8px 0}.reader-settings button{margin-top:13px}
+body.reader.reader-narrow #view .pg{max-width:min(820px,100%)!important;margin-inline:auto}
+body.reader.reader-wide #view .pg{max-width:100%!important}
+.reader-image-status{font-size:12px;color:var(--mute);padding:6px 11px;min-width:105px}
+.workflow-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:11px}
+.workflow-ticket{border:1px solid var(--line);border-radius:13px;padding:13px;display:grid;gap:8px}
+.workflow-ticket textarea,.workflow-ticket select,.workflow-ticket input{width:100%;min-width:0;color:var(--ink);background:var(--paper);font-size:12px}
+.workflow-ticket p{margin:0;color:var(--mute);font-size:12px}.workflow-ticket .btn{font-size:12px}
+@media(max-width:650px){.details-hero{grid-template-columns:1fr}.details-cover{width:min(230px,100%)}.feature-section{padding:16px}.details-chapter{align-items:flex-start;flex-direction:column}}

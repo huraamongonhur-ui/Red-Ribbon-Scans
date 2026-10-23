@@ -94,7 +94,7 @@
   function resetMangaForm() {
     activeId=null;current=null;
     $('#mangaForm').reset();
-    for (const el of ['#mangaTitle','#mangaGenres','#mangaCover']) $(el).disabled = false;
+    for (const el of ['#mangaTitle','#mangaDescription','#mangaGenres','#mangaCover']) $(el).disabled = false;
     $('#mangaId').readOnly=false;
     $('#mangaFormHeading').textContent='Шинэ манга нэмэх';
     $('#saveManga').disabled=false;
@@ -113,6 +113,7 @@
     $('#mangaId').value=manga.id;
     $('#mangaId').readOnly=true;
     $('#mangaTitle').value=manga.title;
+    $('#mangaDescription').value=manga.description||'';
     $('#mangaGenres').value=(manga.genres||[]).join(', ');
     $('#mangaCover').value='';
     $('#mangaFormHeading').textContent=(editable?'Засах: ':'Импорт шаардана: ')+manga.title;
@@ -120,7 +121,7 @@
     $('#deleteManga').hidden=!editable;
     $('#mangaStatus').textContent=editable ? 'Онлайн манга: өөрчлөлт шууд нийтлэгдэнэ.' :
       'Энэ бол GitHub-ийн манга. Жагсаалтын «Импортлох» товчийг дарна уу.';
-    for(const el of ['#mangaTitle','#mangaGenres','#mangaCover']) $(el).disabled=!editable;
+    for(const el of ['#mangaTitle','#mangaDescription','#mangaGenres','#mangaCover']) $(el).disabled=!editable;
     previewCover(getCover(id));
     $('#chapterPanel').hidden=!editable;
     $('#chapterHelp').hidden=editable;
@@ -137,7 +138,7 @@
     saving=true;say('Манга импортолж байна…');
     try {
       const {error}=await sb.from('catalog_manga').insert({
-        id:manga.id,title:manga.title,genres:manga.genres||[],
+        id:manga.id,title:manga.title,description:manga.description||'',genres:manga.genres||[],
         cover:manga.cover||'',chapters:manga.chapters||[]
       });
       if (error) throw error;
@@ -206,7 +207,8 @@
     event.preventDefault();if(saving)return;
     const id=$('#mangaId').value.trim().toLowerCase();
     const title=$('#mangaTitle').value.trim();
-    if (!/^[a-z0-9][a-z0-9-]{1,79}$/.test(id)||!title||title.length>160) {
+    const description=$('#mangaDescription').value.trim();
+    if (!/^[a-z0-9][a-z0-9-]{1,79}$/.test(id)||!title||title.length>160||description.length>4000) {
       $('#mangaStatus').textContent='ID эсвэл нэр буруу байна.';return;
     }
     if (activeId && id!==activeId) {$('#mangaStatus').textContent='ID-г өөрчилж болохгүй.';return}
@@ -224,7 +226,7 @@
         const path='manga/'+id+'/covers/'+crypto.randomUUID()+'.'+TYPES[file.type];
         cover=await upload(file,path);uploaded.push(path);
       }
-      const record={id,title,genres:genreList,cover,chapters:current?.chapters||[]};
+      const record={id,title,description,genres:genreList,cover,chapters:current?.chapters||[]};
       const {error}=await sb.from('catalog_manga').upsert(record,{onConflict:'id'});
       if(error)throw error;
       await reload(id);

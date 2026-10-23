@@ -13,6 +13,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css?v=logo-1">
 <link rel="stylesheet" href="admin.css?v=logo-1">
+<link rel="stylesheet" href="features.css?v=features-8">
 </head>
 <body class="admin-page">
 <header class="admin-header">
@@ -26,7 +27,7 @@
 </header>
 <main class="wrap admin-main">
   <section class="admin-intro">
-    <div><span class="admin-eyebrow">CONTENT MANAGEMENT / SUPABASE</span><h1>Admin <span>Dashboard 2.0</span></h1><p>Манга, бүлэг, зураг, хэрэглэгчийн статистикаа нэг дор удирдаарай.</p></div>
+    <div><span class="admin-eyebrow">CONTENT MANAGEMENT / SUPABASE</span><h1>Admin <span>Dashboard 3.0</span></h1><p>Манга, бүлэг, зураг, хэрэглэгчийн статистикаа нэг дор удирдаарай.</p></div>
     <span id="adminIdentity" class="admin-chip">Нэвтрэлт шалгаж байна…</span>
   </section>
   <div id="adminNotice" class="admin-notice" role="status" aria-live="polite">Supabase холболт шалгаж байна…</div>
@@ -54,6 +55,8 @@
             <input id="mangaId" name="id" pattern="[a-z0-9][a-z0-9-]{1,79}" maxlength="80" minlength="2" required placeholder="my-manga">
             <label for="mangaTitle">Манганы нэр</label>
             <input id="mangaTitle" name="title" maxlength="160" required placeholder="Манганы нэр">
+            <label for="mangaDescription">Танилцуулга (4000 тэмдэгт хүртэл)</label>
+            <textarea id="mangaDescription" maxlength="4000" rows="5" placeholder="Манганы тухай товч танилцуулга"></textarea>
             <label for="mangaGenres">Жанр <small>Таслалаар тусгаарла</small></label>
             <input id="mangaGenres" name="genres" placeholder="Action, Romance, Fantasy">
             <label for="mangaCover">Нүүр зураг солих <small>PNG, JPG, WebP • 10 MB</small></label>
@@ -86,12 +89,23 @@
         </section>
       </div>
     </div>
+    <section id="workflowPanel" class="admin-section" hidden>
+      <div class="admin-section-title"><div><span class="admin-eyebrow">ADMIN WORKFLOW 3.0</span><h2>Редакцийн төлөвлөгөө, хүсэлтүүд</h2></div>
+        <button id="workflowRefresh" class="btn" type="button">↻ Шинэчлэх</button></div>
+      <p class="admin-tip">Зорилтот огноо бол редакцийн төлөвлөгөө юм. Бүлэг автоматаар нийтлэгдэхгүй; нийтлэхдээ бүлгийн удирдлагыг ашиглана.</p>
+      <p id="workflowNotice" class="admin-status" role="status" aria-live="polite">Хүсэлтүүд ачаалж байна…</p>
+      <h3>Нээлттэй хүсэлт (<span id="workflowCount">—</span>)</h3>
+      <div id="adminTickets" class="workflow-grid"></div>
+      <h3>Манганы ажлын төлөв ба зорилтот огноо</h3>
+      <div id="adminWorkflow" class="workflow-grid"></div>
+    </section>
     <div class="admin-footer-note">Зураг Supabase Storage-д хадгалагдана. Устгасан манганы хуучин зураг Storage-д үлдэж болно. Хадгалсан өөрчлөлт хэрэглэгчдэд шууд харагдана.</div>
   </section>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
-<script src="catalog.js?v=admin-2"></script>
-<script src="admin.js?v=admin-2"></script>
+<script src="catalog.js?v=features-8"></script>
+<script src="admin.js?v=features-8"></script>
+<script src="admin-workflow.js?v=features-8"></script>
 </body>
 </html>

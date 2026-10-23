@@ -1,0 +1,23 @@
+<!doctype html><html lang="mn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b0e15"><title>Манга хүсэлт, алдаа мэдээлэх — Red Ribbon</title>
+<link rel="icon" type="image/webp" href="assets/red-ribbon-logo.webp">
+<link rel="stylesheet" href="style.css?v=features-8"><link rel="stylesheet" href="features.css?v=features-8"></head>
+<body class="feature-page"><header class="feature-header wrap"><a href="index.html">← Нүүр</a><a href="my-library.html">Миний сан</a></header>
+<main class="wrap feature-main"><section class="feature-section"><span class="section-kicker">COMMUNITY</span>
+<h1>Манга хүсэлт, алдаа мэдээлэх</h1>
+<p class="feature-muted">Орчуулахыг хүссэн манга эсвэл унших явцад гарсан алдааг админд мэдэгдээрэй. Нэвтэрсэн хэрэглэгч хүсэлт илгээх боломжтой.</p>
+<div id="feedbackNotice" role="status" aria-live="polite">Нэвтрэлт шалгаж байна…</div>
+<form id="feedbackForm" class="feature-form" hidden>
+<label for="feedbackKind">Хүсэлтийн төрөл</label><select id="feedbackKind">
+<option value="manga_request">Шинэ манга орчуулах хүсэлт</option><option value="page_report">Зураг/орчуулгын алдаа</option></select>
+<label for="feedbackTitle">Манганы нэр</label><input id="feedbackTitle" maxlength="160" placeholder="Манганы нэр">
+<label for="feedbackManga">Манганы ID (мэдэж байвал)</label><input id="feedbackManga" maxlength="120" placeholder="manga-id">
+<div class="feedback-chapter"><label for="feedbackChapter">Бүлэг</label><input id="feedbackChapter" maxlength="32" placeholder="1"></div>
+<div class="feedback-chapter"><label for="feedbackPage">Алдаатай хуудас</label><input id="feedbackPage" type="number" min="1" max="10000" placeholder="1"></div>
+<label for="feedbackMessage">Тайлбар (10–1000 тэмдэгт)</label>
+<textarea id="feedbackMessage" required minlength="10" maxlength="1000" rows="5" placeholder="Дэлгэрэнгүй бичнэ үү…"></textarea>
+<button id="feedbackSubmit" type="submit" class="btn primary">Хүсэлт илгээх</button></form></section>
+<section class="feature-section"><h2>Миний хүсэлтүүд</h2><div id="mySubmissions" class="feature-stack"></div>
+<button id="refreshSubmissions" class="btn" type="button">↻ Шинэчлэх</button></section></main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script><script src="config.js"></script><script src="catalog.js?v=features-8"></script>
+<script src="feedback.js?v=features-8"></script></body></html>
