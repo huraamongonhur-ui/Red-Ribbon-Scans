@@ -178,13 +178,41 @@ $("#laImport").onclick=async()=>{
  try{importContent=await window.RRNovelQuality.importText(file);
  $("#laImportPreview").value=importContent.slice(0,120000);
  $("#laUseImport").disabled=!importContent.trim();
- $("#laImportStatus").textContent="Текст уншсан. Энэ нь draft болох хүртлээ нийтлэгдэхгүй.";}
- catch(err){importContent="";$("#laUseImport").disabled=true;$("#laImportStatus").textContent=errorText(err);}
+ $("#laImportChapters").disabled=!importContent.trim();
+ $("#laImportStatus").textContent="Текст уншсан. "+window.RRNovelQuality.splitChapters(importContent).length+" хэсэг илэрлээ. Хадгалахаас өмнө шалгана уу.";}
+ catch(err){importContent="";$("#laUseImport").disabled=true;$("#laImportChapters").disabled=true;$("#laImportStatus").textContent=errorText(err);}
 };
 $("#laUseImport").onclick=()=>{
  if(!importContent)return;$("#laChapterText").value=importContent;
  $("#laChapterStatus").value="draft";activeTab("editor");
  note("Импортолсон текст Editor-т орлоо. Бүлэг болон догол мөрийг шалгаж хадгална уу.");
+};
+$("#laImportChapters").onclick=async()=>{
+ if(!state.isAdmin||!state.novel||!importContent.trim()){note("Эхлээд зохиол болон импортын файл сонгоно уу.");return;}
+ const items=window.RRNovelQuality.splitChapters(importContent);
+ if(items.length>80){note("Нэг удаад 80 хүртэл бүлэг хадгална уу.");return;}
+ if(items.some(item=>item.text.length>300000)){note("Хэт том бүлэг байна; файлаа хуваагаарай.");return;}
+ if(!confirm(items.length+" хэсгийг нийтлээгүй Draft бүлэг болгож хадгалах уу?"))return;
+ const button=$("#laImportChapters");button.disabled=true;
+ const stamp=Date.now().toString(36);
+ let saved=0;
+ try{
+   for(let i=0;i<items.length;i++){
+     const item=items[i];
+     const blocks=window.RRNovelQuality.blocksFromText(item.text);
+     if(!blocks.length)continue;
+     const row={novel_id:state.novel,title:item.title.slice(0,180),
+       slug:"import-"+stamp+"-"+(i+1),volume_number:1,
+       sort_order:state.chapters.length+i+1,status:"draft",release_at:null,blocks};
+     await get(state.sb.from("ln_chapters").insert(row));
+     saved++;
+     $("#laImportStatus").textContent=saved+" / "+items.length+" Draft хадгаллаа…";
+   }
+   await loadChapters();activeTab("editor");
+   note(saved+" бүлэг Draft хэлбэрээр хадгалагдлаа. Review хийхээс өмнө шалгана уу.");
+ }catch(err){
+   note(saved+" бүлэг хадгалагдсан; дараагийн бүлэг дээр алдаа: "+errorText(err)+". Дахин импортлохоос өмнө давхардлыг шалгаарай.");
+ }finally{button.disabled=false;}
 };
 async function start(){
  try{
