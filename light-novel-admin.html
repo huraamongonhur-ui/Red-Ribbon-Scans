@@ -47,7 +47,7 @@
 <section class="la-panel" data-panel="analytics" hidden><h2>Уншилтын статистик</h2><p class="hint">Нэвтэрсэн хэрэглэгчдийн chapter open / 90% completion үйлдлийг өдөрт нэг удаа тоолно. Guest хэрэглэгчийг тооцохгүй.</p><div id="laAnalytics" class="la-stack"></div></section>
 <section class="la-panel" data-panel="reviewers" hidden><h2>Хувийн Reviewer Access</h2><p class="hint">Зөвхөн Supabase Auth-д бүртгэлтэй хэрэглэгчийн UUID-г нэмнэ. Reviewer нь нийтлэгдээгүй текст уншиж санал бичнэ, нийтлэх эрхгүй.</p>
 <form id="laReviewerForm" class="la-row"><label>Reviewer user UUID<input id="laReviewerUID" required placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"></label><button class="primary" type="submit">Эрх олгох</button></form>
-<div id="laReviewers" class="la-stack"></div><h3>Reviewer тэмдэглэл</h3><label>Хянах бүлэг<select id="laReviewChapterPick"></select></label>
+<div id="laReviewers" class="la-stack"></div><h3>Reviewer тэмдэглэл</h3><label>Хянах зохиол<select id="laReviewerNovelPick"></select></label><label>Хянах бүлэг<select id="laReviewChapterPick"></select></label><article id="laReviewReading" class="la-preview" data-theme="dark"></article>
 <div id="laReviewNotes" class="la-stack"></div><form id="laReviewNoteForm"><label>Тэмдэглэл<textarea id="laReviewNote" rows="3" required maxlength="5000"></textarea></label><button class="primary" type="submit">Тэмдэглэл хадгалах</button></form>
 </section></div>
 </main>
