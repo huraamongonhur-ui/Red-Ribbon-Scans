@@ -29,10 +29,10 @@
     </a>
     <nav class="primary-nav" aria-label="Үндсэн цэс">
       <a href="#library">Манга</a>
-      <a href="#about">Бидний тухай</a>
+
       <a href="my-library.html">Миний сан</a>
       <a href="feedback.html">Манга хүсэлт</a>
-      <a href="stats.html">Статистик</a>
+
     </nav>
     <div class="header-actions">
       <button id="newChapterAlerts" class="btn rr-alert-button" type="button"
@@ -59,9 +59,9 @@
 <main class="wrap">
   <section class="hero" id="home" aria-labelledby="heroTitle">
     <div class="hero-copy">
-      <span class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> RED RIBBON SCANS · МОНГОЛООР</span>
+
       <h1 id="heroTitle">Монгол манга. <span>Шууд унш.</span></h1>
-      <p class="hero-subtitle">Мангагаа сонгоод, хүссэн бүлгээ унш. Уншсан газраасаа үргэлжлүүлэхэд амар.</p>
+
       <div class="hero-actions">
         <a class="btn primary hero-cta" href="#library">Манга үзэх <span aria-hidden="true">↗</span></a>
         <a id="resume" class="resume" hidden></a>
@@ -69,7 +69,7 @@
       <div class="hero-stats" aria-label="Манга цуглуулгын мэдээлэл">
         <div><strong id="mangaCount">—</strong><span>Манга</span></div>
         <div><strong id="chapterCount">—</strong><span>Бүлэг</span></div>
-        <div class="hero-stat-note"><span class="live-indicator" aria-hidden="true"></span><span>Уншихад бэлэн</span></div>
+
       </div>
     </div>
   </section>
@@ -111,14 +111,13 @@
   </section>
   <aside class="home-feature-section" id="latest" aria-labelledby="latestHeading">
     <div class="library-heading"><div><span class="section-kicker">ШИНЭЧЛЭЛТ</span>
-      <h2 id="latestHeading">Шинэ бүлгүүд</h2>
-      <p>Сүүлд нийтлэгдсэн бүлгүүдийг эндээс уншаарай.</p></div></div>
+      <h2 id="latestHeading">Шинэ бүлгүүд</h2></div></div>
     <div id="latestUpdates" class="home-feature-list" aria-live="polite"></div>
   </aside>
   </div>
   <section class="home-feature-section" id="forYou" aria-labelledby="forYouHeading">
       <span class="section-kicker">САНАЛ БОЛГОХ</span><h2 id="forYouHeading">Танд санал болгох манга</h2>
-      <p>Энэ төхөөрөмж дээрх уншсан түүх болон дуртай жанраас санал болгоно. AI, серверийн нэмэлт зардалгүй.</p>
+
       <div id="recommendations" class="home-feature-list" aria-live="polite"></div>
   </section>
   <dialog id="newChapterDialog" class="modal" aria-labelledby="newChapterTitle">
@@ -167,13 +166,8 @@
     </div>
   </dialog>
 
-  <section class="about-panel" id="about" aria-label="Red Ribbon Scans тухай">
-    <div class="about-emblem" aria-hidden="true">R.</div>
-    <div><span class="section-kicker">MADE FOR READERS</span><h2>Манга. Монгол хэлээр. Хүссэн үедээ.</h2><p>Red Ribbon Scans — манга унших, хадгалах, дуртай түүхээ үргэлжлүүлэх нэг газар.</p></div>
-    <a href="#home" class="btn about-link">Дээш очих ↑</a>
-  </section>
 </main>
-<footer class="site-footer"><div class="wrap foot"><span>© Red Ribbon Scans</span><span>Made for manga lovers.</span></div></footer>
+<footer class="site-footer"><div class="wrap foot"><span>© Red Ribbon Scans</span><a href="stats.html">Статистик</a></div></footer>
 <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 <button id="backToTop" class="back-to-top" aria-label="Дээш очих" hidden>↑</button>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
