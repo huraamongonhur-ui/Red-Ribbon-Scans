@@ -297,3 +297,33 @@ html[data-theme="light"]{color-scheme:light}
   color:var(--red);border-color:rgba(161,129,239,.31)}
 .hero-cta,.chips .btn[aria-pressed=true]{background:#7445cc!important;
   color:#fff!important;border-color:#7445cc!important}
+
+/* Final shared palette: bright accents for text, deep fills for white labels.
+   Reader-local legacy variables must inherit the selected document theme. */
+:root{--accent-fill:#7445cc;--accent-soft:rgba(161,129,239,.12)}
+body.reader,html[data-theme="light"] body.reader{
+  --paper:inherit;--card:inherit;--ink:inherit;--mute:inherit;--line:inherit;--red:inherit;
+  background:var(--paper);color:var(--ink)
+}
+.my-library-tab[aria-pressed=true],.fav-count,.back-to-top,
+.dir-btn.active,body.reader .dir-btn.active,
+.fav-toggle.is-favorite,.fav-toggle:hover,.fav-toggle:focus-visible,
+.fav-remove:hover{
+  background:var(--accent-fill);border-color:var(--accent-fill);color:#fff
+}
+.my-library-user,.profile-emoji-choices button.chosen,
+.profile-emoji-choices button:hover{background:var(--accent-soft);border-color:var(--red)}
+.my-library-favorite.is-favorite{border-color:var(--red)}
+.profile-overview,.profile-badge.earned{background:var(--accent-soft)}
+.profile-avatar{border-color:var(--red);background:linear-gradient(145deg,#282e42,#7445cc)}
+.profile-badge.earned{border-color:var(--red)}
+.details-cover,.my-library-cover,.home-update-cover{background:linear-gradient(145deg,#58358b,#242b33)}
+.resume:hover{background:var(--paper);border-color:var(--red)}
+.back-to-top{box-shadow:0 8px 24px rgba(116,69,204,.25)}
+textarea:focus-visible{outline:2px solid var(--red);outline-offset:3px}
+input::placeholder,textarea::placeholder{color:var(--mute);opacity:1}
+.feature-header{flex-wrap:wrap}
+@media(max-width:620px){
+  .reader-toolbar{flex-wrap:wrap}
+  .feature-header{gap:10px}
+}

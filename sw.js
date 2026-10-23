@@ -1,4 +1,4 @@
-const CACHE_NAME='red-ribbon-v18';
+const CACHE_NAME='red-ribbon-v19';
 const STATIC_ASSETS=[
   './',
   './index.html',

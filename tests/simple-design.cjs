@@ -8,7 +8,7 @@ const read=file=>fs.readFileSync(path.resolve(__dirname,'..',file),'utf8');
 test('all reader-facing pages load the new minimal stylesheet after their existing styles',()=>{
  for(const p of ['index.html','manga.html','my-library.html','reader.html','stats.html','feedback.html']){
    const html=read(p);
-   assert.match(html,/simple-comix\.css\?v=clean-(?:1|2)/);
+   assert.match(html,/simple-comix\.css\?v=clean-(?:1|2|3)/);
    const head=html.split('</head>')[0];
    const simple=head.indexOf('simple-comix.css');
    assert.ok(simple>=0,p+' missing stylesheet');
@@ -57,7 +57,7 @@ test('compact design covers desktop, mobile and keyboard focus',()=>{
 });
 test('new service-worker version includes new CSS without any DB migration',()=>{
  const sw=read('sw.js');
- assert.match(sw,/red-ribbon-v18/);
+ assert.match(sw,/red-ribbon-v19/);
  assert.match(sw,/'\.\/simple-comix\.css'/);
  assert.doesNotMatch(sw,/supabase\.sql/);
 });
@@ -92,7 +92,7 @@ test('homepage has no redundant featured manga card but retains useful hero acti
 
 
 test('homepage requests refreshed clean styling after removing featured card',()=>{
- assert.match(read('index.html'),/simple-comix\.css\?v=clean-2/);
+ assert.match(read('index.html'),/simple-comix\.css\?v=clean-3/);
 });
 
 
