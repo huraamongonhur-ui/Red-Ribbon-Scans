@@ -40,7 +40,7 @@
 </form></div></section>
 <section class="la-panel" data-panel="import" hidden><h2>Smart Import</h2><p class="hint">TXT, Markdown, DOCX, EPUB файлыг текст болгон задлана. Файл сервер рүү автоматаар upload хийхгүй; эхлээд preview-ээ шалгаад Editor руу шилжүүлнэ.</p>
 <label>Файл сонгох<input id="laImportFile" type="file" accept=".txt,.md,.markdown,.docx,.epub"></label>
-<div class="la-row"><button id="laImport" class="primary" type="button">Файл унших</button><button id="laUseImport" type="button" disabled>Editor-т оруулах</button></div>
+<div class="la-row"><button id="laImport" class="primary" type="button">Файл унших</button><button id="laUseImport" type="button" disabled>Editor-т оруулах</button><button id="laImportChapters" type="button" disabled>Илэрсэн бүлгүүдийг Draft болгох</button></div>
 <p id="laImportStatus" role="status"></p><textarea id="laImportPreview" rows="14" readonly placeholder="Импортлосон текст энд харагдана"></textarea></section>
 <section class="la-panel" data-panel="glossary" hidden><h2>Орчуулгын толь</h2><form id="laGlossaryForm" class="la-form"><div class="la-two"><label>Эх нэр томьёо<input id="laTermOriginal" required></label><label>Монгол орчуулга<input id="laTermMongolian" required></label></div><label>Тэмдэглэл<input id="laTermNote"></label><button class="primary" type="submit">Тольд нэмэх</button></form><div id="laGlossaryList" class="la-stack"></div></section>
 <section class="la-panel" data-panel="queue" hidden><h2>Publication Queue</h2><p class="hint">Scheduled бүлэг товлосон цагт автоматаар уншигчдад нээгдэнэ. Сайтад нийтэд харагдуулахын тулд зохиолын төлөв Published байх шаардлагатай.</p><div id="laQueue" class="la-stack"></div></section>
