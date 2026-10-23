@@ -769,3 +769,19 @@ body.reader .profile-modal{font-family:Manrope,"Segoe UI",system-ui,sans-serif}
   .reader-brand{gap:6px;font-size:9px;letter-spacing:.04em}
   .reader-brand .reader-logo-image{width:29px;height:29px;border-radius:8px}
 }
+
+
+/* Discovery: random picker, next-chapter and share actions. */
+.random-manga-btn{white-space:nowrap;border-radius:11px;font-size:12px;font-weight:800;
+  min-height:43px;padding:9px 13px;transition:border-color .15s,color .15s}
+.random-manga-btn:hover{border-color:var(--red);color:var(--red)}
+.card-quick-actions{display:flex;gap:6px;flex-wrap:wrap;padding:0 9px 11px}
+.card-quick-actions .btn{flex:1 1 75px;display:inline-flex;align-items:center;justify-content:center;
+  text-align:center;min-height:34px;padding:7px 6px;border-radius:8px;font-size:10px;
+  line-height:1.35;font-weight:800}
+.card-quick-actions .card-next{background:rgba(229,56,79,.11);color:var(--red);
+  border-color:rgba(229,56,79,.28)}
+.card-quick-actions .card-next:hover{background:rgba(229,56,79,.2)}
+.card-quick-actions .card-share:hover{border-color:var(--red)}
+.card-quick-actions .btn:disabled{opacity:.5;cursor:wait}
+@media(max-width:520px){.random-manga-btn{width:100%}}

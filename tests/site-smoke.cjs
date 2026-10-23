@@ -12,7 +12,7 @@ const inline = file => [...read(file).matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\
 test('local scripts and page inline scripts parse', () => {
   for (const file of [
     'social.js','profile.js','admin.js','my-library.js','my-library-store.js',
-    'catalog.js','sw.js'
+    'catalog.js','discover.js','sw.js'
   ]) assert.doesNotThrow(() => new Function(read(file)), file);
   for (const file of ['index.html','reader.html','admin.html','my-library.html'])
     assert.doesNotThrow(() => new Function(inline(file)), file);
@@ -93,7 +93,7 @@ test('Reader honors requested manga and chapter IDs', () => {
 test('Reader terminal failures end social loading retries', () => {
   assert.match(inline('reader.html'),/RR_READER_STATE='error'/);
   assert.match(read('social.js'),/RR_READER_STATE !== 'error'/);
-  assert.match(read('sw.js'),/red-ribbon-v13/);
+  assert.match(read('sw.js'),/red-ribbon-v14/);
 });
 
 
@@ -138,5 +138,54 @@ test('My Library exposes safe manual refresh for cross-device updates', () => {
   assert.match(read('my-library.js'),/await Promise\.all\(\[window\.RRCatalog\.load\(\),store\.refresh\(\)\]\)/);
   assert.match(read('my-library-store.js'),/function refresh\(\)/);
   assert.match(read('my-library-store.js'),/ticket!==generation \|\| targetId!==userId/);
-  assert.match(read('sw.js'),/red-ribbon-v13/);
+  assert.match(read('sw.js'),/red-ribbon-v14/);
+});
+
+
+test('discovery starts at first unread chapter and supports completed books', () => {
+  const browser={};
+  new Function('window',read('discover.js'))(browser);
+  const {nextChapter}=browser.RRDiscover;
+  const manga={id:'a',chapters:[{n:1},{n:2},{n:3}]};
+  const fresh=nextChapter(manga,[]);
+  assert.equal(fresh.chapter,1);
+  assert.equal(fresh.label,'Эхлүүлэх');
+  const partial=nextChapter(manga,[{m:'a',c:1}]);
+  assert.equal(partial.chapter,2);
+  assert.equal(partial.remaining,2);
+  const done=nextChapter(manga,[{m:'a',c:1},{m:'a',c:2},{m:'a',c:3}]);
+  assert.equal(done.chapter,3);
+  assert.equal(done.label,'Дахин унших');
+  assert.equal(nextChapter({id:'empty',chapters:[]},[]),null);
+});
+
+test('random manga avoids immediate repetition when possible', () => {
+  const browser={};
+  new Function('window',read('discover.js'))(browser);
+  const {randomManga}=browser.RRDiscover;
+  const a={id:'a',chapters:[{n:1}]}, b={id:'b',chapters:[{n:1}]};
+  assert.equal(randomManga([a,b],'a',()=>0).id,'b');
+  assert.equal(randomManga([],null,()=>0),null);
+  assert.equal(randomManga([a],'a',()=>0).id,'a');
+});
+
+test('sharing encodes manga IDs and includes no user-specific data', () => {
+  const browser={};
+  new Function('window',read('discover.js'))(browser);
+  const {shareUrl}=browser.RRDiscover;
+  const u=new URL(shareUrl({id:'a&b',chapters:[{n:1}]},
+    'https://red-ribbon-scans.vercel.app/index.html'));
+  assert.equal(u.searchParams.get('m'),'a&b');
+  assert.equal(u.searchParams.get('c'),'1');
+  assert.equal(u.pathname,'/reader.html');
+  assert.equal(u.searchParams.size,2);
+});
+
+test('homepage renders quick actions and random button', () => {
+  const html=read('index.html');
+  assert.match(html,/id="randomManga"/);
+  assert.match(html,/data-share/);
+  assert.match(html,/card-quick-actions/);
+  assert.match(html,/discover.js\?v=discover-1/);
+  assert.match(read('sw.js'),/red-ribbon-v14/);
 });

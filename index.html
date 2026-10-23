@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=logo-1">
+<link rel="stylesheet" href="style.css?v=discover-1">
 <link rel="manifest" href="manifest.json">
 </head>
 <body>
@@ -103,6 +103,7 @@
         <option value="name">Нэрээр</option>
         <option value="progress">Үргэлжлүүлж унших</option>
       </select>
+      <button id="randomManga" class="btn random-manga-btn" type="button" title="Санамсаргүй манга сонгох">🎲 Санамсаргүй манга</button>
     </div>
     <div id="resultCount" class="result-count" aria-live="polite"></div>
     <div id="chips" class="chips" role="group" aria-label="Жанраар шүүх"></div>
@@ -161,6 +162,7 @@
 <script src="config.js"></script>
 <script src="catalog.js?v=admin-2"></script>
 <script src="my-library-store.js?v=favorites-fix-1"></script>
+<script src="discover.js?v=discover-1"></script>
 <script>const $=s=>document.querySelector(s);
 const $$=s=>document.querySelectorAll(s);
 const esc=s=>String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]));
@@ -170,7 +172,7 @@ let data=[], q='', g='', sort='new';
 const last=m=>m.chapters[m.chapters.length-1];
 const hue=t=>{let h=0;for(const c of t)h=(h*31+c.charCodeAt(0))%360;return h};
 const isNew=m=>Date.now()-new Date(last(m).date)<14*864e5;
-const href=(m,n)=>`reader.html?m=${encodeURIComponent(m.id)}&c=${n}`;
+const href=(m,n)=>`reader.html?m=${encodeURIComponent(m.id)}&c=${encodeURIComponent(n)}`;
 const favKey='rr_favs', histKey='rr_hist', maxHist=200;
 
 function getFavs(){
@@ -266,6 +268,7 @@ function draw(){
 
   $('#grid').innerHTML=list.length?list.map(m=>{
     const latest=last(m),h=hue(m.title),fav=isFav(m.id),progress=getProgress(m);
+    const next=window.RRDiscover.nextChapter(m,getHist());
     const bg='style="background:linear-gradient(160deg,hsl('+h+' 50% 31%),hsl('+((h+35)%360)+' 49% 15%))"';
     const coverImg=m.cover?'<img src="'+esc(m.cover.replace(/^\/+/, ''))+'" alt="" loading="lazy" decoding="async">':'';
     const rating=window.RR?.[m.id];
@@ -290,6 +293,11 @@ function draw(){
       '<option value=""'+(!window.RRLibraryStore?.getStatus(m.id)?' selected':'')+'>Жагсаалтад нэмэх…</option>'+
       Object.entries(window.RRMyLibrary.labels).map(([key,label])=>'<option value="'+key+'"'+(window.RRLibraryStore?.getStatus(m.id)===key?' selected':'')+'>'+esc(label)+'</option>').join('')+
       '</select></div>'+
+      '<div class="card-quick-actions">'+
+        '<a class="btn card-next" href="'+href(m,next.chapter)+'" aria-label="'+esc(next.label+': '+m.title)+'">'+
+          esc(next.label)+' →</a>'+
+        '<button class="btn card-share" type="button" data-share="'+esc(m.id)+'" aria-label="Холбоос хуваалцах: '+esc(m.title)+'">Хуваалцах</button>'+
+      '</div>'+
     '</article>';
   }).join(''):'<p class="empty">Илэрц олдсонгүй. Хайлтын үгээ эсвэл шүүлтүүрээ өөрчилнө үү.</p>';
 }
@@ -306,6 +314,45 @@ $('#grid').addEventListener('click',async e=>{
     if(button){button.disabled=false;button.focus();}
   }
 });
+$('#grid').addEventListener('click',async e=>{
+  const button=e.target.closest('button[data-share]');
+  if(!button || button.disabled)return;
+  const manga=data.find(item=>item.id===button.dataset.share);
+  if(!manga)return;
+  let url;
+  try{url=window.RRDiscover.shareUrl(manga,document.baseURI);}
+  catch(error){toast(error.message);return;}
+  button.disabled=true;
+  try{
+    if(typeof navigator.share==='function'){
+      try{
+        await navigator.share({title:manga.title,url});
+        return;
+      }catch(error){
+        if(error?.name==='AbortError')return;
+      }
+    }
+    if(navigator.clipboard?.writeText){
+      await navigator.clipboard.writeText(url);
+      toast('Манганы холбоос хуулагдлаа.');
+    }else{
+      const input=document.createElement('textarea');
+      input.value=url;
+      input.setAttribute('readonly','');
+      input.style.position='fixed';
+      input.style.left='-9999px';
+      document.body.append(input);
+      input.select();
+      const copied=typeof document.execCommand==='function' && document.execCommand('copy');
+      input.remove();
+      if(copied)toast('Манганы холбоос хуулагдлаа.');
+      else window.prompt('Манганы холбоос',url);
+    }
+  }catch(error){
+    toast('Холбоос хуулж чадсангүй: '+(error?.message||'Алдаа'));
+  }finally{button.disabled=false;}
+});
+
 $('#grid').addEventListener('change',async e=>{
   const picker=e.target.closest('select[data-library]');
   if(!picker)return;
@@ -348,7 +395,9 @@ function resume(){
     const m=r&&data.find(x=>x.id===r.m);
     if(!m)return;
     const a=$('#resume');
-    a.href=href(m,r.c);
+    const chapter=m.chapters.some(c=>String(c.n)===String(r.c))
+      ? r.c : window.RRDiscover.nextChapter(m,getHist()).chapter;
+    a.href=href(m,chapter);
     a.innerHTML=`<small>Ургэлжлэлэх</small><b>${esc(m.title)}</b> · Бүлэг ${esc(r.c)}`;
     a.hidden=false;
   }catch(e){}
@@ -361,6 +410,15 @@ function restoreUrlState(){
   if(p.has('sort')){sort=p.get('sort');$('#sort').value=sort}
 }
 function saveUrlState(){const p=new URLSearchParams();if(q)p.set('q',q);if(g)p.set('g',g);if(sort!=='new')p.set('sort',sort);history.replaceState(null,'',p.toString()?'?'+p.toString():location.pathname)}
+
+let previousRandomId='';
+$('#randomManga').onclick=()=>{
+  const picked=window.RRDiscover.randomManga(data,previousRandomId);
+  if(!picked){toast('Одоогоор манга алга.');return;}
+  previousRandomId=picked.id;
+  const next=window.RRDiscover.nextChapter(picked,getHist());
+  location.href=href(picked,next.chapter);
+};
 
 const debouncedDraw=debounce(()=>{draw();saveUrlState()},300);
 $('#q').oninput=e=>{q=e.target.value.trim().toLowerCase();$('#clearSearch').hidden=!q;debouncedDraw()};
