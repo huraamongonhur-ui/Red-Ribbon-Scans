@@ -4,8 +4,8 @@
   "description": "Дуртай түүхээ монгол хэлээр уншаарай",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#E8EAED",
-  "theme_color": "#C8102E",
+  "background_color": "#181d23",
+  "theme_color": "#7445cc",
   "orientation": "portrait-primary",
   "icons": [
     {

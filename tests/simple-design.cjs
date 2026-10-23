@@ -8,7 +8,7 @@ const read=file=>fs.readFileSync(path.resolve(__dirname,'..',file),'utf8');
 test('all reader-facing pages load the new minimal stylesheet after their existing styles',()=>{
  for(const p of ['index.html','manga.html','my-library.html','reader.html','stats.html','feedback.html']){
    const html=read(p);
-   assert.match(html,/simple-comix\.css\?v=clean-1/);
+   assert.match(html,/simple-comix\.css\?v=clean-(?:1|2|3)/);
    const head=html.split('</head>')[0];
    const simple=head.indexOf('simple-comix.css');
    assert.ok(simple>=0,p+' missing stylesheet');
@@ -18,7 +18,7 @@ test('all reader-facing pages load the new minimal stylesheet after their existi
 test('home keeps original working selectors but puts catalog first',()=>{
  const html=read('index.html');
  for(const id of ['grid','chips','q','sort','library','latest','latestUpdates',
-      'recommendations','newChapterAlerts','favModal','histModal','heroFeature','resume',
+      'recommendations','newChapterAlerts','favModal','histModal','resume',
       'myLibrary','libraryCount','randomManga','minChapters','minRating'].filter(x=>x!=='myLibrary')){
    assert.match(html,new RegExp('id="'+id+'"'),id);
  }
@@ -57,7 +57,7 @@ test('compact design covers desktop, mobile and keyboard focus',()=>{
 });
 test('new service-worker version includes new CSS without any DB migration',()=>{
  const sw=read('sw.js');
- assert.match(sw,/red-ribbon-v17/);
+ assert.match(sw,/red-ribbon-v19/);
  assert.match(sw,/'\.\/simple-comix\.css'/);
  assert.doesNotMatch(sw,/supabase\.sql/);
 });
@@ -73,4 +73,34 @@ test('mobile notification remains legible and theme setting persists across page
    const page=read(path);
    assert.match(page,/const savedTheme=localStorage\.getItem\('theme'\)/,path);
  }
+});
+
+
+test('homepage has no redundant featured manga card but retains useful hero actions and stats',()=>{
+ const html=read('index.html'),css=read('simple-comix.css');
+ for(const legacy of ['id="heroFeature"','id="featureLink"','ОНЦЛОХ МАНГА',
+   'featureTitle','featureImg','renderFeature()']){
+   assert.ok(!html.includes(legacy),'unexpected featured card: '+legacy);
+ }
+ for(const essential of ['id="mangaCount"','id="chapterCount"','id="resume"','id="heroTitle"',
+  'href="#library"','function renderHeroStats()']){
+   assert.ok(html.includes(essential),'lost hero function: '+essential);
+ }
+ assert.match(css,/\.hero\{\s*display:block/);
+ assert.doesNotMatch(css,/\.hero:has\(#heroFeature\[hidden\]\)/);
+});
+
+
+test('homepage requests refreshed clean styling after removing featured card',()=>{
+ assert.match(read('index.html'),/simple-comix\.css\?v=clean-3/);
+});
+
+
+test('dark and light themes use accessible purple accent without changing logo',()=>{
+ const css=read('simple-comix.css');
+ assert.match(css,/--red:#b89bff/);
+ assert.match(css,/--red:#6b3ab8/);
+ assert.match(css,/\.card \.mark\{background:#7445cc/);
+ assert.match(css,/\.hero-cta,\.chips \.btn\[aria-pressed=true\]/);
+ assert.match(read('index.html'),/red-ribbon-logo\.webp/);
 });

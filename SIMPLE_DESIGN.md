@@ -1,6 +1,6 @@
 # Red Ribbon Scans — Simple catalog redesign
 
-The redesign is intentionally **inspired by Comix.to's uncluttered reading experience**, not a pixel-for-pixel copy. It preserves the Red Ribbon Scans logo, red accent, Mongolian copy and existing business logic.
+The redesign is intentionally **inspired by Comix.to's uncluttered reading experience**, not a pixel-for-pixel copy. It preserves the Red Ribbon Scans logo, purple accent, Mongolian copy and existing business logic.
 
 ## Changed
 - Small, flat header with **all navigation links still available** at mobile sizes.
@@ -12,7 +12,7 @@ The redesign is intentionally **inspired by Comix.to's uncluttered reading exper
 - Clean dark theme by default; light mode remains usable via the existing theme toggle on pages that expose it.
 - Manga details, Reader, My Library, Stats and Feedback share the flatter design.
 - Single \`simple-comix.css\` stylesheet, appended after existing styles to avoid risky rewrites.
-- Cache refresh to \`red-ribbon-v17\`.
+- Cache refresh to \`red-ribbon-v19\`.
 
 ## No database changes
 **No Supabase SQL, environment variables, imports or extra backend dependencies.**
