@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 440" role="img" aria-label="Original fantasy character placeholder portrait">
+  <defs><linearGradient id="bg" x2=".8" y2="1"><stop stop-color="#365776"/><stop offset="1" stop-color="#14152b"/></linearGradient><radialGradient id="glow"><stop stop-color="#719d9d" stop-opacity=".6"/><stop offset="1" stop-color="#719d9d" stop-opacity="0"/></radialGradient></defs>
+  <rect width="400" height="440" fill="url(#bg)"/><circle cx="230" cy="149" r="175" fill="url(#glow)"/><path d="M0 330Q115 270 200 340T400 300V440H0Z" fill="#121629" opacity=".52"/>
+  <path d="M105 282q24-85 95-85 88 3 94 85v126H106Z" fill="#719d9d" opacity=".82"/><ellipse cx="200" cy="159" rx="67" ry="78" fill="#f5e6c1"/><path d="M134 166q-21-99 63-105 81 3 69 98l-27 28-98-1z" fill="#292037"/><path d="M135 144q5-82 65-84 75-2 70 88" fill="none" stroke="#1c172a" stroke-width="13"/>
+  <path d="M147 188q54 43 108 0" fill="none" stroke="#719d9d" stroke-opacity=".55" stroke-width="5"/><circle cx="78" cy="84" r="4" fill="#fff" opacity=".55"/><circle cx="324" cy="102" r="3" fill="#fff" opacity=".5"/><path d="m45 215 7-19 7 19-7 19z" fill="#fff" opacity=".45"/>
+  <rect width="400" height="440" fill="none" stroke="#d2c5ee" stroke-opacity=".2" stroke-width="3"/>
+  </svg>

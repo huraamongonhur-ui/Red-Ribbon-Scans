@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="mn">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0f172a">
+<meta name="description" content="Red Ribbon Scans — Light Novel уншигч, боть болон бүлгийн жагсаалт">
+<title>Light Novel мэдээлэл — Red Ribbon Scans</title>
+<link rel="icon" type="image/webp" href="assets/red-ribbon-logo.webp">
+<link rel="stylesheet" href="light-novel.css?v=3">
+</head>
+<body class="ln-ui" data-page="detail">
+<header class="ln-sitebar">
+  <div class="ln-shell ln-sitebar-inner">
+    <a href="index.html" class="ln-brand"><span class="ln-brand-icon" aria-hidden="true">R.</span><span>Red Ribbon <span class="ln-muted">/ NOVELS</span></span></a>
+    <nav class="ln-breadcrumbs" aria-label="Навигаци"><a href="index.html">Нүүр</a><span aria-hidden="true">/</span><a id="detailBack" href="light-novels.html">Каталог</a><span aria-hidden="true">/</span><span>Зохиол</span></nav>
+  </div>
+</header>
+<section class="ln-detail-hero" aria-label="Light Novel мэдээлэл">
+  <img id="novelHeroBackground" class="ln-hero-art" src="assets/ln-sample-cover.svg" alt="" aria-hidden="true">
+  <div class="ln-shell ln-hero-layout">
+    <div class="ln-cover-frame">
+      <img id="novelCover" src="assets/ln-sample-cover.svg" alt="Light Novel зориулалтын загвар зураг" width="600" height="880">
+      <span class="ln-cover-tag">SAMPLE ART</span>
+    </div>
+    <div class="ln-hero-copy">
+      <div class="ln-kicker">Red Ribbon Scans · Монгол орчуулга</div>
+      <h1 id="novelTitle">Light Novel</h1>
+      <p class="ln-subtitle" id="novelSubtitle"></p>
+      <div id="novelGenres" class="ln-tags" aria-label="Жанрууд"></div>
+      <dl class="ln-meta-grid">
+        <div><dt>Зохиолч</dt><dd id="novelAuthor"></dd></div>
+        <div><dt>Зураач</dt><dd id="novelIllustrator"></dd></div>
+        <div><dt>Ботиуд</dt><dd id="novelVolumes"></dd></div>
+        <div><dt>Төлөв</dt><dd id="novelStatus"></dd></div>
+        <div><dt>Үнэлгээ</dt><dd id="novelRating"></dd></div>
+      </dl>
+      <div class="ln-hero-actions">
+        <a href="light-novel-reader.html?novel=mushoku-tensei&amp;c=intro-1" class="ln-button primary" id="startReading">↗ Уншиж эхлэх</a>
+        <button class="ln-button ghost" id="bookmarkNovel" type="button" aria-pressed="false">♡ Миний санд нэмэх</button>
+      </div>
+      <p class="ln-hero-note">Энэ бол загварын үзүүлэн. Орчуулгын богино дээж агуулсан; бүтэн боть биш.</p>
+    </div>
+  </div>
+</section>
+<main class="ln-shell ln-detail-main">
+  <div class="ln-tabs" role="tablist" aria-label="Зохиолын мэдээллийн хэсгүүд">
+    <button id="tab-synopsis" role="tab" aria-selected="true" aria-controls="panel-synopsis" tabindex="0" class="ln-tab">Танилцуулга</button>
+    <button id="tab-chapters" role="tab" aria-selected="false" aria-controls="panel-chapters" tabindex="-1" class="ln-tab">Боть / Бүлгүүд</button>
+    <button id="tab-characters" role="tab" aria-selected="false" aria-controls="panel-characters" tabindex="-1" class="ln-tab">Дүрүүд</button>
+    <button id="tab-reviews" role="tab" aria-selected="false" aria-controls="panel-reviews" tabindex="-1" class="ln-tab">Сэтгэгдэл</button>
+  </div>
+  <section class="ln-tab-panel" role="tabpanel" id="panel-synopsis" aria-labelledby="tab-synopsis">
+    <h2 class="ln-heading">Зохиолын тухай</h2>
+    <p class="ln-copy" id="novelSynopsis"></p>
+    <div class="ln-note">Одоогоор орчуулгын дээж л нийтлэгдсэн. Дүрийн болон нүүр зургийн байрлалд эх зохиолын зураг биш, загварын зураг ашигласан.</div>
+  </section>
+  <section class="ln-tab-panel" role="tabpanel" id="panel-chapters" aria-labelledby="tab-chapters" hidden>
+    <h2 class="ln-heading">Унших хэсгүүд</h2>
+    <div class="ln-note">Удиртгалын дээжийг навигаци туршихын тулд хоёр хэсэг болгосон. Бүтэн бүлэг эсвэл боть биш.</div>
+    <div id="volumeList"></div>
+  </section>
+  <section class="ln-tab-panel" role="tabpanel" id="panel-characters" aria-labelledby="tab-characters" hidden>
+    <h2 class="ln-heading">Дүрүүдийн мэдээлэл</h2>
+    <div class="ln-character-grid" id="characterGrid"></div>
+    <p class="ln-muted">Дүрийн жинхэнэ зургуудыг зөвшөөрөгдсөн зурагтай болсны дараа энд байрлуулна.</p>
+  </section>
+  <section class="ln-tab-panel" role="tabpanel" id="panel-reviews" aria-labelledby="tab-reviews" hidden>
+    <h2 class="ln-heading">Уншигчдын сэтгэгдэл</h2>
+    <div class="ln-empty">Одоогоор сэтгэгдэл алга. Уншигчдын сэтгэгдлийг хадгалах backend энэ загварт холбогдоогүй байна.</div>
+  </section>
+</main>
+<script src="light-novel-data.js?v=3"></script>
+<script src="light-novel-ui.js?v=3"></script>
+</body>
+</html>
