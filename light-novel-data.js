@@ -13,9 +13,9 @@ window.RR_LIGHT_NOVEL = {
   cover: "assets/ln-sample-cover.svg",
   synopsis: "Нэгэн эр өнгөрсөн амьдралдаа харамсах зуураа бүхнийг дахин эхлүүлэхийг хүснэ. Энэхүү хуудас нь Red Ribbon Scans-ийн уншигчийн загварыг шалгах зориулалттай бөгөөд 1-р ботийн бүрэн орчуулга биш.",
   characters: [
-    {name: "Рудеус Грейрат", role: "Гол дүр", description: "Шинэ амьдралаа эхлүүлэх боломж олдсон гол дүр."},
-    {name: "Зенит Грейрат", role: "Гэр бүл", description: "Рудеусийн ээж."},
-    {name: "Пол Грейрат", role: "Гэр бүл", description: "Рудеусийн аав."}
+    {name: "Рудеус Грейрат", art: "assets/ln-portrait-a.svg", role: "Гол дүр", description: "Шинэ амьдралаа эхлүүлэх боломж олдсон гол дүр."},
+    {name: "Зенит Грейрат", art: "assets/ln-portrait-b.svg", role: "Гэр бүл", description: "Рудеусийн ээж."},
+    {name: "Пол Грейрат", art: "assets/ln-portrait-c.svg", role: "Гэр бүл", description: "Рудеусийн аав."}
   ],
   volumes: [
     {
