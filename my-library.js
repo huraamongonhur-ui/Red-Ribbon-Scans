@@ -69,7 +69,7 @@
     if (!entries.length) {
       const empty = document.createElement('div');
       empty.className='my-library-empty';
-      empty.textContent = filter ? 'Хайлтанд тохирох манга алга.' :
+      empty.textContent = filter ? 'Хайлтад тохирох манга алга.' :
         tab === 'all' ? 'Одоохондоо жагсаалт хоосон байна. Манга цуглуулгаас эхний мангагаа нэмээрэй.' :
         'Энэ ангилалд одоогоор манга алга.';
       grid.append(empty);
@@ -120,7 +120,7 @@
       const heart = document.createElement('button');
       heart.type='button';
       heart.className='my-library-favorite'+(item.favorite?' is-favorite':'');
-      heart.textContent=item.favorite?'♥ Хайртаас хасах':'♡ Хайртад нэмэх';
+      heart.textContent=item.favorite?'♥ Дуртай манганы жагсаалтаас хасах':'♡ Дуртай мангад нэмэх';
       heart.setAttribute('aria-pressed',String(item.favorite));
       heart.onclick=async()=>{
         heart.disabled=true;
@@ -129,12 +129,13 @@
       };
       information.append(heart);
       const last = recent.get(item.id);
-      const chapter = last?.chapter || manga?.chapters?.[0]?.n;
+      const validLast = Boolean(last && manga?.chapters?.some(c=>String(c.n)===String(last.chapter)));
+      const chapter = validLast ? last.chapter : manga?.chapters?.[0]?.n;
       if (manga && chapter != null) {
         const a = document.createElement('a');
         a.className='btn primary my-library-read';
         a.href='reader.html?m='+encodeURIComponent(item.id)+'&c='+encodeURIComponent(chapter);
-        a.textContent=last ? 'Үргэлжлүүлж унших →' : 'Унших →';
+        a.textContent=validLast ? 'Үргэлжлүүлж унших →' : 'Унших →';
         information.append(a);
       }
       card.append(cover,information);
@@ -225,7 +226,7 @@
       const refresh=()=>{
         heart.textContent=store.isFavorite(manga.id)?'♥':'♡';
         heart.setAttribute('aria-pressed',String(store.isFavorite(manga.id)));
-        heart.title=store.isFavorite(manga.id)?'Хайртаас хасах':'Хайртад нэмэх';
+        heart.title=store.isFavorite(manga.id)?'Дуртай манганы жагсаалтаас хасах':'Дуртай мангад нэмэх';
       };
       refresh();
       heart.onclick=async()=>{
@@ -257,6 +258,24 @@
     }catch(error){
       tell(succeeded+' манга импортлогдлоо, цааш үргэлжлүүлэхэд алдаа гарлаа: '+(error?.message||'Алдаа'));
     }finally{button.disabled=false;}
+  };
+
+  $('#myLibraryRefresh').onclick=async()=>{
+    const button=$('#myLibraryRefresh');
+    if(!store?.isSignedIn()) { tell('Шинэчлэхийн тулд эхлээд нэвтэрнэ үү.'); return; }
+    const uid=currentId;
+    button.disabled=true;
+    tell('Жагсаалтыг шинэчилж байна…');
+    try {
+      const [manga] = await Promise.all([window.RRCatalog.load(),store.refresh()]);
+      if (uid!==currentId) return;
+      catalogue.clear();
+      for(const item of manga) catalogue.set(item.id,item);
+      await loadRecent(uid);
+      render();
+    } catch(error) {
+      tell('Шинэчилж чадсангүй: '+(error?.message||'Сүлжээний алдаа'));
+    } finally { button.disabled=false; }
   };
 
   $('#myLibraryTabs').onclick=event => {

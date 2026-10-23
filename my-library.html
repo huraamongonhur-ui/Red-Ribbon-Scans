@@ -34,13 +34,14 @@
     <span id="myLibraryUser" class="my-library-user">Аккаунт шалгаж байна…</span>
   </section>
   <div id="myLibraryMessage" class="my-library-message" role="status" aria-live="polite">Унших жагсаалт ачаалж байна…</div>
+  <button id="myLibraryRefresh" class="btn" type="button" title="Жагсаалтыг дахин ачаалах">↻ Жагсаалт шинэчлэх</button>
   <section id="myLibraryPanel" hidden>
     <div class="my-library-stats" aria-label="Миний сангийн статистик">
       <div><strong id="myCountAll">0</strong><span>Нийт манга</span></div>
       <div><strong id="myCountReading">0</strong><span>Уншиж байгаа</span></div>
       <div><strong id="myCountCompleted">0</strong><span>Дуусгасан</span></div>
       <div><strong id="myCountPlanned">0</strong><span>Дараа унших</span></div>
-      <div><strong id="myCountFavorites">0</strong><span>Хайртай манга</span></div>
+      <div><strong id="myCountFavorites">0</strong><span>Дуртай манга</span></div>
     </div>
     <div class="my-library-tools">
       <div id="myLibraryTabs" class="my-library-tabs" role="group" aria-label="Манганы жагсаалтыг шүүх">
@@ -48,7 +49,7 @@
         <button type="button" class="my-library-tab" data-tab="reading" aria-pressed="false">Уншиж байгаа</button>
         <button type="button" class="my-library-tab" data-tab="completed" aria-pressed="false">Дуусгасан</button>
         <button type="button" class="my-library-tab" data-tab="planned" aria-pressed="false">Дараа унших</button>
-        <button type="button" class="my-library-tab" data-tab="favorites" aria-pressed="false">♥ Хайртал</button>
+        <button type="button" class="my-library-tab" data-tab="favorites" aria-pressed="false">♥ Дуртай манга</button>
       </div>
       <label for="myLibrarySearch" class="visually-hidden">Манганы нэрээр хайх</label>
       <input id="myLibrarySearch" type="search" placeholder="Миний сангаас хайх…" autocomplete="off">
@@ -73,7 +74,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
 <script src="catalog.js?v=admin-2"></script>
-<script src="my-library-store.js?v=favorites-fix-1"></script>
+<script src="my-library-store.js?v=stability-1"></script>
 <script src="my-library.js?v=site-audit-1"></script>
 </body>
 </html>

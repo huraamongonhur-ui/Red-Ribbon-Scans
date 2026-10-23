@@ -74,7 +74,15 @@ window.RRCatalog.load().then(d=>{
   updateReaderLibrary();
   document.title=`${m.title} · Бүлэг ${ch.n} — Red Ribbon`;
   $('#ttl').textContent=`${m.title} · Бүлэг ${ch.n}`;
-  $('#ch').innerHTML=m.chapters.map((c,i)=>`<option value="${i}"${i===idx?' selected':''}>Бүлэг ${c.n}${c.title?' — '+c.title:''}</option>`).join('');
+  const chapterPicker=$('#ch');
+  chapterPicker.replaceChildren();
+  m.chapters.forEach((c,i)=>{
+    const option=document.createElement('option');
+    option.value=String(i);
+    option.textContent='Бүлэг '+c.n+(c.title?' — '+c.title:'');
+    option.selected=i===idx;
+    chapterPicker.append(option);
+  });
   urls=pagesOf(ch);
   if(!urls.length)return note('Энэ бүлэгт зураг байхгүй байна.');
   window.RR_READER_STATE='ready';
@@ -98,8 +106,8 @@ function pagesOf(c){
   if(s.base&&s.count){
     return Array.from({length:s.count},(_,i)=>new URL(s.base.replace(/^\/+/, '')+String(i+1).padStart(s.pad||0,'0')+(s.ext||'.jpg'),new URL('./',location.href)).href);
   }
-  return Array.from({length:5},(_,i)=>'data:image/svg+xml,'+encodeURIComponent(
-    `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1200"><rect width="800" height="1200" fill="#eceef1"/><rect x="40" y="40" width="720" height="1120" fill="none" stroke="#15171D" stroke-width="4"/><text x="400" y="620" font-size="48" font-family="sans-serif" text-anchor="middle" fill="#15171D">Хуудас ${i+1}</text></svg>`));
+  // Missing pages should not look like real published chapter images.
+  return [];
 }
 
 function show(){

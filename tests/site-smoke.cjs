@@ -43,7 +43,7 @@ test('Favorites popup handles empty, normal and deleted manga', () => {
   const render = new Function(...Object.keys(bindings),renderSource+';return renderFavs;')
     (...Object.values(bindings));
   render();
-  assert.match(list.innerHTML, /Хайртал хоосон/);
+  assert.match(list.innerHTML, /Дуртай манганы жагсаалт хоосон/);
   assert.equal(typeof button.onclick, 'function');
   ids=['old-manga'];
   available.push({id:'old-manga',title:'Existing manga',chapters:[{n:1}]});
@@ -93,5 +93,50 @@ test('Reader honors requested manga and chapter IDs', () => {
 test('Reader terminal failures end social loading retries', () => {
   assert.match(inline('reader.html'),/RR_READER_STATE='error'/);
   assert.match(read('social.js'),/RR_READER_STATE !== 'error'/);
-  assert.match(read('sw.js'),/red-ribbon-v11/);
+  assert.match(read('sw.js'),/red-ribbon-v13/);
+});
+
+
+test('homepage HTML has real Mongolian characters, not literal Unicode escape codes', () => {
+  const html=read('index.html');
+  const beforeScript=html.split('<script')[0];
+  assert.doesNotMatch(beforeScript,/\\u[0-9a-f]{4}/i);
+  assert.match(beforeScript, /Уншсан түүх/);
+  assert.match(beforeScript, /Тусламж/);
+  assert.match(beforeScript, /Дуртай манга/);
+  assert.match(beforeScript, /Бүлэг/);
+  assert.doesNotMatch(html,/Бэлэг|Үргэлжлэлэх|туух|Двойн товш/);
+});
+
+test('cloud Favorites message accurately describes account syncing', () => {
+  const profile=read('profile.js');
+  assert.doesNotMatch(profile,/Дуртай манга зөвхөн энэ төхөөрөмж дээр/);
+  assert.match(profile,/isFavoritesReady/);
+  assert.match(read('my-library.html'),/♥ Дуртай манга/);
+});
+
+test('reader chapter selection safely uses DOM text rather than HTML interpolation', () => {
+  const src=inline('reader.html');
+  assert.match(src,/option\.textContent='Бүлэг '/);
+  assert.doesNotMatch(src,/innerHTML=m\.chapters\.map/);
+  const from=src.indexOf('function pagesOf(c){');
+  const to=src.indexOf('\nfunction show(){',from);
+  assert.ok(from>=0&&to>from);
+  assert.match(src.slice(from,to),/return \[\];/);
+  assert.doesNotMatch(src.slice(from,to),/Array\.from\(\{length:5\}/);
+});
+
+test('My Library avoids links to chapters removed by admin', () => {
+  const src=read('my-library.js');
+  assert.match(src,/const validLast = Boolean\(last && manga\?\.chapters\?\.some/);
+  assert.match(src,/const chapter = validLast \? last\.chapter : manga\?\.chapters\?\.\[0\]\?\.n/);
+  assert.match(src,/a\.textContent=validLast \?/);
+});
+
+test('My Library exposes safe manual refresh for cross-device updates', () => {
+  assert.match(read('my-library.html'),/id="myLibraryRefresh"/);
+  assert.match(read('my-library.js'),/await Promise\.all\(\[window\.RRCatalog\.load\(\),store\.refresh\(\)\]\)/);
+  assert.match(read('my-library-store.js'),/function refresh\(\)/);
+  assert.match(read('my-library-store.js'),/ticket!==generation \|\| targetId!==userId/);
+  assert.match(read('sw.js'),/red-ribbon-v13/);
 });
