@@ -210,6 +210,13 @@ function initReader(){
   const requested=new URLSearchParams(location.search).get("c");
   const index=Math.max(0,chapters.findIndex(ch=>ch.id===requested));
   const chapter=chapters[index];
+  if(!chapter){
+    $("#readerChapterTitle").textContent="Нийтлэгдсэн бүлэг алга";
+    $("#readerHeaderSubtitle").textContent="Бүлэг олдсонгүй";
+    $("#readingBody").textContent="Энэ зохиолын унших бүлэг хараахан нийтлэгдээгүй байна.";
+    $(".ln-prev,.ln-next").forEach(a=>a.setAttribute("aria-disabled","true"));
+    return;
+  }
   const title=$("#readerChapterTitle");
   title.textContent=chapter.label;
   $("#readerHeaderTitle").textContent=novel.title;
