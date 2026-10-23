@@ -36,7 +36,7 @@ Update \`light-novel-data.js\` and add approved chapters to \`volumes[].chapters
 }
 \`\`\`
 
-Use *textContent*-based rendering for paragraph text; do not pass untrusted HTML. Only add appropriate illustration files from approved sources. Update the preview-only messaging when real chapters are ready. The current demo has **only two small parts of the translated prologue**, not a completed chapter or volume. Original sample art is *not* an official Mushoku Tensei illustration or cover.
+Use *textContent*-based rendering for paragraph text; do not pass untrusted HTML. Only add appropriate illustration files from approved sources. Update the preview-only messaging when real chapters are ready. The current catalog has **one title**, with **only two small parts of the translated prologue**, not a completed chapter or volume. Original sample art is *not* an official Mushoku Tensei illustration or cover.
 
 ### Review and release
 
