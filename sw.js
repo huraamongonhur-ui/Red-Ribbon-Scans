@@ -1,4 +1,4 @@
-const CACHE_NAME='red-ribbon-v15';
+const CACHE_NAME='red-ribbon-v16';
 const STATIC_ASSETS=[
   './',
   './index.html',
@@ -19,6 +19,13 @@ const STATIC_ASSETS=[
   './feedback.html',
   './feedback.js',
   './admin-workflow.js',
+  './stats.html',
+  './stats.js',
+  './site-extras.js',
+  './reader-extras.js',
+  './extras.css',
+  './admin-bulk.js',
+  './admin-activity.js',
   './my-library-store.js',
   './my-library.js',
   './my-library.css',

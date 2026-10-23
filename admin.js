@@ -94,7 +94,8 @@
   function resetMangaForm() {
     activeId=null;current=null;
     $('#mangaForm').reset();
-    for (const el of ['#mangaTitle','#mangaDescription','#mangaGenres','#mangaCover']) $(el).disabled = false;
+    $('#mangaPublicationStatus').value='ongoing';
+    for (const el of ['#mangaTitle','#mangaDescription','#mangaPublicationStatus','#mangaGenres','#mangaCover']) $(el).disabled = false;
     $('#mangaId').readOnly=false;
     $('#mangaFormHeading').textContent='Шинэ манга нэмэх';
     $('#saveManga').disabled=false;
@@ -114,6 +115,7 @@
     $('#mangaId').readOnly=true;
     $('#mangaTitle').value=manga.title;
     $('#mangaDescription').value=manga.description||'';
+    $('#mangaPublicationStatus').value=manga.publication_status||'ongoing';
     $('#mangaGenres').value=(manga.genres||[]).join(', ');
     $('#mangaCover').value='';
     $('#mangaFormHeading').textContent=(editable?'Засах: ':'Импорт шаардана: ')+manga.title;
@@ -121,7 +123,7 @@
     $('#deleteManga').hidden=!editable;
     $('#mangaStatus').textContent=editable ? 'Онлайн манга: өөрчлөлт шууд нийтлэгдэнэ.' :
       'Энэ бол GitHub-ийн манга. Жагсаалтын «Импортлох» товчийг дарна уу.';
-    for(const el of ['#mangaTitle','#mangaDescription','#mangaGenres','#mangaCover']) $(el).disabled=!editable;
+    for(const el of ['#mangaTitle','#mangaDescription','#mangaPublicationStatus','#mangaGenres','#mangaCover']) $(el).disabled=!editable;
     previewCover(getCover(id));
     $('#chapterPanel').hidden=!editable;
     $('#chapterHelp').hidden=editable;
@@ -138,7 +140,8 @@
     saving=true;say('Манга импортолж байна…');
     try {
       const {error}=await sb.from('catalog_manga').insert({
-        id:manga.id,title:manga.title,description:manga.description||'',genres:manga.genres||[],
+        id:manga.id,title:manga.title,description:manga.description||'',
+        publication_status:manga.publication_status||'ongoing',genres:manga.genres||[],
         cover:manga.cover||'',chapters:manga.chapters||[]
       });
       if (error) throw error;
@@ -226,7 +229,9 @@
         const path='manga/'+id+'/covers/'+crypto.randomUUID()+'.'+TYPES[file.type];
         cover=await upload(file,path);uploaded.push(path);
       }
-      const record={id,title,description,genres:genreList,cover,chapters:current?.chapters||[]};
+      const record={id,title,description,
+        publication_status:$('#mangaPublicationStatus').value,
+        genres:genreList,cover,chapters:current?.chapters||[]};
       const {error}=await sb.from('catalog_manga').upsert(record,{onConflict:'id'});
       if(error)throw error;
       await reload(id);

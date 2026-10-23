@@ -1,0 +1,22 @@
+
+/* Red Ribbon Scans 4.0 — notifications, bookmarks, statistics and moderation. */
+.rr-alert-button{font-size:11px;font-weight:800;padding:8px 11px;white-space:nowrap;border-radius:11px}
+.rr-alert-button:hover{border-color:var(--red)}
+.reader-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin:26px 0}
+.reader-stats>div{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:20px 15px;display:flex;flex-direction:column;gap:5px}
+.reader-stats strong{font-size:28px;color:var(--red);line-height:1.3}
+.reader-stats span{font-size:12px;color:var(--mute)}
+#statsRecent a,#statsMarks a{color:var(--red);font-weight:800;overflow-wrap:anywhere}
+#statsRecent small,#statsMarks small{display:block;color:var(--mute)}
+#newChapterDialog{max-width:min(530px,calc(100vw - 24px));padding:22px}
+#newChapterDialog .feature-ticket{font-weight:800;color:var(--red);margin:6px 0}
+.comment-spoiler{margin:7px 0;padding:9px 12px;border-radius:9px;border:1px solid var(--line);background:var(--paper)}
+.comment-spoiler summary{cursor:pointer;font-weight:800;color:var(--red);list-style:disclosure-closed}
+.comment-spoiler[open] summary{margin-bottom:10px}
+#readerBookmark[aria-pressed="true"]{color:var(--red);border-color:var(--red)}
+#readerSaveState{min-width:100px;font-size:10px;max-width:210px;overflow:hidden;text-overflow:ellipsis}
+#bulkPanel .feature-form{max-width:600px}
+#adminAuditPanel .feature-ticket{display:flex;gap:5px}
+#adminAuditPanel .feature-ticket strong{font-size:12px}
+@media(max-width:820px){.rr-alert-button{padding:6px 7px;font-size:10px;max-width:104px;overflow:hidden;text-overflow:ellipsis}
+  #readerSaveState{max-width:130px}.reader-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}

@@ -38,4 +38,8 @@
  };
  window.addEventListener('rr-catalog-loaded',e=>{all=Array.isArray(e.detail)?e.detail:[];render()});
  window.addEventListener('rr-library-change',render);
+ if(Array.isArray(window.RR_CATALOG_SNAPSHOT)){
+   all=window.RR_CATALOG_SNAPSHOT;
+   render();
+ }
 })();

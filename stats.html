@@ -1,0 +1,28 @@
+<!doctype html><html lang="mn"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b0e15">
+<meta name="description" content="Red Ribbon Scans — уншсан бүлэг, ахиц, тэмдэглэгээ болон төхөөрөмж хоорондын синк.">
+<meta property="og:title" content="Унших статистик — Red Ribbon Scans">
+<link rel="icon" type="image/webp" href="assets/red-ribbon-logo.webp">
+<link rel="stylesheet" href="style.css?v=rr4"><link rel="stylesheet" href="features.css?v=rr4">
+<link rel="stylesheet" href="extras.css?v=rr4">
+<title>Унших статистик — Red Ribbon Scans</title></head>
+<body class="feature-page">
+<header class="feature-header wrap"><a href="index.html">← Манга цуглуулга</a><a href="my-library.html">Миний сан</a></header>
+<main class="wrap feature-main"><h1>Унших статистик <span class="heading-dot">.</span></h1>
+<p class="feature-muted">Уншсан бүлэг, үргэлжлүүлэх холбоос, хадгалсан хуудсууд. Нэвтэрсэн үед аккаунтын ахицыг харуулна.</p>
+<p id="statsNotice" role="status" aria-live="polite">Ачаалж байна…</p>
+<div class="reader-stats" id="statsTotals" aria-live="polite">
+<div><strong id="statSeries">—</strong><span>Манга</span></div>
+<div><strong id="statChapters">—</strong><span>Бүлэг</span></div>
+<div><strong id="statWeek">—</strong><span>Сүүлийн 7 хоног</span></div>
+<div><strong id="statBookmarks">—</strong><span>Тэмдэглэгээ</span></div></div>
+<section class="feature-section"><h2>Үргэлжлүүлж унших</h2>
+<div id="statsRecent" class="feature-stack"></div></section>
+<section class="feature-section"><h2>Хуудасны тэмдэглэгээ</h2>
+<div id="statsMarks" class="feature-stack"></div></section>
+<button id="statsRefresh" class="btn" type="button">↻ Дахин ачаалах</button>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script><script src="catalog.js?v=rr4"></script>
+<script src="stats.js?v=rr4"></script></body></html>

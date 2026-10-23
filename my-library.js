@@ -144,14 +144,18 @@
   }
 
   async function loadRecent(uid) {
-    const result=await sb.from('reading_history')
-      .select('manga_id,chapter,read_at').eq('user_id',uid)
-      .order('read_at',{ascending:false}).limit(1000);
-    if (currentId !== uid || result.error) return;
+    const [legacy,synced]=await Promise.all([
+      sb.from('reading_history').select('manga_id,chapter,read_at')
+        .eq('user_id',uid).order('read_at',{ascending:false}).limit(1000),
+      sb.from('user_chapter_progress').select('manga_id,chapter,read_at')
+        .eq('user_id',uid).order('read_at',{ascending:false}).limit(1000)
+    ]);
+    if(currentId!==uid)return;
     recent.clear();
-    for(const item of result.data || []) {
-      if (!recent.has(item.manga_id)) recent.set(item.manga_id,item);
-    }
+    const entries=[...(legacy.data||[]),...(synced.data||[])]
+      .filter(x=>x&&x.manga_id)
+      .sort((a,b)=>new Date(b.read_at)-new Date(a.read_at));
+    for(const item of entries)if(!recent.has(item.manga_id))recent.set(item.manga_id,item);
     render();
   }
 
