@@ -1,7 +1,8 @@
 /* Red Ribbon Scans Light Novel UI — no framework or API keys required.
    Content is passed through textContent rather than interpolated into HTML. */
-(() => {
+(async () => {
 "use strict";
+await Promise.resolve(window.RR_LN_READY);
 const novels = Array.isArray(window.RR_LIGHT_NOVELS) ? window.RR_LIGHT_NOVELS : [];
 const selectedId = new URLSearchParams(location.search).get("novel");
 const novel = novels.find(item => item && item.id === selectedId) || (!selectedId ? novels[0] : null);
@@ -33,6 +34,29 @@ const chapterUrl = id => "light-novel-reader.html?novel="+encodeURIComponent(nov
 const persistedProgress = () => storage.get(prefix+"progress", null);
 
 
+async function checkNotifications(){
+  const box=$("#lnAlerts"),db=window.RR_LN_CLIENT;
+  if(!box||!db)return;
+  try{
+    const user=(await db.auth.getUser()).data?.user;
+    if(!user)return;
+    const result=await db.from("ln_subscriptions").select("novel_id").eq("user_id",user.id);
+    if(result.error||!result.data.length)return;
+    const followed=new Set(result.data.map(r=>r.novel_id));
+    const books=novels.filter(n=>n.dbId&&followed.has(n.dbId));
+    const visible=books.flatMap(n=>n.volumes.flatMap(v=>v.chapters.map(c=>({id:c.dbChapterId,label:c.label,title:n.title}))));
+    const key="rr-ln-seen-v1-"+user.id;
+    let previous=storage.get(key,null);
+    if(!Array.isArray(previous)){storage.set(key,visible.map(c=>c.id));return;}
+    const newChapters=visible.filter(c=>!previous.includes(c.id));
+    storage.set(key,Array.from(new Set([...previous,...visible.map(c=>c.id)])).slice(-2000));
+    if(newChapters.length){
+      box.hidden=false;
+      box.textContent="Шинэ бүлэг: "+newChapters.slice(0,3).map(c=>c.title+" — "+c.label).join("; ")+
+      (newChapters.length>3?" (+"+(newChapters.length-3)+")":"");
+    }
+  }catch(error){console.warn("[LN] In-app notices unavailable:",error.message);}
+}
 function initCatalog(){
   const search=$("#novelSearch");
   const genre=$("#novelGenre");
@@ -79,6 +103,7 @@ function initCatalog(){
   search.addEventListener("input",render);
   genre.addEventListener("change",render);
   render();
+  checkNotifications();
 }
 
 function initDetail(){
@@ -112,6 +137,28 @@ function initDetail(){
   };
   bookmark.addEventListener("click",()=>{storage.set(prefix+"bookmark",!storage.get(prefix+"bookmark",false));redrawBookmark();});
   redrawBookmark();
+  // Signed-in followers also register in Supabase to get release notices on their next visit.
+  const db=window.RR_LN_CLIENT;
+  if(db&&novel.dbId){
+    db.auth.getUser().then(async result=>{
+      const user=result.data?.user;
+      if(!user)return;
+      const response=await db.from("ln_subscriptions").select("novel_id").eq("novel_id",novel.dbId).eq("user_id",user.id).maybeSingle();
+      if(!response.error&&response.data){
+        storage.set(prefix+"bookmark",true);
+        redrawBookmark();
+      }
+    }).catch(()=>{});
+    bookmark.addEventListener("click",async()=>{
+      const user=(await db.auth.getUser()).data?.user;
+      if(!user)return;
+      const followed=!!storage.get(prefix+"bookmark",false);
+      const op=followed?db.from("ln_subscriptions").upsert({user_id:user.id,novel_id:novel.dbId},{onConflict:"user_id,novel_id"})
+       :db.from("ln_subscriptions").delete().eq("user_id",user.id).eq("novel_id",novel.dbId);
+      const result=await op;
+      if(result.error)console.warn("[LN] Follow sync failed:",result.error.message);
+    });
+  }
   const list=$("#volumeList");
   for (const volume of novel.volumes){
     const wrapper=el("div",{className:"ln-volume"});
@@ -163,6 +210,13 @@ function initReader(){
   const requested=new URLSearchParams(location.search).get("c");
   const index=Math.max(0,chapters.findIndex(ch=>ch.id===requested));
   const chapter=chapters[index];
+  if(!chapter){
+    $("#readerChapterTitle").textContent="Нийтлэгдсэн бүлэг алга";
+    $("#readerHeaderSubtitle").textContent="Бүлэг олдсонгүй";
+    $("#readingBody").textContent="Энэ зохиолын унших бүлэг хараахан нийтлэгдээгүй байна.";
+    $(".ln-prev,.ln-next").forEach(a=>a.setAttribute("aria-disabled","true"));
+    return;
+  }
   const title=$("#readerChapterTitle");
   title.textContent=chapter.label;
   $("#readerHeaderTitle").textContent=novel.title;
@@ -173,6 +227,7 @@ function initReader(){
   for(const a of $$(".ln-prev")){a.href=prev?chapterUrl(prev.id):"#";a.setAttribute("aria-disabled",String(!prev));}
   for(const a of $$(".ln-next")){a.href=next?chapterUrl(next.id):"#";a.setAttribute("aria-disabled",String(!next));}
   const body=$("#readingBody");
+  const publicChapterId=chapter.dbChapterId;
   for(const block of chapter.blocks){
     if(block.type==="paragraph") body.append(el("p",{},block.text));
     else if(block.type==="illustration"&&block.src){
@@ -250,12 +305,26 @@ function initReader(){
     scrollY:Math.round(window.scrollY),
     updatedAt:Date.now()
   });
+  const db=window.RR_LN_CLIENT;
+  let completionSent=false;
+  const logReading=async kind=>{
+    if(!db||!publicChapterId||!novel.dbId)return;
+    try{
+      const user=(await db.auth.getUser()).data?.user;
+      if(!user)return;
+      await db.from("ln_read_events").upsert({
+        user_id:user.id,novel_id:novel.dbId,chapter_id:publicChapterId,event_type:kind
+      },{onConflict:"user_id,chapter_id,event_type,reading_day",ignoreDuplicates:true});
+    }catch{ /* reading remains available when tracking fails */ }
+  };
+  logReading("opened");
   const sync=()=>{
     const y=window.scrollY;
     const distance=Math.max(1,document.documentElement.scrollHeight-window.innerHeight);
     const pct=Math.min(100,Math.max(0,y/distance*100));
     track.style.width=pct.toFixed(1)+"%";
     percentage.textContent=Math.round(pct)+"% уншсан";
+    if(pct>=90&&!completionSent){completionSent=true;logReading("completed");}
     $(".ln-progress-track").setAttribute("aria-valuenow",String(Math.round(pct)));
     const diff=y-lastY;
     if(Math.abs(diff)>5){
