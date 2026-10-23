@@ -15,49 +15,56 @@
     const pending = new Set(), pendingFavorites = new Set();
     const emit = () => window.dispatchEvent(new Event('rr-library-change'));
 
-    function setSession(session) {
-      const nextId = session?.user?.id || null;
-      if (userId === nextId) return loading;
-      userId = nextId;
-      statuses = new Map();
-      favorites = new Set();
-      error = null; favoritesError = null;
-      ready = false; favoritesReady = false;
-      const ticket = ++generation;
-      emit();
-      if (!nextId) {
-        loading = Promise.resolve();
-        return loading;
-      }
-      loading = (async () => {
-        const [library, hearts] = await Promise.all([
-          sb.from('user_manga_library').select('manga_id,status').eq('user_id',nextId),
-          sb.from('user_manga_favorites').select('manga_id').eq('user_id',nextId)
+    function refresh() {
+      const targetId=userId;
+      if(!targetId) return Promise.resolve();
+      if(pending.size || pendingFavorites.size) return loading;
+      const ticket=++generation;
+      loading=(async()=>{
+        const [library,hearts]=await Promise.all([
+          sb.from('user_manga_library').select('manga_id,status').eq('user_id',targetId),
+          sb.from('user_manga_favorites').select('manga_id').eq('user_id',targetId)
         ]);
-        if (ticket !== generation) return;
-        error = library.error || null;
-        favoritesError = hearts.error || null;
-        ready = !error;
-        favoritesReady = !favoritesError;
-        if (ready) {
-          statuses = new Map((library.data || []).filter(row =>
+        if(ticket!==generation || targetId!==userId) return;
+        error=library.error||null;
+        favoritesError=hearts.error||null;
+        ready=!error;
+        favoritesReady=!favoritesError;
+        if(ready){
+          statuses=new Map((library.data||[]).filter(row=>
             validId(row?.manga_id) && Object.hasOwn(VALID,row.status))
-            .map(row => [row.manga_id,row.status]));
+            .map(row=>[row.manga_id,row.status]));
         }
-        if (favoritesReady) {
-          favorites = new Set((hearts.data || []).filter(row => validId(row?.manga_id))
-            .map(row => row.manga_id));
+        if(favoritesReady){
+          favorites=new Set((hearts.data||[]).filter(row=>validId(row?.manga_id))
+            .map(row=>row.manga_id));
         }
         emit();
-      })().catch(reason => {
-        if (ticket === generation) {
-          error = reason;
-          favoritesError = reason;
-          ready = false; favoritesReady = false;
+      })().catch(reason=>{
+        if(ticket===generation && targetId===userId){
+          error=reason; favoritesError=reason;
+          // Preserve already loaded lists when the network briefly fails.
           emit();
         }
       });
       return loading;
+    }
+
+    function setSession(session) {
+      const nextId=session?.user?.id||null;
+      if(userId===nextId) return loading;
+      userId=nextId;
+      statuses=new Map();
+      favorites=new Set();
+      error=null; favoritesError=null;
+      ready=false; favoritesReady=false;
+      generation++;
+      emit();
+      if(!nextId){
+        loading=Promise.resolve();
+        return loading;
+      }
+      return refresh();
     }
 
     async function setStatus(mangaId, status) {
@@ -108,7 +115,7 @@
     }
 
     return {
-      setSession, setStatus, setFavorite,
+      setSession, refresh, setStatus, setFavorite,
       ready: () => loading,
       isSignedIn: () => Boolean(userId),
       isReady: () => ready && Boolean(userId),
