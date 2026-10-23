@@ -13,6 +13,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css?v=discover-1">
 <link rel="stylesheet" href="features.css?v=features-8">
+<link rel="stylesheet" href="extras.css?v=rr4">
 <link rel="manifest" href="manifest.json">
 </head>
 <body>
@@ -28,8 +29,11 @@
       <a href="#about">Бидний тухай</a>
       <a href="my-library.html">Миний сан</a>
       <a href="feedback.html">Манга хүсэлт</a>
+      <a href="stats.html">Статистик</a>
     </nav>
     <div class="header-actions">
+      <button id="newChapterAlerts" class="btn rr-alert-button" type="button"
+        aria-label="Дуртай манганы шинэ бүлэг">🔔 Шинэ бүлэг</button>
       <a class="btn my-library-header" href="my-library.html" title="Миний манганы сан" aria-label="Миний манганы сан">📚 <span>Миний сан</span></a>
       <button id="themeToggle" class="theme-btn" type="button" aria-label="Өнгөний загвар солих" title="Өнгөний загвар солих">
         <svg class="sun" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.2 4.2l1.4 1.4m12.8 12.8 1.4 1.4M1 12h2m18 0h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg>
@@ -130,6 +134,12 @@
       <p>Энэ төхөөрөмж дээрх уншсан түүх болон дуртай жанраас санал болгоно. AI, серверийн нэмэлт зардалгүй.</p>
       <div id="recommendations" class="home-feature-list" aria-live="polite"></div>
   </section>
+  <dialog id="newChapterDialog" class="modal" aria-labelledby="newChapterTitle">
+    <div class="modal-header"><h2 id="newChapterTitle">Дуртай манганы шинэ бүлгүүд</h2>
+    <button id="newChapterClose" class="modal-close" type="button" aria-label="Хаах">✕</button></div>
+    <p class="feature-muted">Мэдэгдэл нь сайт руу дахин ороход шалгагдана. Push мэдэгдэл биш.</p>
+    <div id="newChapterList" class="feature-stack"></div>
+  </dialog>
   <dialog id="favModal" class="modal" aria-labelledby="favTitle">
     <div class="modal-header">
       <h2 id="favTitle">Дуртай манга</h2>
@@ -262,6 +272,7 @@ function renderFeature(){
 window.RRCatalog.load().then(d=>{
   if(!Array.isArray(d))throw Error('Invalid catalog');
   data=d.filter(m=>m && m.chapters && m.chapters.length);
+  window.RR_CATALOG_SNAPSHOT=data;
   restoreUrlState();
   chips();draw();resume();renderFeature();updateFavCount();
   window.dispatchEvent(new CustomEvent('rr-catalog-loaded',{detail:data}));
@@ -303,7 +314,8 @@ function draw(){
         '<div class="cover" '+bg+'><span class="cover-name">'+esc(m.title)+'</span>'+coverImg+
           (isNew(m)?'<span class="mark">ШИНЭ</span>':'')+'</div>'+
         '<div class="card-body">'+
-          '<div class="card-genre">'+esc((m.genres||[])[0]||'MANGA / МАНГА')+'</div>'+
+          '<div class="card-genre">'+esc((m.genres||[])[0]||'MANGA / МАНГА')+
+          ' · '+esc(({ongoing:'Үргэлжилж байгаа',completed:'Дууссан',hiatus:'Завсарласан'})[m.publication_status]||'Үргэлжилж байгаа')+'</div>'+
           '<h3>'+esc(m.title)+'</h3>'+
           '<div class="meta"><span class="chapter-label">Бүлэг '+esc(latest.n)+'</span>'+
           (rating?'<b class="rt">★ '+esc(rating)+'</b>':'')+
@@ -537,5 +549,6 @@ renderSkeletons();
 <script src="profile.js?v=favorites-fix-1"></script>
 <script src="social.js?v=site-audit-1"></script>
 <script src="features-home.js?v=features-8"></script>
+<script src="site-extras.js?v=rr4"></script>
 </body>
 </html>

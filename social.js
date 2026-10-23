@@ -126,7 +126,13 @@
       sb.from('comments').select('id,body,created_at,user_id,profiles(username)').eq('manga_id', mid).eq('chapter', cn).order('created_at', { ascending: false }).limit(100)
     ]);
     const mine = (rv.data || []).find(r => r.user_id === uid);
-    const item = (x, extra = '') => `<article class="cm"><b>${esc(x.profiles?.username || 'Хэрэглэгч')}</b> <small>${when(x.created_at)}</small>${extra}<p>${esc(x.body)}</p></article>`;
+    const safeBody = text => esc(text||'').replace(/\[spoiler\]([\s\S]*?)\[\/spoiler\]/gi,
+      (_whole,hidden)=>'<details class="comment-spoiler"><summary>Spoiler харах</summary>'+hidden+'</details>');
+    const item = (x, extra = '') => `<article class="cm"><b>${esc(x.profiles?.username || 'Хэрэглэгч')}</b> <small>${when(x.created_at)}</small>${extra}<p>${safeBody(x.body)}</p></article>`;
+    const commentActions = c => (c.user_id === uid
+      ? ` <button class="lnk" data-edit="${c.id}" type="button">Засах</button>`
+      : ` <button class="lnk" data-report-comment="${c.id}" type="button">Мэдээлэх</button>`)
+      + (c.user_id === uid || isAdmin ? ` <button class="lnk" data-del="${c.id}" type="button">Устгах</button>` : '');
     box.innerHTML = `<h2>Үнэлгээ</h2><p>${avg}</p>
       <form id="rf"><select id="rr" aria-label="Од">${[5, 4, 3, 2, 1].map(n => `<option value="${n}"${mine && mine.rating === n ? ' selected' : ''}>${'★'.repeat(n)} ${n}</option>`).join('')}</select>
       <textarea id="rb" maxlength="1000" placeholder="Манганы тухай санал (заавал биш)">${mine ? esc(mine.body) : ''}</textarea>
@@ -135,7 +141,7 @@
       <h2>Сэтгэгдэл</h2>
       <form id="cf"><textarea id="cb" maxlength="1000" required placeholder="Сэтгэгдэл бичих"></textarea><button class="btn primary">Илгээх</button></form>
       <p id="sm" class="msg" role="status"></p>
-      <div>${(cm.data || []).length ? cm.data.map(c => item(c, c.user_id === uid || isAdmin ? ` <button class="lnk" data-del="${c.id}" type="button">Устгах</button>` : '')).join('') : '<p class="meta">Энэ бүлэгт сэтгэгдэл алга. Эхний сэтгэгдлийг та бичээрэй.</p>'}</div>`;
+      <div>${(cm.data || []).length ? cm.data.map(c => item(c, commentActions(c))).join('') : '<p class="meta">Энэ бүлэгт сэтгэгдэл алга. Эхний сэтгэгдлийг та бичээрэй.</p>'}</div>`;
     const sm = $('#sm', box);
     $('#rf', box).onsubmit = async e => {
       e.preventDefault();
@@ -151,6 +157,33 @@
       if (error) { sm.textContent = 'Илгээж чадсангүй: ' + error.message; return; }
       drawSocial();
     };
+    box.querySelectorAll('[data-edit]').forEach(b => b.onclick = async () => {
+      const comment=(cm.data||[]).find(c=>String(c.id)===b.dataset.edit && c.user_id===uid);
+      if(!comment)return;
+      const next=prompt('Сэтгэгдэл засах (spoiler: [spoiler]текст[/spoiler])',comment.body);
+      if(next===null)return;
+      const body=next.trim();
+      if(!body||body.length>1000){sm.textContent='1–1000 тэмдэгт бичнэ үү.';return}
+      b.disabled=true;
+      const {error}=await sb.from('comments').update({body})
+        .eq('id',comment.id).eq('user_id',uid);
+      if(error){sm.textContent='Засвар хадгалагдсангүй: '+error.message;b.disabled=false}
+      else drawSocial();
+    });
+    box.querySelectorAll('[data-report-comment]').forEach(b => b.onclick = async () => {
+      const comment=(cm.data||[]).find(c=>String(c.id)===b.dataset.reportComment && c.user_id!==uid);
+      if(!comment)return;
+      const reason=prompt('Сэтгэгдлийг мэдээлэх шалтгаан (10+ тэмдэгт)');
+      if(reason===null)return;
+      if(reason.trim().length<10||reason.length>800){sm.textContent='10–800 тэмдэгт бичнэ үү.';return}
+      b.disabled=true;
+      const {error}=await sb.from('reader_submissions').insert({
+        user_id:uid,kind:'comment_report',manga_id:mid,chapter:String(cn),
+        message:'Сэтгэгдэл #'+comment.id+': '+reason.trim()
+      });
+      sm.textContent=error?'Мэдээлэл илгээгдсэнгүй: '+error.message:'Мэдээллийг админд илгээлээ.';
+      b.disabled=false;
+    });
     box.querySelectorAll('[data-del]').forEach(b => b.onclick = async () => {
       await sb.from('comments').delete().eq('id', b.dataset.del);
       drawSocial();

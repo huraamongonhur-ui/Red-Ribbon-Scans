@@ -31,7 +31,7 @@
    if(!tickets.length)reports.textContent='Хүсэлт, алдаа мэдээлэл одоохондоо алга.';
    for(const ticket of tickets){
      const row=document.createElement('article');row.className='workflow-ticket';
-     row.append(el('strong',(ticket.kind==='page_report'?'Алдаа':'Манга хүсэлт')+' #'+ticket.id),
+     row.append(el('strong',(ticket.kind==='page_report'?'Хуудасны алдаа':ticket.kind==='comment_report'?'Сэтгэгдлийн мэдээлэл':'Манга хүсэлт')+' #'+ticket.id),
        el('p',(ticket.manga_title||ticket.manga_id||'Нэргүй')+
          (ticket.chapter?' · Бүлэг '+ticket.chapter:'')+(ticket.page_number?' · Хуудас '+ticket.page_number:'')),
        el('p',ticket.message));

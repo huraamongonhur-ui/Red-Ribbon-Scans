@@ -28,7 +28,24 @@
    for(const genre of manga.genres||[]){
      const tag=element('span',genre);tag.className='details-tag';$('#detailGenres').append(tag);
    }
-   $('#detailMeta').textContent=manga.chapters.length+' бүлэг';
+   const publication={ongoing:'Үргэлжилж байгаа',completed:'Дууссан',hiatus:'Түр завсарласан'};
+   $('#detailMeta').textContent=manga.chapters.length+' бүлэг · '+
+     (publication[manga.publication_status]||publication.ongoing);
+   const canonical=new URL('manga.html?m='+encodeURIComponent(id),location.href).href;
+   const upsertMeta=(kind,key,value)=>{
+     let node=document.head.querySelector('meta['+kind+'="'+key+'"]');
+     if(!node){node=document.createElement('meta');node.setAttribute(kind,key);document.head.append(node);}
+     node.content=value;
+   };
+   upsertMeta('name','description',(manga.description||manga.title+' манганы бүлгүүд').slice(0,155));
+   upsertMeta('property','og:title',manga.title+' — Red Ribbon Scans');
+   upsertMeta('property','og:description',(manga.description||'Монгол хэлээр унших').slice(0,195));
+   upsertMeta('property','og:url',canonical);
+   if(manga.cover)upsertMeta('property','og:image',new URL(manga.cover,location.href).href);
+   const ld=document.createElement('script');ld.type='application/ld+json';
+   ld.textContent=JSON.stringify({'@context':'https://schema.org','@type':'CreativeWork',
+     name:manga.title,description:manga.description||'',url:canonical});
+   document.head.append(ld);
    const chapters=[...manga.chapters].sort((a,b)=>Number(b.n)-Number(a.n));
    const readUrl=n=>'reader.html?m='+encodeURIComponent(id)+'&c='+encodeURIComponent(n);
    $('#detailStart').href=readUrl(chapters[chapters.length-1].n);

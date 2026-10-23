@@ -13,6 +13,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css?v=logo-1">
 <link rel="stylesheet" href="features.css?v=features-8">
+<link rel="stylesheet" href="extras.css?v=rr4">
 </head>
 <body class="reader">
 <div id="prog"></div>
@@ -36,6 +37,10 @@
     </select>
     <a class="btn reader-library-link" href="my-library.html" title="Миний сан">Миний сан</a>
     <button class="btn" id="mode" type="button" aria-label="Унших горим солих"></button>
+    <button class="btn" id="readerBookmark" type="button" aria-pressed="false" disabled>☆ Хуудас тэмдэглэх</button>
+    <button class="btn" id="readerRetry" type="button">↻ Зураг дахин ачаалах</button>
+    <a class="btn" href="stats.html">Статистик</a>
+    <span id="readerSaveState" class="reader-image-status" role="status"></span>
     <button class="btn" id="readerSettingsBtn" type="button" aria-label="Унших тохиргоо">⚙ Тохиргоо</button>
     <a id="readerReport" class="btn" href="feedback.html?kind=report">Алдаа мэдээлэх</a>
     <span id="readerImageStatus" class="reader-image-status" role="status" aria-live="polite"></span>
@@ -111,11 +116,14 @@ window.RRCatalog.load().then(d=>{
   });
   urls=pagesOf(ch);
   if(!urls.length)return note('Энэ бүлэгт зураг байхгүй байна.');
+  const savedPage=Number(P.get('p'));
+  if(Number.isInteger(savedPage)&&savedPage>=1&&savedPage<=urls.length)p=savedPage-1;
   window.RR_READER_STATE='ready';
   applyDir();
   // Track reading history
   try { addHist(m.id, ch.n); } catch(e) {}
   show();
+  setTimeout(()=>window.dispatchEvent(new Event('rr-reader-progress')),0);
 }).catch(()=>note('Манганы мэдээллийг ачаалж чадсангүй.'));
 
 function note(t){
@@ -211,6 +219,7 @@ function progress(){
 }
 function save(){
   try{localStorage.setItem('rr_last',JSON.stringify({m:m.id,c:ch.n,p}))}catch(e){}
+  window.dispatchEvent(new Event('rr-reader-progress'));
 }
 
 function preloadImages(start,count){
@@ -409,6 +418,7 @@ themeBtn.onclick=()=>{const c=document.documentElement.getAttribute('data-theme'
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}
 </script>
 <script src="profile.js?v=favorites-fix-1"></script>
+<script src="reader-extras.js?v=rr4"></script>
 <script src="social.js?v=site-audit-1"></script>
 </body>
 </html>

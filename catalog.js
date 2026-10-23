@@ -9,6 +9,7 @@
       c && c.n != null && c.pages && typeof c.pages === 'object') : [];
     return {
       id:m.id, title:m.title,
+      publication_status:['ongoing','completed','hiatus'].includes(m.publication_status)?m.publication_status:'ongoing',
       description:typeof m.description==='string' ? m.description : '',
       genres:Array.isArray(m.genres) ? m.genres.filter(g => typeof g === 'string') : [],
       cover:typeof m.cover === 'string' ? m.cover : '',
@@ -36,7 +37,7 @@
 
   async function managedManga(sb) {
     const {data,error} = await sb.from('catalog_manga')
-      .select('id,title,description,genres,cover,chapters').order('updated_at',{ascending:false});
+      .select('id,title,description,publication_status,genres,cover,chapters').order('updated_at',{ascending:false});
     if (error) throw error;
     return (data || []).map(canonical).filter(Boolean);
   }

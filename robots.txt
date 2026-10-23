@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://red-ribbon-scans.vercel.app/sitemap.xml
