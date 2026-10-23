@@ -1,0 +1,61 @@
+<!doctype html><html lang="mn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0f172a"><title>Light Novel Studio — Red Ribbon Scans</title>
+<link rel="icon" href="assets/red-ribbon-logo.webp" type="image/webp">
+<link rel="stylesheet" href="light-novel-admin.css?v=1"></head>
+<body><header class="la-header"><a href="admin.html">← Admin Dashboard</a><strong>Light Novel <span>Studio</span></strong><a href="light-novels.html">Уншигч ↗</a></header>
+<main class="la-wrap"><div class="la-heading"><div><p class="la-kicker">REDACTION · PUBLISHING</p><h1>Light Novel удирдлага</h1><p>Зохиол, орчуулга, редакцийн урсгал нэг газар.</p></div><span class="la-chip" id="laIdentity">Эрх шалгаж байна…</span></div>
+<div id="laNotice" class="la-alert" role="status" aria-live="polite">Supabase холболт шалгаж байна…</div>
+<div id="laApp" hidden>
+<nav class="la-tabs" id="laTabs" aria-label="Админ цэс">
+<button type="button" data-tab="novels" class="active">Зохиолууд</button><button type="button" data-tab="editor">Бүлэг & Editor</button>
+<button type="button" data-tab="import">Smart Import</button><button type="button" data-tab="glossary">Нэр томьёо</button>
+<button type="button" data-tab="queue">Нийтлэх</button><button type="button" data-tab="analytics">Статистик</button>
+<button type="button" data-tab="reviewers">Reviewer</button>
+</nav>
+<section class="la-panel" data-panel="novels"><div class="la-row"><h2>Зохиолууд</h2><button id="laNewNovel" type="button">+ Шинэ зохиол</button></div>
+<div class="la-columns"><div><label for="laNovelPick">Зохиол сонгох</label><select id="laNovelPick" size="7"></select></div>
+<form id="laNovelForm" class="la-form"><label>Slug<input id="laNovelSlug" maxlength="80" pattern="[a-z0-9][a-z0-9-]{1,79}" required placeholder="novel-name"></label>
+<label>Нэр<input id="laNovelTitle" required maxlength="160"></label><label>Дэд нэр<input id="laNovelSubtitle"></label>
+<div class="la-two"><label>Зохиолч<input id="laNovelAuthor"></label><label>Зураач<input id="laNovelIllustrator"></label></div>
+<label>Жанр (таслалаар)<input id="laNovelGenres" placeholder="Fantasy, Romance"></label>
+<label>Эх зохиолын боть<input id="laNovelVolumes" type="number" min="0" max="300" value="0"></label>
+<label>Нүүр зураг URL<input id="laNovelCover" type="url" placeholder="https://..."></label>
+<label>Танилцуулга<textarea id="laNovelSynopsis" rows="3"></textarea></label>
+<label>Каталогийн төлөв<select id="laNovelStatus"><option value="draft">Draft — нууц</option><option value="published">Published — нийтэд</option></select></label>
+<div class="la-row"><button class="primary" type="submit">Зохиол хадгалах</button><span id="laNovelMsg" role="status"></span></div></form></div></section>
+<section class="la-panel" data-panel="editor" hidden><div class="la-row"><h2>Бүлгийн редактор</h2><button id="laNewChapter" type="button">+ Бүлэг нэмэх</button></div>
+<p class="hint">Зүүн талын жагсаалтад бүлгүүдийг чирж эрэмбэлээд хадгална. Боть болон бүлэг бүрийг тусад нь засварлана.</p>
+<div class="la-columns"><div><h3>Бүлгүүд</h3><ol id="laChapterList" class="la-draggable"></ol><button id="laSaveOrder" type="button">Дарааллыг хадгалах</button><h3>Хувилбарын түүх</h3><div id="laVersions"></div></div>
+<form id="laChapterForm" class="la-form">
+<label>Бүлгийн гарчиг<input id="laChapterTitle" required maxlength="180"></label>
+<div class="la-two"><label>Боть №<input id="laVolumeNumber" type="number" min="1" value="1"></label><label>Slug<input id="laChapterSlug" maxlength="80" required placeholder="chapter-01"></label></div>
+<label>Төлөв<select id="laChapterStatus"><option value="draft">Draft</option><option value="review">Review</option><option value="approved">Approved</option><option value="scheduled">Scheduled</option><option value="published">Published</option></select></label>
+<label>Нийтлэх огноо, цаг (Scheduled үед заавал)<input id="laReleaseAt" type="datetime-local"></label>
+<label>Бүлгийн текст <small>Догол мөрийг хоосон мөрөөр салгана. Зураг оруулах бол зураг URL ба тайлбар нэмнэ.</small>
+<textarea id="laChapterText" rows="15" spellcheck="true" placeholder="Орчуулгаа энд оруулна уу…"></textarea></label>
+<div class="la-row"><label>Нийтлэх зураг URL<input id="laIllustrationURL" type="url" placeholder="https://..."></label><button id="laAddIllustration" type="button">+ Зураг блок</button></div>
+<label>Зураг upload <small>Энэ bucket PUBLIC. Нууц зураг бүү оруул.</small><input id="laArtFile" type="file" accept="image/jpeg,image/png,image/webp"></label><button id="laArtUpload" type="button">Зураг upload</button>
+<div class="la-row"><button class="primary" type="submit">Бүлэг хадгалах</button><button id="laCheckQuality" type="button">Чанар шалгах</button><button id="laShowPreview" type="button">Reader Preview</button></div>
+<div id="laQualityResults" class="la-note" aria-live="polite"></div><p id="laChapterMsg" role="status"></p>
+</form></div></section>
+<section class="la-panel" data-panel="import" hidden><h2>Smart Import</h2><p class="hint">TXT, Markdown, DOCX, EPUB файлыг текст болгон задлана. Файл сервер рүү автоматаар upload хийхгүй; эхлээд preview-ээ шалгаад Editor руу шилжүүлнэ.</p>
+<label>Файл сонгох<input id="laImportFile" type="file" accept=".txt,.md,.markdown,.docx,.epub"></label>
+<div class="la-row"><button id="laImport" class="primary" type="button">Файл унших</button><button id="laUseImport" type="button" disabled>Editor-т оруулах</button></div>
+<p id="laImportStatus" role="status"></p><textarea id="laImportPreview" rows="14" readonly placeholder="Импортлосон текст энд харагдана"></textarea></section>
+<section class="la-panel" data-panel="glossary" hidden><h2>Орчуулгын толь</h2><form id="laGlossaryForm" class="la-form"><div class="la-two"><label>Эх нэр томьёо<input id="laTermOriginal" required></label><label>Монгол орчуулга<input id="laTermMongolian" required></label></div><label>Тэмдэглэл<input id="laTermNote"></label><button class="primary" type="submit">Тольд нэмэх</button></form><div id="laGlossaryList" class="la-stack"></div></section>
+<section class="la-panel" data-panel="queue" hidden><h2>Publication Queue</h2><p class="hint">Scheduled бүлэг товлосон цагт автоматаар уншигчдад нээгдэнэ. Сайтад нийтэд харагдуулахын тулд зохиолын төлөв Published байх шаардлагатай.</p><div id="laQueue" class="la-stack"></div></section>
+<section class="la-panel" data-panel="analytics" hidden><h2>Уншилтын статистик</h2><p class="hint">Нэвтэрсэн хэрэглэгчдийн chapter open / 90% completion үйлдлийг өдөрт нэг удаа тоолно. Guest хэрэглэгчийг тооцохгүй.</p><div id="laAnalytics" class="la-stack"></div></section>
+<section class="la-panel" data-panel="reviewers" hidden><h2>Хувийн Reviewer Access</h2><p class="hint">Зөвхөн Supabase Auth-д бүртгэлтэй хэрэглэгчийн UUID-г нэмнэ. Reviewer нь нийтлэгдээгүй текст уншиж санал бичнэ, нийтлэх эрхгүй.</p>
+<form id="laReviewerForm" class="la-row"><label>Reviewer user UUID<input id="laReviewerUID" required placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"></label><button class="primary" type="submit">Эрх олгох</button></form>
+<div id="laReviewers" class="la-stack"></div><h3>Reviewer тэмдэглэл</h3><label>Хянах бүлэг<select id="laReviewChapterPick"></select></label>
+<div id="laReviewNotes" class="la-stack"></div><form id="laReviewNoteForm"><label>Тэмдэглэл<textarea id="laReviewNote" rows="3" required maxlength="5000"></textarea></label><button class="primary" type="submit">Тэмдэглэл хадгалах</button></form>
+</section></div>
+</main>
+<dialog id="laPreviewDialog" class="la-modal"><div class="la-row"><strong>Reader Preview</strong><button id="laPreviewClose" type="button">✕</button></div><div class="la-row"><label>Theme<select id="laPreviewTheme"><option value="dark">Dark</option><option value="light">Light</option><option value="sepia">Sepia</option><option value="oled">OLED</option></select></label></div><article id="laPreviewArticle" class="la-preview"></article></dialog>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mammoth@1.8.0/mammoth.browser.min.js"></script>
+<script src="light-novel-quality.js?v=1"></script>
+<script src="light-novel-admin.js?v=1"></script>
+</body></html>
