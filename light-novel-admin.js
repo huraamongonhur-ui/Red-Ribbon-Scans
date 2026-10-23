@@ -51,6 +51,16 @@ function renderChapters(){
     const open=dom("button","Засах");open.type="button";
     open.onclick=()=>setFormChapter(c);
     li.append(open);
+    if(state.isAdmin){
+      for(const [label,direction] of [["↑",-1],["↓",1]]){
+        const move=dom("button",label);move.type="button";move.setAttribute("aria-label",direction<0?"Бүлгийг дээш":"Бүлгийг доош");
+        move.onclick=()=>{
+          if(direction<0&&li.previousElementSibling)list.insertBefore(li,li.previousElementSibling);
+          else if(direction>0&&li.nextElementSibling)list.insertBefore(li.nextElementSibling,li);
+        };
+        li.append(move);
+      }
+    }
     li.addEventListener("dragstart",e=>{if(!state.isAdmin)return;e.dataTransfer.setData("text/plain",c.id);li.classList.add("dragging");});
     li.addEventListener("dragend",()=>li.classList.remove("dragging"));
     li.addEventListener("dragover",e=>{if(state.isAdmin)e.preventDefault();});
