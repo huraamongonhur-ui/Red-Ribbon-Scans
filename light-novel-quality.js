@@ -74,5 +74,16 @@ async function importText(file){
   }
   throw Error("TXT, MD, DOCX, EPUB формат дэмжинэ.");
 }
-global.RRNovelQuality=Object.freeze({blocksFromText,textFromBlocks,analyze,importText});
+function splitChapters(text){
+ const lines=String(text||"").replace(/\r\n?/g,"\n").split("\n"),result=[];
+ let title="Оруулсан хэсэг",parts=[];
+ const flush=()=>{const body=parts.join("\n").trim();if(body)result.push({title,text:body});parts=[];};
+ for(const line of lines){
+  const heading=line.trim().match(/^(?:#{1,3}\s*)?(?:(?:chapter|бүлэг)\s+[0-9IVXLCDM]+(?:\s*[:.—-]\s*.*)?|(?:prologue|удиртгал|эпилог)(?:\s*[:.—-]\s*.*)?)$/i);
+  if(heading&&parts.some(l=>l.trim())){flush();title=line.replace(/^#+\s*/,"").trim();}else parts.push(line);
+ }
+ flush();
+ return result.length?result:[{title,text:String(text||"").trim()}];
+}
+global.RRNovelQuality=Object.freeze({blocksFromText,textFromBlocks,analyze,importText,splitChapters});
 })(window);
