@@ -67,7 +67,9 @@ function initDetail(){
   }
   for (const character of novel.characters){
     const c=el("article",{className:"ln-character"});
-    const art=el("div",{className:"ln-character-art","aria-label":"Дүрийн зураг оруулах байрлал"}, "✧");
+    const art=el("div",{className:"ln-character-art"});
+    if(character.art) art.append(el("img",{src:character.art,alt:character.name+" — загварын хөрөг зураг",loading:"lazy"}));
+    else art.textContent="✧";
     c.append(art,el("div",{className:"ln-kicker"},character.role),el("h3",{},character.name),el("p",{},character.description));
     $("#characterGrid").append(c);
   }
