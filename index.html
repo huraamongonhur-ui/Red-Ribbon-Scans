@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="style.css?v=discover-1">
 <link rel="stylesheet" href="features.css?v=features-8">
 <link rel="stylesheet" href="extras.css?v=rr4">
-<link rel="stylesheet" href="simple-comix.css?v=clean-1">
+<link rel="stylesheet" href="simple-comix.css?v=clean-2">
 <link rel="manifest" href="manifest.json">
 </head>
 <body>
@@ -69,24 +69,6 @@
         <div><strong id="chapterCount">—</strong><span>Бүлэг</span></div>
         <div class="hero-stat-note"><span class="live-indicator" aria-hidden="true"></span><span>Уншихад бэлэн</span></div>
       </div>
-    </div>
-    <div class="hero-visual" id="heroFeature" hidden>
-      <div class="hero-halo" aria-hidden="true"></div>
-      <span class="hero-symbol hero-symbol-one" aria-hidden="true">✦</span>
-      <span class="hero-symbol hero-symbol-two" aria-hidden="true">+</span>
-      <a id="featureLink" class="feature-card" href="#library">
-        <div class="feature-cover">
-          <div id="featureFallback" class="feature-fallback"></div>
-          <img id="featureImg" alt="" hidden>
-          <span class="feature-bookmark">RR</span>
-        </div>
-        <div class="feature-caption">
-          <small>ОНЦЛОХ МАНГА</small>
-          <strong id="featureTitle"></strong>
-          <span id="featureChapter"></span>
-          <span class="feature-arrow" aria-hidden="true">↗</span>
-        </div>
-      </a>
     </div>
   </section>
   <div class="browse-layout">
@@ -251,25 +233,9 @@ function renderSkeletons(n=6){
   $('#grid').innerHTML=Array.from({length:n},()=>'<div class="card skeleton" role="listitem" aria-hidden="true"><div class="cover"></div><div class="card-body"><div class="skeleton-line"></div><div class="skeleton-line"></div></div></div>').join('');
 }
 
-function renderFeature(){
+function renderHeroStats(){
   $('#mangaCount').textContent=String(data.length);
   $('#chapterCount').textContent=String(data.reduce((sum,m)=>sum+m.chapters.length,0));
-  const m=[...data].sort((a,b)=>new Date(last(b).date)-new Date(last(a).date))[0];
-  if(!m){$('#heroFeature').hidden=true;return}
-  $('#heroFeature').hidden=false;
-  $('#featureLink').href=href(m,last(m).n);
-  $('#featureTitle').textContent=m.title;
-  $('#featureChapter').textContent='Бүлэг '+last(m).n+' · Унших';
-  $('#featureFallback').textContent=m.title;
-  const cover=$('#featureImg');
-  if(m.cover){
-    cover.src=m.cover.replace(/^\/+/, '');
-    cover.alt=m.title+' нүүр зураг';
-    cover.hidden=false;
-    cover.onerror=()=>{cover.hidden=true};
-  }else{
-    cover.hidden=true;
-  }
 }
 
 window.RRCatalog.load().then(d=>{
@@ -277,7 +243,7 @@ window.RRCatalog.load().then(d=>{
   data=d.filter(m=>m && m.chapters && m.chapters.length);
   window.RR_CATALOG_SNAPSHOT=data;
   restoreUrlState();
-  chips();draw();resume();renderFeature();updateFavCount();
+  chips();draw();resume();renderHeroStats();updateFavCount();
   window.dispatchEvent(new CustomEvent('rr-catalog-loaded',{detail:data}));
 }).catch(()=>{
   $('#grid').innerHTML='<p class="empty">Манганы жагсаалтыг ачаалж чадсангүй. Хуудсыг дахин ачаална уу.</p>';
