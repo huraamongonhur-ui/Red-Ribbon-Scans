@@ -1,0 +1,35 @@
+# Local environment files and deployment metadata (never commit real keys)
+.env
+.env.*
+!.env.example
+!.env.sample
+*.local.env
+.vercel/
+.supabase/
+
+# Credentials and private keys
+*.pem
+*.p12
+*.pfx
+*.key
+id_rsa
+id_ed25519
+credentials.json
+service-account*.json
+
+# Local dependencies, caches and generated files
+node_modules/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+dist/
+build/
+*.log
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
