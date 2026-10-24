@@ -8,7 +8,7 @@ const read=file=>fs.readFileSync(path.resolve(__dirname,'..',file),'utf8');
 test('all reader-facing pages load the new minimal stylesheet after their existing styles',()=>{
  for(const p of ['index.html','manga.html','my-library.html','reader.html','stats.html','feedback.html']){
    const html=read(p);
-   assert.match(html,/simple-comix\.css\?v=clean-(?:1|2|3)/);
+   assert.match(html,/simple-comix\.css\?v=clean-(?:1|2|3|4)/);
    const head=html.split('</head>')[0];
    const simple=head.indexOf('simple-comix.css');
    assert.ok(simple>=0,p+' missing stylesheet');
@@ -57,7 +57,7 @@ test('compact design covers desktop, mobile and keyboard focus',()=>{
 });
 test('new service-worker version includes new CSS without any DB migration',()=>{
  const sw=read('sw.js');
- assert.match(sw,/red-ribbon-v19/);
+ assert.match(sw,/red-ribbon-v20/);
  assert.match(sw,/'\.\/simple-comix\.css'/);
  assert.doesNotMatch(sw,/supabase\.sql/);
 });
@@ -76,23 +76,35 @@ test('mobile notification remains legible and theme setting persists across page
 });
 
 
-test('homepage has no redundant featured manga card but retains useful hero actions and stats',()=>{
+test('homepage begins directly with catalog, without hero or promo content',()=>{
  const html=read('index.html'),css=read('simple-comix.css');
- for(const legacy of ['id="heroFeature"','id="featureLink"','ОНЦЛОХ МАНГА',
-   'featureTitle','featureImg','renderFeature()']){
-   assert.ok(!html.includes(legacy),'unexpected featured card: '+legacy);
+ assert.match(html,/<main class="wrap">\s*<div class="browse-layout">/);
+ for(const retired of ['<section class="hero"','id="heroTitle"','id="mangaCount"',
+   'id="chapterCount"','id="heroFeature"','renderHeroStats','ОНЦЛОХ МАНГА']){
+   assert.ok(!html.includes(retired),'retired homepage content: '+retired);
  }
- for(const essential of ['id="mangaCount"','id="chapterCount"','id="resume"','id="heroTitle"',
-  'href="#library"','function renderHeroStats()']){
-   assert.ok(html.includes(essential),'lost hero function: '+essential);
+ for(const preserved of ['id="library"','id="libraryTitle"','id="resume"','id="q"',
+   'id="sort"','id="chips"','id="grid"','id="latestUpdates"']){
+   assert.ok(html.includes(preserved),'catalog functionality: '+preserved);
  }
- assert.match(css,/\.hero\{\s*display:block/);
- assert.doesNotMatch(css,/\.hero:has\(#heroFeature\[hidden\]\)/);
+ assert.match(css,/main\.wrap>\.browse-layout\{margin-top:18px\}/);
+ assert.match(css,/\.library>\.resume-catalog/);
+ assert.doesNotMatch(css,/\.hero\{/);
+});
+test('continue-reading remains accessible inside catalog, not a promotional banner',()=>{
+ const html=read('index.html');
+ const catalog=html.indexOf('<section class="library" id="library"');
+ const resume=html.indexOf('id="resume"');
+ const search=html.indexOf('id="q"');
+ assert.ok(catalog>=0&&resume>catalog&&search>resume);
+ assert.equal((html.match(/id="resume"/g)||[]).length,1);
+ assert.match(html,/function resume\(\)/);
+ assert.match(html,/chips\(\);draw\(\);resume\(\);updateFavCount\(\);/);
+ assert.match(html,/Үргэлжлүүлэх/);
 });
 
-
-test('homepage requests refreshed clean styling after removing featured card',()=>{
- assert.match(read('index.html'),/simple-comix\.css\?v=clean-3/);
+test('homepage requests fresh stylesheet after catalog-first redesign',()=>{
+ assert.match(read('index.html'),/simple-comix\.css\?v=clean-4/);
 });
 
 
@@ -101,6 +113,6 @@ test('dark and light themes use accessible purple accent without changing logo',
  assert.match(css,/--red:#b89bff/);
  assert.match(css,/--red:#6b3ab8/);
  assert.match(css,/\.card \.mark\{background:#7445cc/);
- assert.match(css,/\.hero-cta,\.chips \.btn\[aria-pressed=true\]/);
+ assert.match(css,/\.chips \.btn\[aria-pressed=true\]/);
  assert.match(read('index.html'),/red-ribbon-logo\.webp/);
 });
