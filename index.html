@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="style.css?v=discover-1">
 <link rel="stylesheet" href="features.css?v=features-8">
 <link rel="stylesheet" href="extras.css?v=rr4">
-<link rel="stylesheet" href="simple-comix.css?v=clean-3">
+<link rel="stylesheet" href="simple-comix.css?v=clean-4">
 <link rel="manifest" href="manifest.json">
 </head>
 <body>
@@ -58,22 +58,6 @@
 </header>
 
 <main class="wrap">
-  <section class="hero" id="home" aria-labelledby="heroTitle">
-    <div class="hero-copy">
-
-      <h1 id="heroTitle">Монгол манга. <span>Шууд унш.</span></h1>
-
-      <div class="hero-actions">
-        <a class="btn primary hero-cta" href="#library">Манга үзэх <span aria-hidden="true">↗</span></a>
-        <a id="resume" class="resume" hidden></a>
-      </div>
-      <div class="hero-stats" aria-label="Манга цуглуулгын мэдээлэл">
-        <div><strong id="mangaCount">—</strong><span>Манга</span></div>
-        <div><strong id="chapterCount">—</strong><span>Бүлэг</span></div>
-
-      </div>
-    </div>
-  </section>
   <div class="browse-layout">
   <section class="library" id="library" aria-labelledby="libraryTitle">
     <div class="library-heading">
@@ -84,6 +68,7 @@
       </div>
       <span class="library-count" id="libraryCount" aria-live="polite">Манга ачаалж байна…</span>
     </div>
+    <a id="resume" class="resume resume-catalog" hidden></a>
     <div class="tools">
       <div class="search-wrap">
         <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
@@ -230,23 +215,16 @@ function renderSkeletons(n=6){
   $('#grid').innerHTML=Array.from({length:n},()=>'<div class="card skeleton" role="listitem" aria-hidden="true"><div class="cover"></div><div class="card-body"><div class="skeleton-line"></div><div class="skeleton-line"></div></div></div>').join('');
 }
 
-function renderHeroStats(){
-  $('#mangaCount').textContent=String(data.length);
-  $('#chapterCount').textContent=String(data.reduce((sum,m)=>sum+m.chapters.length,0));
-}
-
 window.RRCatalog.load().then(d=>{
   if(!Array.isArray(d))throw Error('Invalid catalog');
   data=d.filter(m=>m && m.chapters && m.chapters.length);
   window.RR_CATALOG_SNAPSHOT=data;
   restoreUrlState();
-  chips();draw();resume();renderHeroStats();updateFavCount();
+  chips();draw();resume();updateFavCount();
   window.dispatchEvent(new CustomEvent('rr-catalog-loaded',{detail:data}));
 }).catch(()=>{
   $('#grid').innerHTML='<p class="empty">Манганы жагсаалтыг ачаалж чадсангүй. Хуудсыг дахин ачаална уу.</p>';
   $('#libraryCount').textContent='Ачаалахад алдаа гарлаа';
-  $('#mangaCount').textContent='0';
-  $('#chapterCount').textContent='0';
 });
 
 function chips(){
@@ -403,7 +381,7 @@ function resume(){
     const chapter=m.chapters.some(c=>String(c.n)===String(r.c))
       ? r.c : window.RRDiscover.nextChapter(m,getHist()).chapter;
     a.href=href(m,chapter);
-    a.innerHTML=`<small>Ургэлжлэлэх</small><b>${esc(m.title)}</b> · Бүлэг ${esc(r.c)}`;
+    a.innerHTML=`<small>Үргэлжлүүлэх</small><b>${esc(m.title)}</b> · Бүлэг ${esc(chapter)}`;
     a.hidden=false;
   }catch(e){}
 }

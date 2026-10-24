@@ -93,7 +93,7 @@ test('Reader honors requested manga and chapter IDs', () => {
 test('Reader terminal failures end social loading retries', () => {
   assert.match(inline('reader.html'),/RR_READER_STATE='error'/);
   assert.match(read('social.js'),/RR_READER_STATE !== 'error'/);
-  assert.match(read('sw.js'),/red-ribbon-v19/);
+  assert.match(read('sw.js'),/red-ribbon-v20/);
 });
 
 
@@ -104,7 +104,8 @@ test('homepage HTML has real Mongolian characters, not literal Unicode escape co
   assert.match(beforeScript, /Уншсан түүх/);
   assert.match(beforeScript, /Тусламж/);
   assert.match(beforeScript, /Дуртай манга/);
-  assert.match(beforeScript, /Бүлэг/);
+  assert.match(beforeScript, /Шинэ бүлгүүд/);
+  assert.match(beforeScript, /Бүлгийн тоо/);
   assert.doesNotMatch(html,/Бэлэг|Үргэлжлэлэх|туух|Двойн товш/);
 });
 
@@ -138,7 +139,7 @@ test('My Library exposes safe manual refresh for cross-device updates', () => {
   assert.match(read('my-library.js'),/await Promise\.all\(\[window\.RRCatalog\.load\(\),store\.refresh\(\)\]\)/);
   assert.match(read('my-library-store.js'),/function refresh\(\)/);
   assert.match(read('my-library-store.js'),/ticket!==generation \|\| targetId!==userId/);
-  assert.match(read('sw.js'),/red-ribbon-v19/);
+  assert.match(read('sw.js'),/red-ribbon-v20/);
 });
 
 
@@ -187,7 +188,7 @@ test('homepage renders quick actions and random button', () => {
   assert.match(html,/data-share/);
   assert.match(html,/card-quick-actions/);
   assert.match(html,/discover.js\?v=discover-1/);
-  assert.match(read('sw.js'),/red-ribbon-v19/);
+  assert.match(read('sw.js'),/red-ribbon-v20/);
 });
 
 
